@@ -1,0 +1,108 @@
+package com.seq.integration;
+
+import com.seq.TestUtils;
+import com.seq.api.*;
+import com.seq.exception.APIException;
+import com.seq.http.Client;
+import com.seq.common.Utils;
+
+import org.junit.Test;
+
+import java.util.*;
+import java.text.*;
+
+import static org.junit.Assert.*;
+
+public class CreateTest {
+  static Client client;
+  static Key key;
+
+  @Test
+  public void run() throws Exception {
+    testKeyCreate();
+    testAccountCreate();
+    testAssetCreate();
+  }
+
+  public void testKeyCreate() throws Exception {
+    client = TestUtils.generateClient();
+    String id = "CreateTest-testKeyCreate-id";
+    key = new Key.Builder().setId(id).create(client);
+    assertNotNull(key.id);
+    assertEquals(id, key.id);
+
+    try {
+      new Key.Builder().setId(id).create(client);
+    } catch (APIException e) {
+      return;
+    }
+    throw new Exception("expecting APIException");
+  }
+
+  public void testAccountCreate() throws Exception {
+    client = TestUtils.generateClient();
+    key = new Key.Builder().create(client);
+    String alice = "CreateTest-testAccountCreate-alice";
+    String test = "CreateTest-testAccountCreate-test";
+    Map<String, Object> tags = new HashMap<>();
+    tags.put("name", alice);
+    Account account =
+        new Account.Builder()
+            .setId(alice)
+            .addKey(key)
+            .setQuorum(1)
+            .setTags(tags)
+            .addTag("test", test)
+            .create(client);
+    assertNotNull(account.id);
+    assertEquals(alice, account.id);
+    assertEquals(1, account.quorum);
+    assertEquals(alice, account.tags.get("name"));
+    assertEquals(test, account.tags.get("test"));
+
+    try {
+      new Account.Builder()
+          .setId(alice)
+          .addKey(key)
+          .setQuorum(1)
+          .addTag("name", alice)
+          .create(client);
+    } catch (APIException e) {
+      return;
+    }
+    throw new Exception("expecting APIException");
+  }
+
+  public void testAssetCreate() throws Exception {
+    client = TestUtils.generateClient();
+    key = new Key.Builder().create(client);
+    String asset = "CreateTest-testAssetCreate-asset";
+    String test = "CreateTest-testAssetCreate-test";
+    Map<String, Object> tags = new HashMap<>();
+    tags.put("name", asset);
+    Asset testAsset =
+        new Asset.Builder()
+            .setAlias(asset)
+            .addKey(key)
+            .setQuorum(1)
+            .setTags(tags)
+            .addTag("test", test)
+            .create(client);
+    assertEquals(asset, testAsset.alias);
+    assertEquals(1, testAsset.quorum);
+    assertEquals(asset, testAsset.tags.get("name"));
+    assertEquals(test, testAsset.tags.get("test"));
+
+    try {
+      new Asset.Builder()
+          .setAlias(asset)
+          .addKey(key)
+          .setQuorum(1)
+          .addTag("name", asset)
+          .create(client);
+    } catch (APIException e) {
+      return;
+    }
+    throw new Exception("expecting APIException");
+  }
+}

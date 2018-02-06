@@ -32,9 +32,9 @@
     </developers>
 
     <scm>
-        <connection>scm:git:git://github.com/chain/sequence.git</connection>
-        <developerConnection>scm:git:ssh://github.com:chain/sequence.git</developerConnection>
-        <url>http://github.com/chain/seqquence/tree/master</url>
+        <connection>scm:git:git://github.com/sequence/sequence-sdk-java.git</connection>
+        <developerConnection>scm:git:ssh://github.com:sequence/sequence-sdk-java.git</developerConnection>
+        <url>https://github.com/sequence/sequence-sdk-java</url>
     </scm>
 
     <dependencies>

@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.seq</groupId>
     <artifactId>sequence-sdk</artifactId>
-    <version>1.0.4</version>
+    <version>1.1.0</version>
     <packaging>jar</packaging>
 
     <name>${project.groupId}:${project.artifactId}</name>
@@ -215,7 +215,7 @@
                         </property>
                     </systemProperties>
                     <excludes>
-                        <exclude>com/chain/integration/**.java</exclude>
+                        <exclude>com/seq/integration/**.java</exclude>
                     </excludes>
                 </configuration>
                 <executions>
@@ -230,7 +230,7 @@
                                 <exclude>none</exclude>
                             </excludes>
                             <includes>
-                                <include>com/chain/integration/**.java</include>
+                                <include>com/seq/integration/**.java</include>
                             </includes>
                         </configuration>
                     </execution>

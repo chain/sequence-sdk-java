@@ -127,7 +127,7 @@ public class HttpWrapper {
   private static final int MAX_RETRIES = 10;
   private static final int RETRY_BASE_DELAY_MILLIS = 40;
 
-  // the max amount of time cored leader election could take
+  // the max amount of time ledger leader election could take
   private static final int RETRY_MAX_DELAY_MILLIS = 15000;
 
   private static int retryDelayMillis(int retryAttempt) {

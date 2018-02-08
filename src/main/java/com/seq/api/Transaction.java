@@ -96,7 +96,7 @@ public class Transaction {
     }
 
     /**
-     * Executes a query on the core's transactions, returning an iterable over
+     * Executes a query on the ledger's transactions, returning an iterable over
      * pages of transactoins that match the query.
      * @param client ledger API connection object
      * @return an iterable over pages of transactions

@@ -302,7 +302,7 @@ public class Client {
   private static final int MAX_RETRIES = 10;
   private static final int RETRY_BASE_DELAY_MILLIS = 40;
 
-  // the max amount of time cored leader election could take
+  // the max amount of time ledger leader election could take
   private static final int RETRY_MAX_DELAY_MILLIS = 15000;
 
   private static int retryDelayMillis(int retryAttempt) {
@@ -426,7 +426,7 @@ public class Client {
 
     /**
      * Sets a URL for the client to use.
-     * @param url the URL of the Chain Core or HSM.
+     * @param url the URL of the ledger API.
      */
     public Builder setURL(String url) throws BadURLException {
       try {
@@ -439,7 +439,7 @@ public class Client {
 
     /**
      * Sets the credential for the client
-     * @param credential The access token for the Chain Core or HSM
+     * @param credential an API credential from a user of the ledger's team
      */
     public Builder setCredential(String credential) {
       this.credential = credential;

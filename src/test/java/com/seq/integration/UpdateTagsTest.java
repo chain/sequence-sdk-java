@@ -97,4 +97,46 @@ public class UpdateTagsTest {
       assertTrue(e.toString().contains("CH051"));
     }
   }
+
+  @Test
+  public void flavorTags() throws Exception {
+    Client client = TestUtils.generateClient();
+    Key key = new Key.Builder().create(client);
+
+    Flavor flavor1 = new Flavor.Builder().addKey(key).setQuorum(1).addTag("x", "zero").create(client);
+    Flavor flavor2 = new Flavor.Builder().addKey(key).setQuorum(1).addTag("y", "zero").create(client);
+
+    Map<String, Object> update1, update2;
+
+    // Flavor tag update
+
+    update1 = new HashMap<>();
+    update1.put("x", "one");
+
+    new Flavor.TagUpdateBuilder().forId(flavor1.id).setTags(update1).update(client);
+
+    Flavor.ItemIterable flavors =
+        new Flavor.QueryBuilder()
+            .setFilter("id=$1")
+            .addFilterParameter(flavor1.id)
+            .getIterable(client);
+
+    for (Flavor flavor : flavors) {
+      assertEquals(flavor.tags.get("x"), "one");
+    }
+
+    // Flavor tag update that raises an error
+
+    try {
+      update1 = new HashMap<>();
+      update1.put("x", "two");
+
+      new Flavor.TagUpdateBuilder()
+          // ID intentionally omitted
+          .setTags(update1)
+          .update(client);
+    } catch (APIException e) {
+      assertTrue(e.toString().contains("CH051"));
+    }
+  }
 }

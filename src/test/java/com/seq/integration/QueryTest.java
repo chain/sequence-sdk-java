@@ -94,6 +94,17 @@ public class QueryTest {
     assertEquals(asset, items.items.get(0).alias);
   }
 
+  public void testFlavorQuery() throws Exception {
+    client = TestUtils.generateClient();
+    key = new Key.Builder().create(client);
+    String flavor = UUID.randomUUID().toString();
+    new Flavor.Builder().setId(flavor).addKey(key).setQuorum(1).create(client);
+    Flavor.Page items =
+        new Flavor.QueryBuilder().setFilter("id=$1").addFilterParameter(flavor).getPage(client);
+    assertEquals(1, items.items.size());
+    assertEquals(flavor, items.items.get(0).id);
+  }
+
   public void testTransactionQuery() throws Exception {
     client = TestUtils.generateClient();
     key = new Key.Builder().create(client);

@@ -22,6 +22,7 @@ public class CreateTest {
     testKeyCreate();
     testAccountCreate();
     testAssetCreate();
+    testFlavorCreate();
   }
 
   public void testKeyCreate() throws Exception {
@@ -99,6 +100,39 @@ public class CreateTest {
           .addKey(key)
           .setQuorum(1)
           .addTag("name", asset)
+          .create(client);
+    } catch (APIException e) {
+      return;
+    }
+    throw new Exception("expecting APIException");
+  }
+
+  public void testFlavorCreate() throws Exception {
+    client = TestUtils.generateClient();
+    key = new Key.Builder().create(client);
+    String flavor = "CreateTest-testFlavorCreate-flavor";
+    String test = "CreateTest-testFlavorCreate-test";
+    Map<String, Object> tags = new HashMap<>();
+    tags.put("name", flavor);
+    Flavor testFlavor =
+        new Flavor.Builder()
+            .setId(flavor)
+            .addKey(key)
+            .setQuorum(1)
+            .setTags(tags)
+            .addTag("test", test)
+            .create(client);
+    assertEquals(flavor, testFlavor.id);
+    assertEquals(1, testFlavor.quorum);
+    assertEquals(flavor, testFlavor.tags.get("name"));
+    assertEquals(test, testFlavor.tags.get("test"));
+
+    try {
+      new Flavor.Builder()
+          .setId(flavor)
+          .addKey(key)
+          .setQuorum(1)
+          .addTag("name", flavor)
           .create(client);
     } catch (APIException e) {
       return;

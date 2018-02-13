@@ -21,6 +21,7 @@ public class FailureTest {
   public void run() throws Exception {
     testCreateAccount();
     testCreateAsset();
+    testCreateFlavor();
     testTransact();
   }
 
@@ -38,6 +39,16 @@ public class FailureTest {
     client = TestUtils.generateClient();
     try {
       new Asset.Builder().create(client);
+    } catch (APIException e) {
+      return;
+    }
+    throw new Exception("expecting APIException");
+  }
+
+  public void testCreateFlavor() throws Exception {
+    client = TestUtils.generateClient();
+    try {
+      new Flavor.Builder().create(client);
     } catch (APIException e) {
       return;
     }

@@ -25,7 +25,7 @@ import java.util.Map;
  */
 public class Action {
   /**
-   * The number of units of the action's asset
+   * The number of units of the action's flavor
    */
   public long amount;
 
@@ -52,20 +52,38 @@ public class Action {
   public Date timestamp;
 
   /**
-   * The ID of the asset held by the action.
+   * The ID of the flavor held by the action.
    */
+  @SerializedName("flavor_id")
+  public String flavorId;
+
+  /**
+   * The tags of the flavor held by the action.
+   */
+  @SerializedName("flavor_tags")
+  public Map<String, Object> flavorTags;
+
+  /**
+   * The ID of the asset held by the action.
+   * @deprecated use {@link #flavorId} instead
+   */
+  @Deprecated
   @SerializedName("asset_id")
   public String assetId;
 
   /**
    * The alias of the asset held by the action.
+   * @deprecated use {@link #flavorId} instead
    */
+  @Deprecated
   @SerializedName("asset_alias")
   public String assetAlias;
 
   /**
    * The tags of the asset held by the action.
+   * @deprecated use {@link #flavorTags} instead
    */
+  @Deprecated
   @SerializedName("asset_tags")
   public Map<String, Object> assetTags;
 

@@ -8,7 +8,9 @@ import java.util.*;
 
 /**
  * A type or class of value that can be tracked on a ledger.
+ * @deprecated Use Flavor instead.
  */
+@Deprecated
 public class Asset {
   /**
    * Unique identifier of the asset, derived from its keys.

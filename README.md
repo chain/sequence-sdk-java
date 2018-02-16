@@ -14,7 +14,7 @@ Add the following to your `pom.xml`:
 <dependency>
   <groupId>com.seq</groupId>
   <artifactId>sequence-sdk</artifactId>
-  <version>[1.2,3)</version>
+  <version>[1.2,2)</version>
 </dependency>
 ```
 

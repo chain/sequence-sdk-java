@@ -58,10 +58,11 @@ public class Action {
   public String flavorId;
 
   /**
-   * The tags of the flavor held by the action.
+   * A copy of the associated tags (flavor, source account, and destination
+   * account) as they existed at the time of the transaction.
    */
-  @SerializedName("flavor_tags")
-  public Map<String, Object> flavorTags;
+  @SerializedName("snapshot")
+  public Map<String, Object> snapshot;
 
   /**
    * The ID of the asset held by the action.
@@ -81,7 +82,7 @@ public class Action {
 
   /**
    * The tags of the asset held by the action.
-   * @deprecated use {@link #flavorTags} instead
+   * @deprecated use {@link #snapshot} instead
    */
   @Deprecated
   @SerializedName("asset_tags")
@@ -103,7 +104,9 @@ public class Action {
 
   /**
    * The tags of the source account executing the action.
+   * @deprecated use {@link #snapshot} instead
    */
+  @Deprecated
   @SerializedName("source_account_tags")
   public Map<String, Object> sourceAccountTags;
 
@@ -123,7 +126,9 @@ public class Action {
 
   /**
    * The tags of the destination account affected by the action.
+   * @deprecated use {@link #snapshot} instead
    */
+  @Deprecated
   @SerializedName("destination_account_tags")
   public Map<String, Object> destinationAccountTags;
 

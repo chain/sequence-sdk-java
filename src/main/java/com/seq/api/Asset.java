@@ -40,11 +40,13 @@ public class Asset {
   /**
    * A single page of assets returned from a query.
    */
+  @Deprecated
   public static class Page extends BasePage<Asset> {}
 
   /**
    * Iterable interface for consuming individual assets from a query.
    */
+  @Deprecated
   public static class ItemIterable extends BaseItemIterable<Asset> {
     public ItemIterable(Client client, String path, Query nextQuery) {
       super(client, path, nextQuery, Page.class);
@@ -54,6 +56,7 @@ public class Asset {
   /**
    * Iterable interface for consuming pages of assets from a query.
    */
+  @Deprecated
   public static class PageIterable extends BasePageIterable<Page> {
     public PageIterable(Client client, String path, Query nextQuery) {
       super(client, path, nextQuery, Page.class);
@@ -63,6 +66,7 @@ public class Asset {
   /**
    * A builder class for querying assets in the ledger.
    */
+  @Deprecated
   public static class QueryBuilder extends BaseQueryBuilder<QueryBuilder> {
     /**
      * Executes the query, returning a page of assets that match the query.
@@ -98,6 +102,7 @@ public class Asset {
   /**
    * A builder for defining assets in the ledger.
    */
+  @Deprecated
   public static class Builder {
     private String alias;
     private Map<String, Object> tags;
@@ -204,6 +209,7 @@ public class Asset {
   /**
    * A builder for updating an asset's tags.
    */
+  @Deprecated
   public static class TagUpdateBuilder {
     private String alias;
     private String id;

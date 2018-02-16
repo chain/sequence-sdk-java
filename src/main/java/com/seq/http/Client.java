@@ -196,11 +196,17 @@ public class Client {
 
     ChainException exception = null;
     for (int attempt = 1; attempt - 1 <= MAX_RETRIES; attempt++) {
-
+      String urlParts;
       int idx = this.urlIndex.get();
+      String addr = System.getenv("SEQADDR");
+      if (addr != null) {
+        urlParts = "https://" + addr;
+      } else {
+        urlParts = this.urls.get(idx % this.urls.size()).toString();
+      }
+
       URL endpointURL;
       try {
-        String urlParts = this.urls.get(idx % this.urls.size()).toString();
         if (urlParts.endsWith("/")) {
           urlParts = urlParts.substring(0, urlParts.length() - 1);
         }

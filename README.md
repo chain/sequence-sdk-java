@@ -14,7 +14,7 @@ Add the following to your `pom.xml`:
 <dependency>
   <groupId>com.seq</groupId>
   <artifactId>sequence-sdk</artifactId>
-  <version>[1.1,2)</version>
+  <version>[1.2,3)</version>
 </dependency>
 ```
 
@@ -37,4 +37,3 @@ Client ledger =
 
 Comprehensive instructions and examples are available in the
 [developer documentation](https://dashboard.seq.com/docs).
-

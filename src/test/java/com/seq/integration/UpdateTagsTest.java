@@ -52,7 +52,8 @@ public class UpdateTagsTest {
           .setTags(update1)
           .update(client);
     } catch (APIException e) {
-      assertTrue(e.toString().contains("CH051"));
+      assertEquals(e.code, "CH051");
+      assertEquals(e.seqCode, "SEQ051");
     }
   }
 
@@ -94,7 +95,8 @@ public class UpdateTagsTest {
           .setTags(update1)
           .update(client);
     } catch (APIException e) {
-      assertTrue(e.toString().contains("CH051"));
+      assertEquals(e.code, "CH051");
+      assertEquals(e.seqCode, "SEQ051");
     }
   }
 
@@ -136,7 +138,8 @@ public class UpdateTagsTest {
           .setTags(update1)
           .update(client);
     } catch (APIException e) {
-      assertTrue(e.toString().contains("CH051"));
+      assertEquals(e.code, "CH051");
+      assertEquals(e.seqCode, "SEQ051");
     }
   }
 }

@@ -13,8 +13,16 @@ import com.google.gson.annotations.SerializedName;
 public class APIException extends ChainException {
   /**
    * An error code of the format "CHXXX".
+   * @deprecated use {@link #seqCode} instead
    */
+  @Deprecated
   public String code;
+
+  /**
+   * An error code of the format "SEQXXX".
+   */
+   @SerializedName("seq_code")
+  public String seqCode;
 
   /**
    * Message describing the general nature of the error.
@@ -53,25 +61,28 @@ public class APIException extends ChainException {
     this.requestId = requestId;
   }
 
-  public APIException(String code, String message, String detail, boolean retriable) {
+  public APIException(String code, String seqCode, String message, String detail, boolean retriable) {
     super(message);
     this.chainMessage = message;
     this.code = code;
+    this.seqCode = seqCode;
     this.detail = detail;
     this.retriable = retriable;
     this.temporary = temporary;
   }
 
-  public APIException(String code, String message, String detail, String requestId) {
+  public APIException(String code, String seqCode, String message, String detail, String requestId) {
     super(message);
     this.chainMessage = message;
     this.code = code;
+    this.seqCode = seqCode;
     this.detail = detail;
     this.requestId = requestId;
   }
 
   public APIException(
       String code,
+      String seqCode,
       String message,
       String detail,
       boolean retriable,
@@ -80,6 +91,7 @@ public class APIException extends ChainException {
     super(message);
     this.chainMessage = message;
     this.code = code;
+    this.seqCode = seqCode;
     this.detail = detail;
     this.retriable = retriable;
     this.temporary = temporary;
@@ -91,8 +103,8 @@ public class APIException extends ChainException {
   public String getMessage() {
     String s = "";
 
-    if (this.code != null && this.code.length() > 0) {
-      s += "Code: " + this.code + " ";
+    if (this.seqCode != null && this.seqCode.length() > 0) {
+      s += "Code: " + this.seqCode + " ";
     }
 
     s += "Message: " + this.chainMessage;

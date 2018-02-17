@@ -46,8 +46,6 @@ import javax.net.ssl.*;
  * The Client object encapsulates access to the ledger API server.
  */
 public class Client {
-  private AtomicInteger urlIndex;
-  private List<URL> urls;
   private OkHttpClient httpClient;
   private String macaroon;
   private String ledgerName;
@@ -71,18 +69,12 @@ public class Client {
   }
 
   public Client(Builder builder) throws ConfigurationException {
-    List<URL> urls = new ArrayList<>(builder.urls);
-    if (urls.isEmpty()) {
-      throw new ConfigurationException("No URL provided.");
-    }
     if (builder.ledger == null || builder.ledger.isEmpty()) {
       throw new ConfigurationException("No ledger name provided");
     }
     if (builder.credential == null || builder.credential.isEmpty()) {
       throw new ConfigurationException("No credential provided");
     }
-    this.urlIndex = new AtomicInteger(0);
-    this.urls = urls;
     this.ledgerName = builder.ledger;
     this.macaroon = builder.credential;
     this.httpClient = buildHttpClient(builder);
@@ -196,13 +188,10 @@ public class Client {
 
     ChainException exception = null;
     for (int attempt = 1; attempt - 1 <= MAX_RETRIES; attempt++) {
-      String urlParts;
-      int idx = this.urlIndex.get();
+      String urlParts = "https://api.seq.com";
       String addr = System.getenv("SEQADDR");
       if (addr != null) {
         urlParts = "https://" + addr;
-      } else {
-        urlParts = this.urls.get(idx % this.urls.size()).toString();
       }
 
       URL endpointURL;
@@ -241,17 +230,11 @@ public class Client {
         Response resp = this.checkError(this.httpClient.newCall(req).execute());
         return respCreator.create(resp, Utils.serializer);
       } catch (IOException ex) {
-        // This URL's process might be unhealthy; move to the next.
-        this.nextURL(idx);
-
         // The OkHttp library already performs retries for some
         // I/O-related errors, but we've hit this case in a leader
         // failover, so do our own retries too.
         exception = new ConfigurationException(ex.getMessage());
       } catch (ConnectivityException ex) {
-        // This URL's process might be unhealthy; move to the next.
-        this.nextURL(idx);
-
         // ConnectivityExceptions are always retriable.
         exception = ex;
       } catch (APIException ex) {
@@ -259,8 +242,6 @@ public class Client {
           throw ex;
         }
 
-        // This URL's process might be unhealthy; move to the next.
-        this.nextURL(idx);
         exception = ex;
       }
     }
@@ -346,24 +327,13 @@ public class Client {
     return response;
   }
 
-  private void nextURL(int failedIndex) {
-    if (this.urls.size() == 1) {
-      return; // No point contending on the CAS if there's only one URL.
-    }
-
-    // A request to the url at failedIndex just failed. Move to the next
-    // URL in the items.
-    int nextIndex = failedIndex + 1;
-    this.urlIndex.compareAndSet(failedIndex, nextIndex);
-  }
-
   /**
    * Overrides {@link Object#hashCode()}
    * @return the hash code
    */
   @Override
   public int hashCode() {
-    int code = this.urls.hashCode();
+    int code = 0;
     if (this.macaroon != null) {
       code = code * 31 + this.macaroon.hashCode();
     }
@@ -381,9 +351,6 @@ public class Client {
     if (!(o instanceof Client)) return false;
 
     Client other = (Client) o;
-    if (!this.urls.equals(other.urls)) {
-      return false;
-    }
     return Objects.equals(this.macaroon, other.macaroon);
   }
 
@@ -392,7 +359,6 @@ public class Client {
    */
   public static class Builder {
     private OkHttpClient baseHttpClient;
-    private List<URL> urls;
     private String credential;
     private String ledger;
     private CertificatePinner cp;
@@ -412,17 +378,10 @@ public class Client {
     public Builder() {
       this.baseHttpClient = new OkHttpClient();
       this.baseHttpClient.setFollowRedirects(false);
-      this.urls = new ArrayList<>();
       this.setDefaults();
     }
 
     private void setDefaults() {
-      try {
-        this.setURL("https://api.seq.com");
-      } catch (BadURLException ex) {
-        //hard coded
-      }
-
       this.setReadTimeout(30, TimeUnit.SECONDS);
       this.setWriteTimeout(30, TimeUnit.SECONDS);
       this.setConnectTimeout(30, TimeUnit.SECONDS);
@@ -431,15 +390,11 @@ public class Client {
     }
 
     /**
-     * Sets a URL for the client to use.
-     * @param url the URL of the ledger API.
+     * No-op. This method exists only for backward compatibility.
+	 * It has no effect. It will be removed in a future version.
+     * @param url unused.
      */
-    public Builder setURL(String url) throws BadURLException {
-      try {
-        this.urls = new ArrayList<URL>(Arrays.asList(new URL(url)));
-      } catch (MalformedURLException e) {
-        throw new BadURLException(e.getMessage());
-      }
+    @Deprecated public Builder setURL(String url) throws BadURLException {
       return this;
     }
 

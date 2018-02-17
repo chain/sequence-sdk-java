@@ -32,9 +32,7 @@ public class ProdRefresher implements Refresher {
 
   public ProdRefresher() {
     try {
-      List<URL> sessionURLs =
-          new ArrayList<>(Arrays.asList(new URL("https://session-api.seq.com")));
-      this.http = new HttpWrapper(sessionURLs);
+      this.http = new HttpWrapper();
       this.resp = new SessionResponse();
     } catch (MalformedURLException e) {
       new ConfigurationException(e.getMessage());

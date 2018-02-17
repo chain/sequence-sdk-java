@@ -18,15 +18,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class HttpWrapper {
   private OkHttpClient httpClient;
-  private List<URL> urls;
-  private AtomicInteger urlIndex;
   private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
   private static String version = "dev"; // updated in the static initializer
 
-  public HttpWrapper(List<URL> urls) {
-    this.urls = urls;
+  public HttpWrapper() {
     this.httpClient = buildHttpClient();
-    this.urlIndex = new AtomicInteger(0);
   }
 
   /**
@@ -64,11 +60,9 @@ public class HttpWrapper {
 
     ChainException exception = null;
     for (int attempt = 1; attempt - 1 <= MAX_RETRIES; attempt++) {
-
-      int idx = this.urlIndex.get();
       URL endpointURL;
       try {
-        URI u = new URI(this.urls.get(idx % this.urls.size()).toString() + "/" + path);
+        URI u = new URI("https://session-api.seq.com/" + path);
         u = u.normalize();
         endpointURL = new URL(u.toString());
       } catch (MalformedURLException ex) {
@@ -97,17 +91,11 @@ public class HttpWrapper {
         Response resp = this.checkError(this.httpClient.newCall(req).execute());
         return rc.create(resp, Utils.serializer);
       } catch (IOException ex) {
-        // This URL's process might be unhealthy; move to the next.
-        this.nextURL(idx);
-
         // The OkHttp library already performs retries for some
         // I/O-related errors, but we've hit this case in a leader
         // failover, so do our own retries too.
         exception = new ConfigurationException(ex.getMessage());
       } catch (ConnectivityException ex) {
-        // This URL's process might be unhealthy; move to the next.
-        this.nextURL(idx);
-
         // ConnectivityExceptions are always retriable.
         exception = ex;
       } catch (APIException ex) {
@@ -115,8 +103,6 @@ public class HttpWrapper {
           throw ex;
         }
 
-        // This URL's process might be unhealthy; move to the next.
-        this.nextURL(idx);
         exception = ex;
       }
     }
@@ -163,17 +149,6 @@ public class HttpWrapper {
       }
     }
     return response;
-  }
-
-  private void nextURL(int failedIndex) {
-    if (this.urls.size() == 1) {
-      return; // No point contending on the CAS if there's only one URL.
-    }
-
-    // A request to the url at failedIndex just failed. Move to the next
-    // URL in the items.
-    int nextIndex = failedIndex + 1;
-    this.urlIndex.compareAndSet(failedIndex, nextIndex);
   }
 
   private OkHttpClient buildHttpClient() {

@@ -387,6 +387,27 @@ public class Transaction {
         }
 
         /**
+         * Specifies tags for the tokens output by the action.
+         * @param tokenTags arbitrary key-value data
+         * @return updated action
+         */
+        public Issue setTokenTags(Map<String, Object> tokenTags) {
+          put("token_tags", tokenTags);
+          return this;
+        }
+
+        /**
+         * Adds a key-value pair to the tokens output by the action.
+         * @param key key of the token tag field
+         * @param value value of token tag field
+         * @return updated action
+         */
+        public Issue addTokenTagsField(String key, Object value) {
+          addKeyValueField("token_tags", key, value);
+          return this;
+        }
+
+        /**
          * Specifies reference data for the action.
          * @param referenceData arbitrary key-value data
          * @return updated action
@@ -516,6 +537,27 @@ public class Transaction {
          */
         public Transfer setDestinationAccountId(String id) {
           put("destination_account_id", id);
+          return this;
+        }
+
+        /**
+         * Specifies tags for the tokens output by the action.
+         * @param tokenTags arbitrary key-value data
+         * @return updated action
+         */
+        public Transfer setTokenTags(Map<String, Object> tokenTags) {
+          put("token_tags", tokenTags);
+          return this;
+        }
+
+        /**
+         * Adds a key-value pair to the tokens output by the action.
+         * @param key key of the token tag field
+         * @param value value of token tag field
+         * @return updated action
+         */
+        public Transfer addTokenTagsField(String key, Object value) {
+          addKeyValueField("token_tags", key, value);
           return this;
         }
 

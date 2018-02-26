@@ -26,6 +26,7 @@ public class QueryTest {
     testTransactionQuery();
     testActionQuery();
     testBalanceQuery();
+    testTokenQuery();
     testContractQuery();
     testPagination();
   }
@@ -266,6 +267,48 @@ public class QueryTest {
     as = sumPage.items.get(0);
     assertEquals(1, sumPage.items.size());
     assertEquals(10, as.amount);
+  }
+
+  public void testTokenQuery() throws Exception {
+    client = TestUtils.generateClient();
+    key = new Key.Builder().create(client);
+    String flavor = UUID.randomUUID().toString();
+    String alice = UUID.randomUUID().toString();
+    String test = UUID.randomUUID().toString();
+    long amount = 100;
+
+    new Flavor.Builder()
+        .addKey(key)
+        .setId(flavor)
+        .addTag("name", flavor)
+        .setQuorum(1)
+        .create(client);
+
+    Transaction.Builder txBuilder = new Transaction.Builder();
+
+    for (int i = 0; i < 10; i++) {
+      Account account =
+          new Account.Builder().setId(alice + i).addKey(key).setQuorum(1).create(client);
+      txBuilder.addAction(
+          new Transaction.Builder.Action.Issue()
+              .setFlavorId(flavor)
+              .setAmount(amount)
+              .setDestinationAccountId(account.id)
+              .addTokenTagsField("test", test));
+    }
+
+    txBuilder.transact(client);
+
+    Token.Page items =
+        new Token.ListBuilder()
+            .setFilter("tags.test=$1")
+            .addFilterParameter(test)
+            .getPage(client);
+
+    assertEquals(10, items.items.size());
+
+    Token token = items.items.get(0);
+    assertEquals(100, token.amount);
   }
 
   public void testBalanceQuery() throws Exception {

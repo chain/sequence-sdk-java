@@ -26,6 +26,7 @@ public class TransactionTest {
     testBasicTransaction();
     testMultiSigTransaction();
     testContract();
+    testTransactionWithFilter();
   }
 
   public void testBasicTransaction() throws Exception {
@@ -36,9 +37,9 @@ public class TransactionTest {
     String asset = "TransactionTest-testBasicTransaction-asset";
     String test = "TransactionTest-testBasicTransaction-test";
 
-    new Account.Builder().setId(alice).addKey(key).setQuorum(1).create(client);
-    new Account.Builder().setId(bob).addKey(key).setQuorum(1).create(client);
-    new Asset.Builder().setAlias(asset).addKey(key).setQuorum(1).create(client);
+    new Account.Builder().setId(alice).addKey(key).create(client);
+    new Account.Builder().setId(bob).addKey(key).create(client);
+    new Asset.Builder().setAlias(asset).addKey(key).create(client);
 
     Transaction resp =
         new Transaction.Builder()
@@ -121,14 +122,12 @@ public class TransactionTest {
         .addKey(key)
         .addKey(key2)
         .addKey(key3)
-        .setQuorum(1)
         .create(client);
     new Asset.Builder()
         .setAlias(asset)
         .addKey(key)
         .addKey(key2)
         .addKey(key3)
-        .setQuorum(1)
         .create(client);
 
     new Transaction.Builder()
@@ -164,9 +163,9 @@ public class TransactionTest {
     String bob = "TransactionTest-testContract-bob";
     String asset = "TransactionTest-testContract-asset";
 
-    new Account.Builder().setId(alice).addKey(key).setQuorum(1).create(client);
-    new Account.Builder().setId(bob).addKey(key).setQuorum(1).create(client);
-    new Asset.Builder().setAlias(asset).addKey(key).setQuorum(1).create(client);
+    new Account.Builder().setId(alice).addKey(key).create(client);
+    new Account.Builder().setId(bob).addKey(key).create(client);
+    new Asset.Builder().setAlias(asset).addKey(key).create(client);
 
     Transaction resp =
         new Transaction.Builder()
@@ -210,5 +209,89 @@ public class TransactionTest {
                 .setAssetAlias(asset)
                 .setAmount(unspent.amount))
         .transact(client);
+  }
+
+  public void testTransactionWithFilter() throws Exception {
+    client = TestUtils.generateClient();
+    key = new Key.Builder().create(client);
+    String alice = "TransactionTest-testTransactionWithFilter-alice";
+    String bob = "TransactionTest-testTransactionWithFilter-bob";
+    String flavor = "TransactionTest-testTransactionWithFilter-flavor";
+    String test = "TransactionTest-testTransactionWithFilter-test";
+
+    new Account.Builder().setId(alice).addKey(key).create(client);
+    new Account.Builder().setId(bob).addKey(key).create(client);
+    new Flavor.Builder().setId(flavor).addKey(key).create(client);
+
+    Transaction resp =
+        new Transaction.Builder()
+            .addAction(
+                new Transaction.Builder.Action.Issue()
+                    .setFlavorId(flavor)
+                    .setAmount(100)
+                    .setDestinationAccountId(alice)
+                    .addTokenTagsField("test", test))
+            .transact(client);
+
+    Transaction.Page txs =
+        new Transaction.QueryBuilder()
+            .setFilter("id=$1")
+            .addFilterParameter(resp.id)
+            .getPage(client);
+
+    assertEquals(1, txs.items.size());
+
+    resp =
+        new Transaction.Builder()
+            .addAction(
+                new Transaction.Builder.Action.Transfer()
+                    .setSourceAccountId(alice)
+                    .setFlavorId(flavor)
+                    .setAmount(100)
+                    .setDestinationAccountId(bob)
+                    .setFilter("tags.test=$1")
+                    .addFilterParameter(test)
+                    .addTokenTagsField("test", test))
+            .transact(client);
+
+    Token.Page tokens =
+        new Token.ListBuilder()
+            .setFilter("account_id=$1")
+            .addFilterParameter(alice)
+            .getPage(client);
+    assertEquals(0, tokens.items.size());
+
+    tokens =
+        new Token.ListBuilder()
+            .setFilter("account_id=$1")
+            .addFilterParameter(bob)
+            .getPage(client);
+
+    assertEquals(1, tokens.items.size());
+    Token token = tokens.items.get(0);
+    assertEquals(100, token.amount);
+
+    new Transaction.Builder()
+        .addAction(
+            new Transaction.Builder.Action.Retire()
+                .setSourceAccountAlias(bob)
+                .setFlavorId(flavor)
+                .setAmount(5)
+                .setFilter("tags.test=$1")
+                .addFilterParameter(test))
+        .transact(client);
+
+    tokens =
+        new Token.ListBuilder()
+            .setFilter("account_id=$1")
+            .addFilterParameter(bob)
+            .getPage(client);
+
+    assertEquals(1, tokens.items.size());
+    token = tokens.items.get(0);
+    assertEquals(95, token.amount);
+    Map<String, Object> tokenTags = new HashMap<>();
+    tokenTags.put("test", test);
+    assertEquals(tokenTags, token.tags);
   }
 }

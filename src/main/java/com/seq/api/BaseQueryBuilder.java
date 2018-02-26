@@ -64,7 +64,7 @@ public abstract class BaseQueryBuilder<T extends BaseQueryBuilder<T>> {
 
   /**
    * Adds a filter parameter that will be interpolated into the filter expression.
-   * @param param a filter paramger
+   * @param param a filter parameter
    * @return updated builder
    */
   public T addFilterParameter(Object param) {

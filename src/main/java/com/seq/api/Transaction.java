@@ -311,6 +311,15 @@ public class Transaction {
         referenceData.put(fieldKey, value);
       }
 
+      protected void addListItem(String mapKey, Object param) {
+        List<Object> filterParams = (ArrayList<Object>) get(mapKey);
+        if (filterParams == null) {
+          filterParams = new ArrayList<Object>();
+          put(mapKey, filterParams);
+        }
+        filterParams.add(param);
+      }
+
       /**
        * Issues new units of a flavor to a destination account.
        */
@@ -562,6 +571,26 @@ public class Transaction {
         }
 
         /**
+         * Token filter string. See {https://dashboard.seq.com/docs/filters}.
+         * @param filter a filter expression
+         * @return updated action
+         */
+        public Transfer setFilter(String filter) {
+          put("filter", filter);
+          return this;
+        }
+
+        /**
+         * A list of parameter values for filter string (if needed).
+         * @param param a filter parameter
+         * @return updated action
+         */
+        public Transfer addFilterParameter(Object param) {
+          addListItem("filter_params", param);
+          return this;
+        }
+
+        /**
          * Specifies reference data for the action.
          * @param referenceData arbitrary key-value data
          * @return updated action
@@ -688,6 +717,26 @@ public class Transaction {
          */
         public Retire setAmount(long amount) {
           put("amount", amount);
+          return this;
+        }
+
+        /**
+         * Token filter string. See {https://dashboard.seq.com/docs/filters}.
+         * @param filter a filter expression
+         * @return updated action
+         */
+        public Retire setFilter(String filter) {
+          put("filter", filter);
+          return this;
+        }
+
+        /**
+         * A list of parameter values for filter string (if needed).
+         * @param param a filter parameter
+         * @return updated action
+         */
+        public Retire addFilterParameter(Object param) {
+          addListItem("filter_params", param);
           return this;
         }
 

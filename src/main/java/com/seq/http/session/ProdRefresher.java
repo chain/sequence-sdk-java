@@ -31,12 +31,8 @@ public class ProdRefresher implements Refresher {
   private SessionResponse resp;
 
   public ProdRefresher() {
-    try {
-      this.http = new HttpWrapper();
-      this.resp = new SessionResponse();
-    } catch (MalformedURLException e) {
-      new ConfigurationException(e.getMessage());
-    }
+    this.http = new HttpWrapper();
+    this.resp = new SessionResponse();
   }
 
   public String teamName() {

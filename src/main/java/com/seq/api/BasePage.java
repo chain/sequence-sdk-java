@@ -34,6 +34,11 @@ public abstract class BasePage<T> {
   /**
    * Specifies the details of the next query.
    */
+  public String cursor;
+
+  /**
+   * Specifies the details of the next query.
+   */
   public Query next;
 
   public BasePage() {

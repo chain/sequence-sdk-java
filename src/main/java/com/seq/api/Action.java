@@ -188,6 +188,20 @@ public class Action {
     }
 
     /**
+     * Executes the query, returning a page of actions that match the query
+     * beginning with provided cursor.
+     * @param client ledger API connection object
+     * @param cursor string representing encoded query object
+     * @return a page of actions
+     * @throws ChainException
+     */
+    public Page getPage(Client client, String cursor) throws ChainException {
+      Query next = new Query();
+      next.cursor = cursor;
+      return client.request("list-actions", next, Page.class);
+    }
+
+    /**
      * Executes the query, returning an iterable over actions that match the
      * query.
      * @param client ledger API connection object
@@ -222,6 +236,20 @@ public class Action {
      */
     public ActionSum.Page getPage(Client client) throws ChainException {
       return client.request("sum-actions", this.next, ActionSum.Page.class);
+    }
+
+    /**
+     * Executes the query, returning a page of actionsums that match the query
+     * beginning with provided cursor.
+     * @param client ledger API connection object
+     * @param cursor string representing encoded query object
+     * @return a page of actionsums
+     * @throws ChainException
+     */
+    public ActionSum.Page getPage(Client client, String cursor) throws ChainException {
+      Query next = new Query();
+      next.cursor = cursor;
+      return client.request("sum-actions", next, ActionSum.Page.class);
     }
 
     /**

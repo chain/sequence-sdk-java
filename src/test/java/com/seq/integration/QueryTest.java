@@ -169,6 +169,7 @@ public class QueryTest {
 
   public void testActionQuery() throws Exception {
     client = TestUtils.generateClient();
+    DevUtils.reset(client);
     key = new Key.Builder().create(client);
     String asset = UUID.randomUUID().toString();
     String alice = UUID.randomUUID().toString();
@@ -216,20 +217,31 @@ public class QueryTest {
 
     txBuilder.transact(client);
 
-    Action.Page items =
+    Action.Page page =
         new Action.ListBuilder()
             .setFilter("reference_data.test=$1")
             .addFilterParameter(test)
             .getPage(client);
-    assertEquals(12, items.items.size());
+    assertEquals(12, page.items.size());
 
-    items =
+    page =
+        new Action.ListBuilder()
+            .setFilter("reference_data.test=$1")
+            .addFilterParameter(test)
+            .setPageSize(10)
+            .getPage(client);
+    assertEquals(10, page.items.size());
+
+    page = new Action.ListBuilder().getPage(client, page.cursor);
+    assertEquals(2, page.items.size());
+
+    page =
         new Action.ListBuilder()
             .setFilter("reference_data.test=$1 AND timestamp<$2")
             .addFilterParameter(test)
             .addFilterParameter(oldTime)
             .getPage(client);
-    assertEquals(0, items.items.size());
+    assertEquals(0, page.items.size());
 
     ActionSum.Page sumPage =
         new Action.SumBuilder()
@@ -241,6 +253,22 @@ public class QueryTest {
             .addGroupByField("reference_data.test")
             .getPage(client);
     assertEquals(0, sumPage.items.size());
+
+    sumPage =
+        new Action.SumBuilder()
+            .addGroupByField("type")
+            .getPage(client);
+    assertEquals(2, sumPage.items.size());
+
+    sumPage =
+        new Action.SumBuilder()
+            .addGroupByField("type")
+            .setPageSize(1)
+            .getPage(client);
+    assertEquals(1, sumPage.items.size());
+
+    sumPage = new Action.SumBuilder().getPage(client, sumPage.cursor);
+    assertEquals(1, sumPage.items.size());
 
     sumPage =
         new Action.SumBuilder()

@@ -53,6 +53,16 @@ public abstract class BaseQueryBuilder<T extends BaseQueryBuilder<T>> {
   }
 
   /**
+   * Sets the number of actions to include in each page.
+   * @param size the number of items on the page
+   * @return updated builder
+   */
+  public T setPageSize(int size) {
+    this.next.pageSize = size;
+    return (T) this;
+  }
+
+  /**
    * Sets the filter expression for the query.
    * @param filter a filter expression
    * @return updated builder

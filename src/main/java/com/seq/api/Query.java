@@ -15,6 +15,11 @@ public class Query {
   @SerializedName("filter_params")
   public List<Object> filterParams;
 
+  @SerializedName("page_size")
+  public int pageSize;
+
+  public String cursor;
+
   public long timeout;
 
   public String after;

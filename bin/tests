@@ -3,4 +3,4 @@ set -xeo pipefail
 dropdb --if-exists ledger; createdb ledger
 cd $CHAIN/sdk/java
 rm -rf target
-with-ledgerd mvn clean integration-test
+with-ledgerd mvn clean integration-test "$@"

@@ -101,6 +101,20 @@ public class Token {
     }
 
     /**
+     * Executes the query, returning a page of tokens that match the query
+     * beginning with provided cursor.
+     * @param client ledger API connection object
+     * @param cursor string representing encoded query object
+     * @return a page of tokens
+     * @throws ChainException
+     */
+    public Page getPage(Client client, String cursor) throws ChainException {
+      Query next = new Query();
+      next.cursor = cursor;
+      return client.request("list-tokens", next, Page.class);
+    }
+
+    /**
      * Executes the query, returning an iterable over tokens that match the
      * query.
      * @param client ledger API connection object
@@ -129,6 +143,20 @@ public class Token {
      */
     public TokenSum.Page getPage(Client client) throws ChainException {
       return client.request("sum-tokens", this.next, TokenSum.Page.class);
+    }
+
+    /**
+     * Executes the query, returning a page of token sums that match the query
+     * beginning with provided cursor.
+     * @param client ledger API connection object
+     * @param cursor string representing encoded query object
+     * @return a page of token sums
+     * @throws ChainException
+     */
+    public TokenSum.Page getPage(Client client, String cursor) throws ChainException {
+      Query next = new Query();
+      next.cursor = cursor;
+      return client.request("sum-tokens", next, TokenSum.Page.class);
     }
 
     /**

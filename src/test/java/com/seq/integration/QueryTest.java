@@ -299,6 +299,7 @@ public class QueryTest {
 
   public void testTokenQuery() throws Exception {
     client = TestUtils.generateClient();
+    DevUtils.reset(client);
     key = new Key.Builder().create(client);
     String flavor = UUID.randomUUID().toString();
     String alice = UUID.randomUUID().toString();
@@ -327,16 +328,42 @@ public class QueryTest {
 
     txBuilder.transact(client);
 
-    Token.Page items =
+    Token.Page page =
         new Token.ListBuilder()
             .setFilter("tags.test=$1")
             .addFilterParameter(test)
             .getPage(client);
+    assertEquals(10, page.items.size());
 
-    assertEquals(10, items.items.size());
-
-    Token token = items.items.get(0);
+    Token token = page.items.get(0);
     assertEquals(100, token.amount);
+
+    page =
+        new Token.ListBuilder()
+            .setFilter("tags.test=$1")
+            .addFilterParameter(test)
+            .setPageSize(7)
+            .getPage(client);
+    assertEquals(7, page.items.size());
+
+    page = new Token.ListBuilder().getPage(client, page.cursor);
+    assertEquals(3, page.items.size());
+
+    TokenSum.Page sumPage =
+        new Token.SumBuilder()
+            .addGroupByField("account_id")
+            .getPage(client);
+    assertEquals(10, sumPage.items.size());
+
+    sumPage =
+        new Token.SumBuilder()
+            .addGroupByField("account_id")
+            .setPageSize(7)
+            .getPage(client);
+    assertEquals(7, sumPage.items.size());
+
+    sumPage = new Token.SumBuilder().getPage(client, sumPage.cursor);
+    assertEquals(3, sumPage.items.size());
   }
 
   public void testBalanceQuery() throws Exception {

@@ -64,8 +64,8 @@ public class TokenSum {
   /**
    * Iterable interface for consuming individual actions from a query.
    */
-  public static class Iterable extends BaseItemIterable<TokenSum> {
-    public Iterable(Client client, String path, Query nextQuery) {
+  public static class ItemIterable extends BaseItemIterable<TokenSum> {
+    public ItemIterable(Client client, String path, Query nextQuery) {
       super(client, path, nextQuery, Page.class);
     }
   }

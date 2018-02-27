@@ -68,8 +68,8 @@ public class Token {
   /**
    * Iterable interface for consuming individual tokens from a query.
    */
-  public static class Iterable extends BaseItemIterable<Token> {
-    public Iterable(Client client, String path, Query nextQuery) {
+  public static class ItemIterable extends BaseItemIterable<Token> {
+    public ItemIterable(Client client, String path, Query nextQuery) {
       super(client, path, nextQuery, Page.class);
     }
   }
@@ -79,7 +79,7 @@ public class Token {
    *
    * <p>List all tokens after a certain time:</p>
    * <pre>{@code
-   * Token.Iterable tokens = new Token.ListBuilder()
+   * Token.ItemIterable tokens = new Token.ListBuilder()
    *   .setFilter("timestamp > $1")
    *   .addFilterParameter("1985-10-26T01:21:00Z")
    *   .getIterable(ledger);
@@ -121,8 +121,8 @@ public class Token {
      * @return an iterable over tokens
      * @throws ChainException
      */
-    public Iterable getIterable(Client client) throws ChainException {
-      return new Iterable(client, "list-tokens", this.next);
+    public ItemIterable getIterable(Client client) throws ChainException {
+      return new ItemIterable(client, "list-tokens", this.next);
     }
 
     @Deprecated
@@ -166,8 +166,8 @@ public class Token {
      * @return an iterable over token sums
      * @throws ChainException
      */
-    public TokenSum.Iterable getIterable(Client client) throws ChainException {
-      return new TokenSum.Iterable(client, "sum-tokens", this.next);
+    public TokenSum.ItemIterable getIterable(Client client) throws ChainException {
+      return new TokenSum.ItemIterable(client, "sum-tokens", this.next);
     }
 
     @Deprecated

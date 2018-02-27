@@ -155,6 +155,7 @@ public class Action {
   /**
    * Iterable interface for consuming pages of actions from a query.
    */
+  @Deprecated
   public static class PageIterable extends BasePageIterable<Page> {
     public PageIterable(Client client, String path, Query nextQuery) {
       super(client, path, nextQuery, Page.class);
@@ -218,7 +219,9 @@ public class Action {
      * @param client ledger API connection object
      * @return an iterable over pages of actions
      * @throws ChainException
-     */
+    * @deprecated use {@link #getPage} instead
+    */
+    @Deprecated
     public PageIterable getPageIterable(Client client) throws ChainException {
       return new PageIterable(client, "list-actions", this.next);
     }
@@ -269,7 +272,9 @@ public class Action {
      * @param client ledger API connection object
      * @return an iterable over pages of actionsums
      * @throws ChainException
-     */
+    * @deprecated use {@link #getPage} instead
+    */
+    @Deprecated
     public ActionSum.PageIterable getPageIterable(Client client) throws ChainException {
       return new ActionSum.PageIterable(client, "sum-actions", this.next);
     }

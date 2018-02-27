@@ -217,6 +217,16 @@ public class QueryTest {
 
     txBuilder.transact(client);
 
+    Action.ItemIterable actions = new Action.ListBuilder()
+      .setFilter("reference_data.test=$1")
+      .addFilterParameter(test)
+      .getIterable(client);
+    int i = 0;
+    for (Action action : actions) {
+      i++;
+    }
+    assertEquals(12, i);
+
     Action.Page page =
         new Action.ListBuilder()
             .setFilter("reference_data.test=$1")
@@ -242,6 +252,21 @@ public class QueryTest {
             .addFilterParameter(oldTime)
             .getPage(client);
     assertEquals(0, page.items.size());
+
+    ActionSum.ItemIterable actionSums = new Action.SumBuilder()
+        .addGroupByField("type")
+        .getIterable(client);
+    int issued = 0;
+    int transferred = 0;
+    for (ActionSum sum : actionSums) {
+      if (sum.type.equals("issue")) {
+          issued++;
+      } else if (sum.type.equals("transfer")) {
+          transferred++;
+      }
+    }
+    assertEquals(1, issued);
+    assertEquals(1, transferred);
 
     ActionSum.Page sumPage =
         new Action.SumBuilder()
@@ -328,6 +353,16 @@ public class QueryTest {
 
     txBuilder.transact(client);
 
+    Token.ItemIterable tokens = new Token.ListBuilder()
+        .setFilter("tags.test=$1")
+        .addFilterParameter(test)
+        .getIterable(client);
+    int i = 0;
+    for (Token token : tokens) {
+        i++;
+    }
+    assertEquals(10, i);
+
     Token.Page page =
         new Token.ListBuilder()
             .setFilter("tags.test=$1")
@@ -364,6 +399,13 @@ public class QueryTest {
 
     sumPage = new Token.SumBuilder().getPage(client, sumPage.cursor);
     assertEquals(3, sumPage.items.size());
+
+    TokenSum.ItemIterable tokenSums = new Token.SumBuilder()
+      .addGroupByField("account_id")
+      .getIterable(client);
+    for (TokenSum sum : tokenSums) {
+      assertEquals(100, sum.amount);
+    }
   }
 
   public void testBalanceQuery() throws Exception {

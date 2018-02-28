@@ -13,7 +13,9 @@ import java.util.Map;
 
 /**
  * An entry in the ledger that contains value that can be spent.
+ * @deprecated Use Token.ListBuilder instead.
  */
+@Deprecated
 public class Contract {
   /**
    * A unique ID.
@@ -84,11 +86,13 @@ public class Contract {
   /**
    * A single page of contracts returned from a query.
    */
+  @Deprecated
   public static class Page extends BasePage<Contract> {}
 
   /**
    * Iterable interface for consuming individual contracts from a query.
    */
+  @Deprecated
   public static class ItemIterable extends BaseItemIterable<Contract> {
     public ItemIterable(Client client, String path, Query nextQuery) {
       super(client, path, nextQuery, Page.class);
@@ -98,6 +102,7 @@ public class Contract {
   /**
    * Iterable interface for consuming pages of contracts from a query.
    */
+  @Deprecated
   public static class PageIterable extends BasePageIterable<Page> {
     public PageIterable(Client client, String path, Query nextQuery) {
       super(client, path, nextQuery, Page.class);
@@ -107,6 +112,7 @@ public class Contract {
   /**
    * A builder class for querying contracts in the ledger.
    */
+  @Deprecated
   public static class QueryBuilder extends BaseQueryBuilder<QueryBuilder> {
     /**
      * Executes the query, returning a page of contracts that match the query.

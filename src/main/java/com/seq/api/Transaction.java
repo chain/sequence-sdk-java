@@ -143,8 +143,9 @@ public class Transaction {
     public String flavorId;
 
     /**
-     * A copy of the associated tags (flavor, source account, and destination
-     * account) as they existed at the time of the transaction.
+     * A copy of the associated tags (flavor, source account, destination
+     * account, action, and token) as they existed at the time of the
+     * transaction.
      */
     @SerializedName("snapshot")
     public Map<String, Object> snapshot;

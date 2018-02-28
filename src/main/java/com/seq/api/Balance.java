@@ -17,7 +17,9 @@ import java.util.Map;
  * A summation of contract amounts. Contracts are selected using a filter, and
  * their values are summed using the common values of one or more contract
  * fields.
+ * @deprecated Use Token.SumBuilder instead.
  */
+@Deprecated
 public class Balance {
   /**
    * List of parameters along which contract amounts were summed.
@@ -33,11 +35,13 @@ public class Balance {
   /**
    * A single page of balances returned from a query.
    */
+  @Deprecated
   public static class Page extends BasePage<Balance> {}
 
   /**
    * Iterable interface for consuming individual balances from a query.
    */
+  @Deprecated
   public static class ItemIterable extends BaseItemIterable<Balance> {
     public ItemIterable(Client client, String path, Query nextQuery) {
       super(client, path, nextQuery, Page.class);
@@ -47,6 +51,7 @@ public class Balance {
   /**
    * Iterable interface for consuming pages of balances from a query.
    */
+  @Deprecated
   public static class PageIterable extends BasePageIterable<Page> {
     public PageIterable(Client client, String path, Query nextQuery) {
       super(client, path, nextQuery, Page.class);
@@ -56,6 +61,7 @@ public class Balance {
   /**
    * A builder class for querying balances in the ledger.
    */
+  @Deprecated
   public static class QueryBuilder extends BaseQueryBuilder<QueryBuilder> {
     /**
      * Executes the query, returning a page of balances that match the query.

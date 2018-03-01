@@ -85,6 +85,20 @@ public class Transaction {
     }
 
     /**
+     * Executes the query, returning a page of transactions that match the query
+     * beginning with provided cursor.
+     * @param client ledger API connection object
+     * @param cursor string representing encoded query object
+     * @return a page of transactions
+     * @throws ChainException
+     */
+    public Page getPage(Client client, String cursor) throws ChainException {
+      Query next = new Query();
+      next.cursor = cursor;
+      return client.request("list-transactions", next, Page.class);
+    }
+
+    /**
      * Executes the query, returning an iterable over transactions that match
      * the query.
      * @param client ledger API connection object

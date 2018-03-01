@@ -68,6 +68,20 @@ public class Flavor {
     }
 
     /**
+     * Executes the query, returning a page of flavors that match the query
+     * beginning with provided cursor.
+     * @param client ledger API connection object
+     * @param cursor string representing encoded query object
+     * @return a page of flavors
+     * @throws ChainException
+     */
+    public Page getPage(Client client, String cursor) throws ChainException {
+      Query next = new Query();
+      next.cursor = cursor;
+      return client.request("list-flavors", next, Page.class);
+    }
+
+    /**
      * Executes the query, returning an iterable over flavors that match the query
      * @param client ledger API connection object
      * @return an iterable over flavors

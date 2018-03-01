@@ -22,15 +22,6 @@ public abstract class BaseQueryBuilder<T extends BaseQueryBuilder<T>> {
   public abstract <S extends BasePage> S getPage(Client client) throws ChainException;
 
   /**
-   * Execute the API query and return one page of items.
-   * @param client ledger API connection object
-   * @param cursor string representing encoded query object
-   * @return a page of S objects that satisfy the query
-   * @throws ChainException
-   */
-  public abstract <S extends BasePage> S getPage(Client client, String cursor) throws ChainException;
-
-  /**
    * Executes the API query.
    * @param client ledger API connection object
    * @return an iterable over pages of S objects that satisfy the query

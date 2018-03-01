@@ -630,7 +630,9 @@ public class Transaction {
          * Specifies reference data for the change contract.
          * @param referenceData arbitrary key-value data
          * @return updated action
+         * @deprecated this now happens automatically when using token tags
          */
+        @Deprecated
         public Transfer setChangeReferenceData(Map<String, Object> referenceData) {
           put("change_reference_data", referenceData);
           return this;
@@ -641,7 +643,9 @@ public class Transaction {
          * @param key key of the reference data field
          * @param value value of reference data field
          * @return updated action
+         * @deprecated this now happens automatically when using token tags
          */
+        @Deprecated
         public Transfer addChangeReferenceDataField(String key, Object value) {
           addKeyValueField("change_reference_data", key, value);
           return this;
@@ -780,7 +784,9 @@ public class Transaction {
          * Specifies reference data for the change contract.
          * @param referenceData arbitrary key-value data
          * @return updated action
+         * @deprecated this now happens automatically when using token tags
          */
+        @Deprecated
         public Retire setChangeReferenceData(Map<String, Object> referenceData) {
           put("change_reference_data", referenceData);
           return this;
@@ -791,7 +797,9 @@ public class Transaction {
          * @param key key of the reference data field
          * @param value value of reference data field
          * @return updated action
+         * @deprecated this now happens automatically when using token tags
          */
+        @Deprecated
         public Retire addChangeReferenceDataField(String key, Object value) {
           addKeyValueField("change_reference_data", key, value);
           return this;

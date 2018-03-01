@@ -1,5 +1,22 @@
 # Sequence Java SDK changelog
 
+## 1.3.0 (20180301)
+
+For full details on the 1.3 release and how to migrate your code,
+[visit the Sequence changelog](https://dashboard.seq.com/docs/changelog#release-v1-3).
+
+* Added new interfaces: listing tokens and summing tokens.
+  Listing tokens replaces querying contracts, which is now deprecated.
+  Summing tokens replaces querying balances, which is now deprecated.
+* Added new interfaces: token tags.
+  Set token tags on Issue and Transfer actions.
+* Added new interface: `setFilter` and `addFilterParameter` on the transaction
+  builder. Filter tokens by tags on Transfer and Retire actions.
+* Added new pagination interfaces: accounts, actions, flavors, keys, tokens,
+  transactions. Can be used in an end-user application, such as infinite scroll.
+  Use `setPageSize(size)` on builders to set page size.
+  Use `getPage(client, cursor)` to make subsequent requests.
+
 ## 1.2.0 (20180216)
 
 For full details on the 1.2 release and how to migrate your code,

@@ -129,7 +129,9 @@ public class Key {
      * Specifies a list of ids of keys to be queried.
      * @param ids a list of key ids
      * @return updated builder
+     * @deprecated this method is not useful
      */
+    @Deprecated
     public QueryBuilder setIds(List<String> ids) {
       this.next.ids = new ArrayList<>(ids);
       return this;
@@ -139,7 +141,7 @@ public class Key {
      * Specifies a list of aliases of keys to be queried.
      * @param aliases a list of key aliases
      * @return updated builder
-     * @deprecated use {@link #setIds(List)} instead
+     * @deprecated this method is not useful
       */
     @Deprecated
     public QueryBuilder setAliases(List<String> aliases) {
@@ -151,7 +153,9 @@ public class Key {
      * Adds an id to the list of id of keys to be queried.
      * @param id a key id
      * @return updated builder
+     * @deprecated this method is not useful
      */
+    @Deprecated
     public QueryBuilder addId(String id) {
       this.next.ids.add(id);
       return this;
@@ -161,7 +165,7 @@ public class Key {
      * Adds an alias to the list of aliases of keys to be queried.
      * @param alias a key alias
      * @return updated builder
-     * @deprecated use {@link #addId(String)} instead
+     * @deprecated this method is not useful
      */
     @Deprecated
     public QueryBuilder addAlias(String alias) {

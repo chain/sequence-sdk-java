@@ -1,6 +1,6 @@
 # Sequence Java SDK changelog
 
-## 1.3.0 (20180301)
+## 1.3 (20180301)
 
 For full details on the 1.3 release and how to migrate your code,
 [visit the Sequence changelog](https://dashboard.seq.com/docs/changelog#release-v1-3).

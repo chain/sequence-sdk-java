@@ -124,9 +124,9 @@ public class Transaction {
      * Specifies the timestamp of the earliest transaction to include in the query results.
      * @param time unixtime in milliseconds
      * @return updated builder
-     * @deprecated use "timestamp >= $1" with {$link #setFilter} instead
+     * @deprecated use "timestamp &gt;= $1" with {@link #setFilter} instead
      */
-	@Deprecated
+    @Deprecated
     public QueryBuilder setStartTime(long time) {
       this.next.startTime = time;
       return this;
@@ -135,10 +135,10 @@ public class Transaction {
     /**
      * Specifies the timestamp of the most recent transaction to include in the query results.
      * @param time unixtime in milliseconds
-     * @deprecated use "timestamp <= $1" with {$link #setFilter} instead
+     * @deprecated use "timestamp &lt;= $1" with {@link #setFilter} instead
      * @return updated builder
      */
-	@Deprecated
+    @Deprecated
     public QueryBuilder setEndTime(long time) {
       this.next.endTime = time;
       return this;

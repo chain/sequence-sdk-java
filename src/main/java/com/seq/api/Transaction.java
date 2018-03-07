@@ -273,15 +273,7 @@ public class Transaction {
      * @throws ChainException
      */
     public Transaction transact(Client client) throws ChainException {
-      JsonObject tpl = client.request("build-transaction", this, JsonObject.class);
-
-      HashMap<String, Object> body = new HashMap();
-      body.put("transaction", tpl);
-      tpl = client.request("sign-transaction", body, JsonObject.class);
-
-      body = new HashMap<>();
-      body.put("transaction", tpl);
-      return client.request("submit-transaction", body, Transaction.class);
+      return client.request("transact", this, Transaction.class);
     }
 
     public Builder() {

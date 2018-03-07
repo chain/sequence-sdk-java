@@ -246,6 +246,13 @@ public class Transaction {
     /**
      * User-specified, key-value data embedded into the action.
      */
+    @SerializedName("tags")
+    public Map<String, Object> tags;
+
+    /**
+     * User-specified, key-value data embedded into the action.
+     */
+    @Deprecated
     @SerializedName("reference_data")
     public Map<String, Object> referenceData;
   }
@@ -322,12 +329,12 @@ public class Transaction {
       public Action() {}
 
       protected void addKeyValueField(String mapKey, String fieldKey, Object value) {
-        Map<String, Object> referenceData = (Map<String, Object>) get(mapKey);
-        if (referenceData == null) {
-          referenceData = new HashMap<String, Object>();
-          put(mapKey, referenceData);
+        Map<String, Object> keyValueData = (Map<String, Object>) get(mapKey);
+        if (keyValueData == null) {
+          keyValueData = new HashMap<String, Object>();
+          put(mapKey, keyValueData);
         }
-        referenceData.put(fieldKey, value);
+        keyValueData.put(fieldKey, value);
       }
 
       protected void addListItem(String mapKey, Object param) {
@@ -436,10 +443,33 @@ public class Transaction {
         }
 
         /**
+         * Specifies tags for the action.
+         * @param actionTags arbitrary key-value data
+         * @return updated action
+         */
+        public Issue setActionTags(Map<String, Object> actionTags) {
+          put("action_tags", actionTags);
+          return this;
+        }
+
+        /**
+         * Adds a key-value pair to the tags for the action.
+         * @param key key of the action tags field
+         * @param value value of action tags field
+         * @return updated action
+         */
+        public Issue addActionTagsField(String key, Object value) {
+          addKeyValueField("action_tags", key, value);
+          return this;
+        }
+
+        /**
          * Specifies reference data for the action.
          * @param referenceData arbitrary key-value data
          * @return updated action
+         * @deprecated see {@link #setActionTags(Map)} or {@link #setTokenTags(Map)} instead
          */
+        @Deprecated
         public Issue setReferenceData(Map<String, Object> referenceData) {
           put("reference_data", referenceData);
           return this;
@@ -450,7 +480,9 @@ public class Transaction {
          * @param key key of the reference data field
          * @param value value of reference data field
          * @return updated action
+         * @deprecated see {@link #addActionTagsField(String, Object)} or {@link #addTokenTagsField(String, Object)} instead
          */
+        @Deprecated
         public Issue addReferenceDataField(String key, Object value) {
           addKeyValueField("reference_data", key, value);
           return this;
@@ -590,6 +622,27 @@ public class Transaction {
         }
 
         /**
+         * Specifies tags for the action.
+         * @param actionTags arbitrary key-value data
+         * @return updated action
+         */
+        public Transfer setActionTags(Map<String, Object> actionTags) {
+          put("action_tags", actionTags);
+          return this;
+        }
+
+        /**
+         * Adds a key-value pair to the tags for the action.
+         * @param key key of the action tags field
+         * @param value value of action tags field
+         * @return updated action
+         */
+        public Transfer addActionTagsField(String key, Object value) {
+          addKeyValueField("action_tags", key, value);
+          return this;
+        }
+
+        /**
          * Token filter string. See {https://dashboard.seq.com/docs/filters}.
          * @param filter a filter expression
          * @return updated action
@@ -613,7 +666,9 @@ public class Transaction {
          * Specifies reference data for the action.
          * @param referenceData arbitrary key-value data
          * @return updated action
+         * @deprecated see {@link #setActionTags(Map)} or {@link #setTokenTags(Map)} instead
          */
+        @Deprecated
         public Transfer setReferenceData(Map<String, Object> referenceData) {
           put("reference_data", referenceData);
           return this;
@@ -624,7 +679,9 @@ public class Transaction {
          * @param key key of the reference data field
          * @param value value of reference data field
          * @return updated action
+         * @deprecated see {@link #addActionTagsField(String, Object)} or {@link #addTokenTagsField(String, Object)} instead
          */
+        @Deprecated
         public Transfer addReferenceDataField(String key, Object value) {
           addKeyValueField("reference_data", key, value);
           return this;
@@ -744,6 +801,27 @@ public class Transaction {
         }
 
         /**
+         * Specifies tags for the action.
+         * @param actionTags arbitrary key-value data
+         * @return updated action
+         */
+        public Retire setActionTags(Map<String, Object> actionTags) {
+          put("action_tags", actionTags);
+          return this;
+        }
+
+        /**
+         * Adds a key-value pair to the tags for the action.
+         * @param key key of the action tags field
+         * @param value value of action tags field
+         * @return updated action
+         */
+        public Retire addActionTagsField(String key, Object value) {
+          addKeyValueField("action_tags", key, value);
+          return this;
+        }
+
+        /**
          * Token filter string. See {https://dashboard.seq.com/docs/filters}.
          * @param filter a filter expression
          * @return updated action
@@ -767,7 +845,9 @@ public class Transaction {
          * Specifies reference data for the action.
          * @param referenceData arbitrary key-value data
          * @return updated action
+         * @deprecated see {@link #setActionTags(Map)} instead
          */
+        @Deprecated
         public Retire setReferenceData(Map<String, Object> referenceData) {
           put("reference_data", referenceData);
           return this;
@@ -778,7 +858,9 @@ public class Transaction {
          * @param key key of the reference data field
          * @param value value of reference data field
          * @return updated action
+         * @deprecated see {@link #addActionTagsField(String, Object)} instead
          */
+        @Deprecated
         public Retire addReferenceDataField(String key, Object value) {
           addKeyValueField("reference_data", key, value);
           return this;

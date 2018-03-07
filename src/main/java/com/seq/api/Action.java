@@ -135,6 +135,13 @@ public class Action {
   /**
    * User-specified key-value data embedded in the action.
    */
+  @SerializedName("tags")
+  public Object tags;
+
+  /**
+   * User-specified key-value data embedded in the action.
+   */
+  @Deprecated
   @SerializedName("reference_data")
   public Object referenceData;
 

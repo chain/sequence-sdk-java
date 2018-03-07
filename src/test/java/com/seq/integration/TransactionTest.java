@@ -27,6 +27,7 @@ public class TransactionTest {
     testMultiSigTransaction();
     testContract();
     testTransactionWithFilter();
+    testTransactionWithActionTags();
   }
 
   public void testBasicTransaction() throws Exception {
@@ -58,9 +59,6 @@ public class TransactionTest {
             .getPage(client);
     Transaction tx = txs.items.get(0);
     assertEquals(1, txs.items.size());
-    // TODO(jackson): bring back asserts about the
-    // annotated transaction when the SDK knows about
-    // actions & entries
 
     resp =
         new Transaction.Builder()
@@ -80,9 +78,6 @@ public class TransactionTest {
             .getPage(client);
     tx = txs.items.get(0);
     assertEquals(1, txs.items.size());
-    // TODO(jackson): bring back asserts about the
-    // annotated transaction when the SDK knows about
-    // actions & entries
 
     new Transaction.Builder()
         .addAction(
@@ -293,5 +288,77 @@ public class TransactionTest {
     Map<String, Object> tokenTags = new HashMap<>();
     tokenTags.put("test", test);
     assertEquals(tokenTags, token.tags);
+  }
+
+  public void testTransactionWithActionTags() throws Exception {
+    client = TestUtils.generateClient();
+    key = new Key.Builder().create(client);
+    String alice = "TransactionTest-testTransactionWithActionTags-issue-alice";
+    String bob = "TransactionTest-testTransactionWithActionTags-issue-bob";
+    String flavor = "TransactionTest-testTransactionWithActionTags-issue-flavor";
+    String test = "TransactionTest-testTransactionWithActionTags-issue-test";
+
+    new Account.Builder().setId(alice).addKey(key).create(client);
+    new Account.Builder().setId(bob).addKey(key).create(client);
+    new Flavor.Builder().setId(flavor).addKey(key).create(client);
+
+    Transaction resp =
+        new Transaction.Builder()
+            .addAction(
+                new Transaction.Builder.Action.Issue()
+                    .setFlavorId(flavor)
+                    .setAmount(100)
+                    .setDestinationAccountId(alice)
+                    .addActionTagsField("test", test))
+            .transact(client);
+
+    Action.Page actions =
+        new Action.ListBuilder()
+            .setFilter("tags.test=$1")
+            .addFilterParameter(test)
+            .getPage(client);
+    Action action = actions.items.get(0);
+    assertEquals("issue", action.type);
+    assertEquals(100, action.amount);
+
+    test = "TransactionTest-testTransactionWithActionTags-transfer-test";
+
+    resp =
+        new Transaction.Builder()
+            .addAction(
+                new Transaction.Builder.Action.Transfer()
+                    .setSourceAccountId(alice)
+                    .setFlavorId(flavor)
+                    .setAmount(10)
+                    .setDestinationAccountId(bob)
+                    .addActionTagsField("test", test))
+            .transact(client);
+    actions =
+        new Action.ListBuilder()
+            .setFilter("tags.test=$1")
+            .addFilterParameter(test)
+            .getPage(client);
+    action = actions.items.get(0);
+    assertEquals("transfer", action.type);
+    assertEquals(10, action.amount);
+
+    test = "TransactionTest-testTransactionWithActionTags-retire-test";
+
+    new Transaction.Builder()
+        .addAction(
+            new Transaction.Builder.Action.Retire()
+                .setSourceAccountAlias(bob)
+                .setFlavorId(flavor)
+                .setAmount(5)
+                .addActionTagsField("test", test))
+        .transact(client);
+    actions =
+        new Action.ListBuilder()
+            .setFilter("tags.test=$1")
+            .addFilterParameter(test)
+            .getPage(client);
+    action = actions.items.get(0);
+    assertEquals("retire", action.type);
+    assertEquals(5, action.amount);
   }
 }

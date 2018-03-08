@@ -1,5 +1,19 @@
 # Sequence Java SDK changelog
 
+## 1.4 (20180306)
+
+For full details on the 1.4 release and how to migrate your code,
+[visit the Sequence changelog](https://dashboard.seq.com/docs/changelog#release-v1-4).
+
+* Added `tags` to `Action`.
+* Added `setActionTags` and `addActionTagField` to `Transaction`
+  action builders.
+* Added timestamp inequalities in filters.
+* `setReferenceData` and `addReferenceDataField` on `Transaction` builder actions 
+  have been deprecated. Use the new action tag fields above.
+* `setStartTime` and `setEndTime` in Transaction filters have been deprecated.
+  You can now use `"timestamp >= $1"` in a filter instead.
+
 ## 1.3 (20180301)
 
 For full details on the 1.3 release and how to migrate your code,

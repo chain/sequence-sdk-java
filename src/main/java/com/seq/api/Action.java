@@ -62,7 +62,7 @@ public class Action {
    * action, and token) as they existed at the time of the transaction.
    */
   @SerializedName("snapshot")
-  public Map<String, Object> snapshot;
+  public Snapshot snapshot;
 
   /**
    * The ID of the asset held by the action.
@@ -144,6 +144,39 @@ public class Action {
   @Deprecated
   @SerializedName("reference_data")
   public Object referenceData;
+
+  public static class Snapshot {
+    /**
+     * A snapshot of the actions's tags at the time of action creation
+     */
+    @SerializedName("action_tags")
+    public Map<String, Object> actionTags;
+
+    /**
+     * A snapshot of the flavor's tags at the time of action creation
+     */
+    @SerializedName("flavor_tags")
+    public Map<String, Object> flavorTags;
+
+    /**
+     * A snapshot of the source account's tags at the time of action creation
+     */
+    @SerializedName("source_account_tags")
+    public Map<String, Object> sourceAccountTags;
+
+    /**
+     * A snapshot of the destination account's tags at the time of action creation
+     */
+    @SerializedName("destination_account_tags")
+    public Map<String, Object> destinationAccountTags;
+
+    /**
+     * A snapshot of the tokens's tags at the time of action creation
+     */
+    @SerializedName("token_tags")
+    public Map<String, Object> tokenTags;
+  }
+
 
   /**
    * A single page of actions returned from a query.

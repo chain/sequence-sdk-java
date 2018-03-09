@@ -1,5 +1,12 @@
 # Sequence Java SDK changelog
 
+## 1.5 (2018????)
+
+* Added support for camel-case identifiers in filter queries.
+  Identifiers in query strings are now consistent with
+  identifiers in Java source code.
+  Snake-case names in query strings are deprecated.
+
 ## 1.4 (20180308)
 
 For full details on the 1.4 release and how to migrate your code,

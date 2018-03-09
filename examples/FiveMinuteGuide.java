@@ -68,7 +68,7 @@ class FiveMinuteGuide {
 
     ActionSum.ItemIterable sums =
         new Action.SumBuilder()
-            .setFilter("type = $1 AND asset_tags.type = $2 AND timestamp >= $3 AND timestamp =< $4")
+            .setFilter("type = $1 AND assetTags.type = $2 AND timestamp >= $3 AND timestamp =< $4")
             .addFilterParameter("issue")
             .addFilterParameter("currency")
             .addFilterParameter(t1)
@@ -76,7 +76,7 @@ class FiveMinuteGuide {
             .setGroupBy(
                 new ArrayList<String>() {
                   {
-                    add("asset_tags.type");
+                    add("assetTags.type");
                   }
                 })
             .getIterable(ledger);

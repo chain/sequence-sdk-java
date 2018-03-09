@@ -213,6 +213,7 @@ public class Client {
               .header("Macaroon", this.macaroon)
               .header("Discharge-Macaroon", this.refresher.dischargeMacaroon())
               .header("Idempotency-Key", idempotencyKey)
+              .header("Name-Set", "camel|snake")
               .url(endpointURL)
               .method("POST", requestBody)
               .build();

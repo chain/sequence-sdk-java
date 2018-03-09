@@ -6,6 +6,8 @@
   Identifiers in query strings are now consistent with
   identifiers in Java source code.
   Snake-case names in query strings are deprecated.
+* Transaction reference data properties and methods have been deprecated;
+  Use action tags instead.
 
 ## 1.4 (20180308)
 

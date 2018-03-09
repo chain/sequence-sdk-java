@@ -33,8 +33,10 @@ public class Transaction {
 
   /**
    * User-specified key-value data embedded into the transaction.
+   * @deprecated use {@link Action#tags} instead
    */
   @SerializedName("reference_data")
+  @Deprecated
   public Map<String, Object> referenceData;
 
   /**
@@ -251,6 +253,7 @@ public class Transaction {
 
     /**
      * User-specified, key-value data embedded into the action.
+    * @deprecated use {@link Action#tags} instead
      */
     @Deprecated
     @SerializedName("reference_data")
@@ -294,6 +297,7 @@ public class Transaction {
    */
   public static class Builder {
     @SerializedName("reference_data")
+    @Deprecated
     protected Map<String, Object> referenceData;
 
     protected List<Action> actions;
@@ -316,7 +320,9 @@ public class Transaction {
      * Specifies key-value data to be recorded in the transaction.
      * @param referenceData arbitrary key-value data
      * @return updated builder
+     * @deprecated use the action's setActionTags method instead
      */
+    @Deprecated
     public Builder setReferenceData(Map<String, Object> referenceData) {
       this.referenceData = referenceData;
       return this;
@@ -327,7 +333,9 @@ public class Transaction {
      * @param key key of the reference data field
      * @param value value of reference data field
      * @return updated builder
+     * @deprecated use the action's addActionTagsField method instead
      */
+    @Deprecated
     public Builder addReferenceDataField(String key, Object value) {
       if (this.referenceData == null) {
         this.referenceData = new HashMap<>();

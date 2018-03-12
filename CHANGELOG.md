@@ -2,6 +2,7 @@
 
 ## 1.5 (2018????)
 
+* Added `Feed`s. [More info](https://dashboard.seq.com/docs/feeds)
 * Added support for camel-case identifiers in filter queries.
   Identifiers in query strings are now consistent with
   identifiers in Java source code.
@@ -18,7 +19,7 @@ For full details on the 1.4 release and how to migrate your code,
 * Added `setActionTags` and `addActionTagField` to `Transaction`
   action builders.
 * Added timestamp inequalities in filters.
-* `setReferenceData` and `addReferenceDataField` on `Transaction` builder actions 
+* `setReferenceData` and `addReferenceDataField` on `Transaction` builder actions
   have been deprecated. Use the new action tag fields above.
 * `setStartTime` and `setEndTime` in Transaction filters have been deprecated.
   You can now use `"timestamp >= $1"` in a filter instead.

@@ -16,8 +16,16 @@ public class Flavor {
   public String id;
 
   /**
-   * The set of keys used to sign transactions that issue the flavor.
+   * The set of key IDs used to sign transactions that issue the flavor.
    */
+  @SerializedName("key_ids")
+  public List<String> keyIds;
+
+  /**
+   * The set of keys used to sign transactions that issue the flavor.
+   * @deprecated use {@link #keyIds} instead
+   */
+  @Deprecated
   public List<Key.Handle> keys;
 
   /**
@@ -109,13 +117,18 @@ public class Flavor {
     private String id;
     private Map<String, Object> tags;
 
+    @SerializedName("key_ids")
+    private List<String> keyIds;
+
     @SerializedName("keys")
+    @Deprecated
     private List<Key.Handle> keys;
 
     private Integer quorum;
 
     public Builder() {
       this.keys = new ArrayList<>();
+      this.keyIds = new ArrayList<>();
     }
 
     /**
@@ -179,7 +192,7 @@ public class Flavor {
      * @return updated builder
      */
     public Builder addKey(Key k) {
-      keys.add(Key.Handle.fromKey(k));
+      this.keyIds.add(k.id);
       return this;
     }
 
@@ -189,9 +202,7 @@ public class Flavor {
      * @return updated builder
      */
     public Builder addKeyById(String id) {
-      Key.Handle h = new Key.Handle();
-      h.id = id;
-      this.keys.add(h);
+      this.keyIds.add(id);
       return this;
     }
   }

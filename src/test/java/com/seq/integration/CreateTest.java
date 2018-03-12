@@ -60,6 +60,7 @@ public class CreateTest {
     assertEquals(1, account.quorum);
     assertEquals(alice, account.tags.get("name"));
     assertEquals(test, account.tags.get("test"));
+    assertEquals(key.id, account.keyIds.get(0));
 
     try {
       new Account.Builder()
@@ -126,6 +127,7 @@ public class CreateTest {
     assertEquals(1, testFlavor.quorum);
     assertEquals(flavor, testFlavor.tags.get("name"));
     assertEquals(test, testFlavor.tags.get("test"));
+    assertEquals(key.id, testFlavor.keyIds.get(0));
 
     try {
       new Flavor.Builder()

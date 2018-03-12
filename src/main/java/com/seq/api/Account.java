@@ -23,8 +23,17 @@ public class Account {
   public String alias;
 
   /**
-   * The set of keys used for signing transactions that spend from the account.
+   * The set of key IDs used for signing transactions that spend from the
+   * account.
    */
+  @SerializedName("key_ids")
+  public List<String> keyIds;
+
+  /**
+   * The set of keys used for signing transactions that spend from the account.
+   * @deprecated use {@link #keyIds} instead
+   */
+  @Deprecated
   public List<Key.Handle> keys;
 
   /**
@@ -117,13 +126,18 @@ public class Account {
     private String alias;
     private Integer quorum;
 
+    @SerializedName("key_ids")
+    private List<String> keyIds;
+
     @SerializedName("keys")
+    @Deprecated
     private List<Key.Handle> keys;
 
     private Map<String, Object> tags;
 
     public Builder() {
       this.keys = new ArrayList<>();
+      this.keyIds = new ArrayList<>();
     }
 
     /**
@@ -175,7 +189,7 @@ public class Account {
      * @return updated builder
      */
     public Builder addKey(Key k) {
-      keys.add(Key.Handle.fromKey(k));
+      this.keyIds.add(k.id);
       return this;
     }
 
@@ -185,9 +199,7 @@ public class Account {
      * @return updated builder
      */
     public Builder addKeyById(String id) {
-      Key.Handle h = new Key.Handle();
-      h.id = id;
-      this.keys.add(h);
+      this.keyIds.add(id);
       return this;
     }
 

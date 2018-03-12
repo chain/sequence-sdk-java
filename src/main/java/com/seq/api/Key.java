@@ -176,7 +176,9 @@ public class Key {
 
   /**
    * A composite key identifier, containing an alias and/or and ID.
+   * @deprecated this class is no longer needed
    */
+  @Deprecated
   public static class Handle {
     public String alias;
     public String id;

@@ -3,6 +3,8 @@
 ## 1.5 (2018????)
 
 * Added `Feed`s. [More info](https://dashboard.seq.com/docs/feeds)
+* The `keys` field on `Account` and `Flavor` has been deprecated; the new field
+  is `keyIds`, containing key ID strings.
 * Added support for camel-case identifiers in filter queries.
   Identifiers in query strings are now consistent with
   identifiers in Java source code.

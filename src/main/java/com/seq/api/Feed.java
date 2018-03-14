@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.*;
 
-public class Feed {
+public class Feed<T> {
   /**
    * Unique identifier of the feed.
    */
@@ -34,22 +34,46 @@ public class Feed {
   public String cursor;
 
   public static class Action {
-    public static class Builder extends FeedBuilder {
+    public static class Builder extends Feed.Builder<com.seq.api.Action> {
       public Builder() {
-        this.type = "action";
+        super("action");
       }
+    }
+
+    /**
+     * Retrieves an individual action feed.
+     *
+     * @param id the feed id
+     * @param client ledger API connection object
+     * @return a feed object
+     * @throws ChainException
+     */
+    public static Feed<com.seq.api.Action> get(String id, Client client) throws ChainException {
+      return Feed.<com.seq.api.Action>get(id, "action", client);
     }
   }
 
   public static class Transaction {
-    public static class Builder extends FeedBuilder {
+    public static class Builder extends Feed.Builder<com.seq.api.Transaction> {
       public Builder() {
-        this.type = "transaction";
+        super("transaction");
       }
+    }
+
+    /**
+     * Retrieves an individual transaction feed.
+     *
+     * @param id the feed id
+     * @param client ledger API connection object
+     * @return a feed object
+     * @throws ChainException
+     */
+    public static Feed<com.seq.api.Transaction> get(String id, Client client) throws ChainException {
+      return Feed.<com.seq.api.Transaction>get(id, "transaction", client);
     }
   }
 
-  abstract public static class FeedBuilder {
+  abstract public static class Builder<T> {
     private String id;
     protected String type;
     private String filter;
@@ -57,7 +81,8 @@ public class Feed {
     @SerializedName("filter_params")
     private List<Object> filterParams;
 
-    public FeedBuilder() {
+    private Builder(String type) {
+      this.type = type;
       this.filterParams = new ArrayList<>();
     };
 
@@ -67,17 +92,16 @@ public class Feed {
      * @return a feed
      * @throws ChainException
      */
-    public Feed create(Client client) throws ChainException {
+    public Feed<T> create(Client client) throws ChainException {
       return client.request("create-feed", this, Feed.class);
     }
-
 
     /**
      * Specifies the id for the new feed.
      * @param id unique identifier. Will be auto-generated if not provided.
      * @return updated builder
      */
-    public FeedBuilder setId(String id) {
+    public Builder<T> setId(String id) {
       this.id = id;
       return this;
     }
@@ -87,7 +111,7 @@ public class Feed {
      * @param filter a filter expression
      * @return updated builder
      */
-    public FeedBuilder setFilter(String filter) {
+    public Builder<T> setFilter(String filter) {
       this.filter = filter;
       return this;
     }
@@ -97,7 +121,7 @@ public class Feed {
      * @param param a filter parameter
      * @return updated builder
      */
-    public FeedBuilder addFilterParameter(Object param) {
+    public Builder<T> addFilterParameter(Object param) {
       this.filterParams.add(param);
       return this;
     }
@@ -106,7 +130,7 @@ public class Feed {
      * Specifies the parameters that will be interpolated into the filter expression.
      * @param params list of filter parameters
      */
-    public FeedBuilder setFilterParameters(List<?> params) {
+    public Builder<T> setFilterParameters(List<?> params) {
       this.filterParams = new ArrayList<>(params);
       return this;
     }
@@ -120,9 +144,13 @@ public class Feed {
    * @return a feed object
    * @throws ChainException
    */
-  public static Feed get(String id, Client client) throws ChainException {
+  private static <T> Feed<T> get(String id, String type, Client client) throws ChainException {
     Map<String, Object> req = new HashMap<>();
     req.put("id", id);
-    return client.request("get-feed", req, Feed.class);
+    Feed<T> feed = client.request("get-feed", req, Feed.class);
+    if (feed.type != type) {
+        throw new ChainException("Feed " + id + " is a " + feed.type + " feed, not "+ type);
+    }
+    return feed;
   }
 }

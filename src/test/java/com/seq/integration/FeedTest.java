@@ -25,13 +25,13 @@ public class FeedTest {
     client = TestUtils.generateClient();
     String id = UUID.randomUUID().toString();
 
-    Feed created = new Feed.Action.Builder()
+    Feed<Action> created = new Feed.Action.Builder()
       .setId(id)
       .setFilter("snapshot.actionTags.type=$1")
       .addFilterParameter("test")
       .create(client);
 
-    Feed got = Feed.get(id, client);
+    Feed<Action> got = Feed.Action.get(id, client);
 
     assertEquals(created.id, got.id);
     assertEquals(created.filter, got.filter);
@@ -44,7 +44,7 @@ public class FeedTest {
     client = TestUtils.generateClient();
     String id = UUID.randomUUID().toString();
 
-    Feed created = new Feed.Transaction.Builder()
+    Feed<Transaction> created = new Feed.Transaction.Builder()
       .create(client);
 
     assertEquals(created.type, "transaction");

@@ -148,7 +148,7 @@ public class Feed<T> {
     Map<String, Object> req = new HashMap<>();
     req.put("id", id);
     Feed<T> feed = client.request("get-feed", req, Feed.class);
-    if (feed.type != type) {
+    if (!feed.type.equals(type)) {
         throw new ChainException("Feed " + id + " is a " + feed.type + " feed, not "+ type);
     }
     return feed;

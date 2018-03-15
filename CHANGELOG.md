@@ -18,7 +18,7 @@ For full details on the 1.4 release and how to migrate your code,
 [visit the Sequence changelog](https://dashboard.seq.com/docs/changelog#release-v1-4).
 
 * Added `tags` to `Action`.
-* Added `setActionTags` and `addActionTagField` to `Transaction`
+* Added `setActionTags` and `addActionTagsField` to `Transaction`
   action builders.
 * Added timestamp inequalities in filters.
 * `setReferenceData` and `addReferenceDataField` on `Transaction` builder actions

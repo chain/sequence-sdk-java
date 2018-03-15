@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.*;
 
-public class Feed<T> {
+public class Feed<T> implements Iterable<T> {
   /**
    * Unique identifier of the feed.
    */
@@ -32,6 +32,92 @@ public class Feed<T> {
    * Indicates the last transaction consumed by this feed.
    */
   public String cursor;
+
+  private Client _client;
+
+  private T latestItem;
+  private String latestCursor;
+
+  class Page<S> {
+    public List<S> items;
+    public List<String> cursors;
+
+    public Page() {
+      this.items = new ArrayList<>();
+      this.cursors = new ArrayList<>();
+    }
+  }
+
+  class ActionPage extends Page<com.seq.api.Action> {}
+  class TransactionPage extends Page<com.seq.api.Transaction> {}
+
+  public Iterator<T> iterator() {
+    return new Iterator<T>() {
+      private int pos = 0;
+      private List<T> items = new ArrayList<>();
+      private List<String> cursors = new ArrayList<>();
+
+      private Page getPage() throws ChainException {
+        Map<String, Object> req = new HashMap<>();
+        req.put("id", id);
+
+        if (type.equals("action")) {
+          return _client.request("stream-feed-items", req, ActionPage.class);
+        } else {
+          return _client.request("stream-feed-items", req, TransactionPage.class);
+        }
+      }
+
+      /**
+       * Returns the next item in the results items.
+       * @return api object of type T
+       */
+      public T next() {
+        latestItem = items.get(pos);
+        latestCursor = cursors.get(pos);
+        pos++;
+        return latestItem;
+      }
+
+      /**
+       * Returns true if there is another item in the results items.
+       * @return boolean
+       */
+      public boolean hasNext() {
+        if (pos < items.size()) {
+          return true;
+        } else {
+          try {
+            Page page = getPage();
+            this.pos = 0;
+            this.items = page.items;
+            this.cursors = page.cursors;
+          } catch (ChainException e) {
+            return false;
+          }
+        }
+
+        return true;
+      }
+
+      /**
+       * This method is unsupported.
+       * @throws UnsupportedOperationException
+       */
+      public void remove() throws UnsupportedOperationException {
+        throw new UnsupportedOperationException();
+      }
+    };
+  }
+
+  public void ack() throws ChainException {
+    Map<String, Object> req = new HashMap<>();
+    req.put("id", id);
+    req.put("cursor", latestCursor);
+    req.put("previous_cursor", cursor);
+    _client.request("ack-feed", req, Feed.class);
+    cursor = latestCursor;
+  }
 
   public static class Action {
     public static class Builder extends Feed.Builder<com.seq.api.Action> {
@@ -93,7 +179,9 @@ public class Feed<T> {
      * @throws ChainException
      */
     public Feed<T> create(Client client) throws ChainException {
-      return client.request("create-feed", this, Feed.class);
+      Feed<T> feed = client.request("create-feed", this, Feed.class);
+      feed._client = client;
+      return feed;
     }
 
     /**
@@ -148,6 +236,7 @@ public class Feed<T> {
     Map<String, Object> req = new HashMap<>();
     req.put("id", id);
     Feed<T> feed = client.request("get-feed", req, Feed.class);
+    feed._client = client;
     if (!feed.type.equals(type)) {
         throw new ChainException("Feed " + id + " is a " + feed.type + " feed, not "+ type);
     }

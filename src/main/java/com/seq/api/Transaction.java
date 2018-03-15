@@ -152,6 +152,11 @@ public class Transaction {
    */
   public static class Action {
     /**
+     * A unique ID.
+     */
+    public String id;
+    
+    /**
      * The type of the action. Possible values are "issue", "transfer" and "retire".
      */
     public String type;

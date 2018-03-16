@@ -119,6 +119,12 @@ public class Feed<T> implements Iterable<T> {
     cursor = latestCursor;
   }
 
+  public void delete() throws ChainException {
+    Map<String, Object> req = new HashMap<>();
+    req.put("id", id);
+    _client.request("delete-feed", req, Feed.class);
+  }
+
   public static class Action {
     public static class Builder extends Feed.Builder<com.seq.api.Action> {
       public Builder() {

@@ -5,6 +5,7 @@ import com.seq.api.*;
 import com.seq.exception.ChainException;
 import com.seq.http.Client;
 import org.junit.Test;
+import com.seq.exception.APIException;
 
 import java.util.*;
 import java.util.concurrent.*;
@@ -23,6 +24,7 @@ public class FeedTest {
     testTransactionFeedCreation();
     testActionFeedConsumption();
     testTransactionFeedConsumption();
+    testFeedDeletion();
   }
 
   public void testActionFeedCreation() throws Exception {
@@ -152,5 +154,20 @@ public class FeedTest {
 
     assertEquals(txs.get(0).id, tx1.id);
     assertEquals(txs.get(1).id, tx2.id);
+  }
+
+  public void testFeedDeletion() throws Exception {
+    client = TestUtils.generateClient();
+    String uuid = UUID.randomUUID().toString();
+
+    Feed<Action> feed = new Feed.Action.Builder().setId(uuid).create(client);
+    feed.delete();
+
+    try {
+      Feed<Action> missing = Feed.Action.get(uuid, client);
+    } catch (APIException e) {
+      return;
+    }
+    throw new Exception("expecting APIException");
   }
 }

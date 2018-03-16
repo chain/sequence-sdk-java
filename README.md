@@ -14,7 +14,7 @@ Add the following to your `pom.xml`:
 <dependency>
   <groupId>com.seq</groupId>
   <artifactId>sequence-sdk</artifactId>
-  <version>[1.4,2)</version>
+  <version>[1.5,2)</version>
 </dependency>
 ```
 
@@ -23,7 +23,7 @@ Add the following to your `pom.xml`:
 ```java
 import com.seq.api.*;
 import com.seq.http.*;
-
+import com.seq.exception.*;
 ...
 
 Client ledger =

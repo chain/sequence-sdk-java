@@ -27,6 +27,7 @@ public abstract class BaseQueryBuilder<T extends BaseQueryBuilder<T>> {
    * @return an iterable over pages of S objects that satisfy the query
    * @throws ChainException
    */
+  @Deprecated
   public abstract <S extends BasePageIterable> S getPageIterable(Client client)
       throws ChainException;
 

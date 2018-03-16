@@ -38,18 +38,18 @@ public class Feed<T> implements Iterable<T> {
   private T latestItem;
   private String latestCursor;
 
-  class Page<S> {
+  class IterablePage<S> {
     public List<S> items;
     public List<String> cursors;
 
-    public Page() {
+    public IterablePage() {
       this.items = new ArrayList<>();
       this.cursors = new ArrayList<>();
     }
   }
 
-  class ActionPage extends Page<com.seq.api.Action> {}
-  class TransactionPage extends Page<com.seq.api.Transaction> {}
+  class ActionPage extends IterablePage<com.seq.api.Action> {}
+  class TransactionPage extends IterablePage<com.seq.api.Transaction> {}
 
   public Iterator<T> iterator() {
     return new Iterator<T>() {
@@ -57,7 +57,7 @@ public class Feed<T> implements Iterable<T> {
       private List<T> items = new ArrayList<>();
       private List<String> cursors = new ArrayList<>();
 
-      private Page getPage() throws ChainException {
+      private IterablePage getPage() throws ChainException {
         Map<String, Object> req = new HashMap<>();
         req.put("id", id);
 
@@ -88,7 +88,7 @@ public class Feed<T> implements Iterable<T> {
           return true;
         } else {
           try {
-            Page page = getPage();
+            IterablePage page = getPage();
             this.pos = 0;
             this.items = page.items;
             this.cursors = page.cursors;
@@ -241,5 +241,69 @@ public class Feed<T> implements Iterable<T> {
         throw new ChainException("Feed " + id + " is a " + feed.type + " feed, not "+ type);
     }
     return feed;
+  }
+
+  public static class Page extends BasePage<Feed> {}
+
+  public static class ItemIterable extends BaseItemIterable<Feed> {
+    public ItemIterable(Client client, String path, Query nextQuery) {
+      super(client, path, nextQuery, Page.class);
+    }
+  }
+
+  public static class PageIterable extends BasePageIterable<Page> {
+    public PageIterable(Client client, String path, Query nextQuery) {
+      super(client, path, nextQuery, Page.class);
+    }
+  }
+
+  /**
+   * A builder class for querying feeds in the ledger.
+   */
+  public static class QueryBuilder extends BaseQueryBuilder<QueryBuilder> {
+    /**
+     * Executes the query, returning a page of feeds that match the query.
+     * @param client ledger API connection object
+     * @return a page of feeds
+     * @throws ChainException
+     */
+    public Page getPage(Client client) throws ChainException {
+      return client.request("list-feeds", this.next, Page.class);
+    }
+
+    /**
+     * Executes the query, returning a page of feeds that match the query
+     * beginning with provided cursor.
+     * @param client ledger API connection object
+     * @param cursor string representing encoded query object
+     * @return a page of feeds
+     * @throws ChainException
+     */
+    public Page getPage(Client client, String cursor) throws ChainException {
+      Query next = new Query();
+      next.cursor = cursor;
+      return client.request("list-feeds", next, Page.class);
+    }
+
+    /**
+     * Executes the query, returning an iterable over feeds that match the query.
+     * @param client ledger API connection object
+     * @return an iterable over feeds
+     * @throws ChainException
+     */
+    public ItemIterable getIterable(Client client) throws ChainException {
+      return new ItemIterable(client, "list-feeds", this.next);
+    }
+
+    /**
+     * Executes the query, returning an iterable over pages of feeds that match
+     * the query.
+     * @param client ledger API connection object
+     * @return an iterable over pages of feeds
+     * @throws ChainException
+     */
+    public PageIterable getPageIterable(Client client) throws ChainException {
+      return new PageIterable(client, "list-feeds", this.next);
+    }
   }
 }

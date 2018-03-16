@@ -24,6 +24,7 @@ public class PaginationTest {
     testAccountPageCursor();
     testFlavorPageCursor();
     testTransactionPageCursor();
+    testFeedPageCursor();
   }
 
   public void testKeyPageCursor() throws Exception {
@@ -136,5 +137,28 @@ public class PaginationTest {
       .getPage(client, page.cursor);
     assertEquals(1, page2.items.size());
     assertEquals(true, page2.lastPage);
+  }
+
+  public void testFeedPageCursor() throws Exception {
+    client = TestUtils.generateClient();
+    String uuid = UUID.randomUUID().toString();
+
+    // FIXME: feeds are loaded in reverse alphabetical order due
+    // to an API issue. This test will fail when that order changes.
+    Feed f1 = new Feed.Transaction.Builder().setId("zzzzz" + uuid).create(client);
+    Feed f2 = new Feed.Action.Builder().setId("zzzzy" + uuid).create(client);
+    Feed f3 = new Feed.Transaction.Builder().setId("zzzzx" + uuid).create(client);
+
+    Feed.Page feeds = new Feed.QueryBuilder()
+      .setPageSize(1)
+      .getPage(client);
+
+    assertEquals(feeds.items.get(0).id, f1.id);
+
+    feeds = new Feed.QueryBuilder()
+      .getPage(client, feeds.cursor);
+
+    assertEquals(feeds.items.get(0).id, f2.id);
+    assertEquals(feeds.lastPage, false);
   }
 }

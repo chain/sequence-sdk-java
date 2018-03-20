@@ -41,14 +41,10 @@ public class Query {
 
   public List<String> ids;
 
-  @Deprecated
-  public List<String> aliases;
-
   public Query() {
     this.filterParams = new ArrayList<>();
     this.sumBy = new ArrayList<>();
     this.groupBy = new ArrayList<>();
     this.ids = new ArrayList<>();
-    this.aliases = new ArrayList<>();
   }
 }

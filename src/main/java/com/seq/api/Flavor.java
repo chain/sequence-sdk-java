@@ -207,18 +207,6 @@ public class Flavor {
       this.keyIds.add(k.id);
       return this;
     }
-
-    /**
-     * Adds a key that can be used to sign transactions that issue the flavor.
-     * @param id the key's ID
-     * @return updated builder
-     * @deprecated use {@link #addKeyId(String)} instead
-     */
-    @Deprecated
-    public Builder addKeyById(String id) {
-      this.keyIds.add(id);
-      return this;
-    }
   }
 
   /**

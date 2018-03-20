@@ -49,24 +49,6 @@ public class ActionSum {
   public Date timestamp;
 
   /**
-   * The ID of the asset held by the action.
-   */
-  @SerializedName("asset_id")
-  public String assetId;
-
-  /**
-   * The alias of the asset held by the action.
-   */
-  @SerializedName("asset_alias")
-  public String assetAlias;
-
-  /**
-   * The tags of the asset held by the action.
-   */
-  @SerializedName("asset_tags")
-  public Map<String, Object> assetTags;
-
-  /**
    * The ID of the source account executing the action.
    */
   @SerializedName("source_account_id")

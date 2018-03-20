@@ -16,13 +16,6 @@ public class Account {
   public String id;
 
   /**
-   * Unique, user-specified identifier.
-   * @deprecated use {@link #id} instead
-   */
-  @Deprecated
-  public String alias;
-
-  /**
    * The set of key IDs used for signing transactions that spend from the
    * account.
    */
@@ -123,7 +116,6 @@ public class Account {
    */
   public static class Builder {
     private String id;
-    private String alias;
     private Integer quorum;
 
     @SerializedName("key_ids")
@@ -157,18 +149,6 @@ public class Account {
      */
     public Builder setId(String id) {
       this.id = id;
-      return this;
-    }
-
-    /**
-     * Specifies the alias for the new account.
-     * @param alias a unique, user-specified identifier
-     * @return updated builder
-     * @deprecated use {@link #setId(String)} instead.
-     */
-    @Deprecated
-    public Builder setAlias(String alias) {
-      this.alias = alias;
       return this;
     }
 
@@ -219,20 +199,6 @@ public class Account {
     }
 
     /**
-     * Adds a key that can be used to sign transactions that spend from the account.
-     * @param alias the key's alias
-     * @return updated builder
-     * @deprecated use {@link #addKeyId(String)} instead
-     */
-    @Deprecated
-    public Builder addKeyByAlias(String alias) {
-      Key.Handle h = new Key.Handle();
-      h.alias = alias;
-      this.keys.add(h);
-      return this;
-    }
-
-    /**
      * Adds a key-value pair to the account's tags.
      * @param key key of the tag
      * @param value value of the tag
@@ -261,7 +227,6 @@ public class Account {
    * A builder for updating an account's tags.
    */
   public static class TagUpdateBuilder {
-    private String alias;
     private String id;
     private Map<String, Object> tags;
 
@@ -272,18 +237,6 @@ public class Account {
      */
     public TagUpdateBuilder forId(String id) {
       this.id = id;
-      return this;
-    }
-
-    /**
-     * Specifies the account to be updated.
-     * @param alias the account's alias
-     * @return updated builder
-     * @deprecated use {@link #forId(String)} instead
-     */
-    @Deprecated
-    public TagUpdateBuilder forAlias(String alias) {
-      this.alias = alias;
       return this;
     }
 

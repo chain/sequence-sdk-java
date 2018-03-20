@@ -65,42 +65,10 @@ public class Action {
   public Snapshot snapshot;
 
   /**
-   * The ID of the asset held by the action.
-   * @deprecated use {@link #flavorId} instead
-   */
-  @Deprecated
-  @SerializedName("asset_id")
-  public String assetId;
-
-  /**
-   * The alias of the asset held by the action.
-   * @deprecated use {@link #flavorId} instead
-   */
-  @Deprecated
-  @SerializedName("asset_alias")
-  public String assetAlias;
-
-  /**
-   * The tags of the asset held by the action.
-   * @deprecated use {@link #snapshot} instead
-   */
-  @Deprecated
-  @SerializedName("asset_tags")
-  public Map<String, Object> assetTags;
-
-  /**
    * The ID of the source account executing the action.
    */
   @SerializedName("source_account_id")
   public String sourceAccountId;
-
-  /**
-   * The alias of the source account executing the action.
-   * @deprecated see {@link #sourceAccountId} instead
-   */
-  @Deprecated
-  @SerializedName("source_account_alias")
-  public String sourceAccountAlias;
 
   /**
    * The tags of the source account executing the action.
@@ -115,14 +83,6 @@ public class Action {
    */
   @SerializedName("destination_account_id")
   public String destinationAccountId;
-
-  /**
-   * The alias of the destination account affected by the action.
-   * @deprecated see {@link #destinationAccountId} instead
-   */
-  @Deprecated
-  @SerializedName("destination_account_alias")
-  public String destinationAccountAlias;
 
   /**
    * The tags of the destination account affected by the action.

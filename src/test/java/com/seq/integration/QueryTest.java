@@ -77,7 +77,7 @@ public class QueryTest {
 
     Account.PageIterable piter =
         new Account.QueryBuilder()
-            .setFilter("alias=$1")
+            .setFilter("id=$1")
             .addFilterParameter(alice)
             .getPageIterable(client);
 

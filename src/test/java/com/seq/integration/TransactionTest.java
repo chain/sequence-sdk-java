@@ -79,7 +79,7 @@ public class TransactionTest {
     new Transaction.Builder()
         .addAction(
             new Transaction.Builder.Action.Retire()
-                .setSourceAccountAlias(bob)
+                .setSourceAccountId(bob)
                 .setFlavorId(flavorId)
                 .setAmount(5)
                 .addActionTagsField("test", test))
@@ -210,7 +210,7 @@ public class TransactionTest {
     new Transaction.Builder()
         .addAction(
             new Transaction.Builder.Action.Retire()
-                .setSourceAccountAlias(bob)
+                .setSourceAccountId(bob)
                 .setFlavorId(flavor)
                 .setAmount(5)
                 .setFilter("tags.test=$1")
@@ -288,7 +288,7 @@ public class TransactionTest {
     new Transaction.Builder()
         .addAction(
             new Transaction.Builder.Action.Retire()
-                .setSourceAccountAlias(bob)
+                .setSourceAccountId(bob)
                 .setFlavorId(flavor)
                 .setAmount(5)
                 .addActionTagsField("test", test))

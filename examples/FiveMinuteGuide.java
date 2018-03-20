@@ -9,6 +9,7 @@
 
 import java.nio.file.*;
 import java.util.*;
+import java.text.*;
 
 import com.seq.api.*;
 import com.seq.http.*;
@@ -27,15 +28,19 @@ class FiveMinuteGuide {
     String alice = "alice" + uuid;
     String bob = "bob" + uuid;
 
+    String oldTime =
+      new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+        .format(new Date(System.currentTimeMillis() - 100000000000L));
+
     new Key.Builder().setId(key).create(ledger);
-    new Asset.Builder().setAlias(usd).addKeyById(key).create(ledger);
+    new Flavor.Builder().setId(usd).addKeyId(key).create(ledger);
     new Account.Builder().setId(alice).addKeyId(key).create(ledger);
     new Account.Builder().setId(bob).addKeyId(key).create(ledger);
 
     new Transaction.Builder()
         .addAction(
             new Transaction.Builder.Action.Issue()
-                .setAssetAlias(usd)
+                .setFlavorId(usd)
                 .setAmount(100)
                 .setDestinationAccountId(alice))
         .transact(ledger);
@@ -43,7 +48,7 @@ class FiveMinuteGuide {
     new Transaction.Builder()
         .addAction(
             new Transaction.Builder.Action.Transfer()
-                .setAssetAlias(usd)
+                .setFlavorId(usd)
                 .setAmount(50)
                 .setSourceAccountId(alice)
                 .setDestinationAccountId(bob))
@@ -52,7 +57,7 @@ class FiveMinuteGuide {
     new Transaction.Builder()
         .addAction(
             new Transaction.Builder.Action.Transfer()
-                .setAssetAlias(usd)
+                .setFlavorId(usd)
                 .setAmount(50)
                 .setSourceAccountId(alice)
                 .setDestinationAccountId(bob))
@@ -61,27 +66,31 @@ class FiveMinuteGuide {
     new Transaction.Builder()
         .addAction(
             new Transaction.Builder.Action.Retire()
-                .setAssetAlias(usd)
+                .setFlavorId(usd)
                 .setAmount(10)
                 .setSourceAccountId(bob))
         .transact(ledger);
 
+    String newTime =
+      new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+        .format(new Date(System.currentTimeMillis() - 100000000000L));
+
     ActionSum.ItemIterable sums =
-        new Action.SumBuilder()
-            .setFilter("type = $1 AND assetTags.type = $2 AND timestamp >= $3 AND timestamp =< $4")
-            .addFilterParameter("issue")
-            .addFilterParameter("currency")
-            .addFilterParameter(t1)
-            .addFilterParameter(t2)
-            .setGroupBy(
-                new ArrayList<String>() {
-                  {
-                    add("assetTags.type");
-                  }
-                })
-            .getIterable(ledger);
+      new Action.SumBuilder()
+          .setFilter("type = $1 AND flavorTags.type = $2 AND timestamp >= $3 AND timestamp =< $4")
+          .addFilterParameter("issue")
+          .addFilterParameter("currency")
+          .addFilterParameter(oldTime)
+          .addFilterParameter(newTime)
+          .setGroupBy(
+              new ArrayList<String>() {
+                {
+                  add("flavorTags.type");
+                }
+              })
+          .getIterable(ledger);
     for (ActionSum sum : sums) {
-      System.out.printf("currency: %s\n", sum.assetAlias);
+      System.out.printf("currency: %d\n", sum.flavorId);
       System.out.printf("amount issued: %d\n", sum.amount);
     }
   }

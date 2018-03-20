@@ -16,18 +16,10 @@ public class Key {
   public String id;
 
   /**
-   * Unique, user-specified identifier of the key.
-   * @deprecated use {@link #id} instead
-   */
-  @Deprecated
-  public String alias;
-
-  /**
    * Configuration object for creating keys.
    */
   public static class Builder {
     private String id;
-    private String alias;
 
     /**
      * Specifies the id for the new key.
@@ -36,18 +28,6 @@ public class Key {
      */
     public Builder setId(String id) {
       this.id = id;
-      return this;
-    }
-
-    /**
-     * Sets a user-provided, unique identifier for the key.
-     * @param alias the new key's alias
-     * @return the updated builder
-     * @deprecated use {@link #setId(String)} instead
-     */
-    @Deprecated
-    public Builder setAlias(String alias) {
-      this.alias = alias;
       return this;
     }
 
@@ -138,18 +118,6 @@ public class Key {
     }
 
     /**
-     * Specifies a list of aliases of keys to be queried.
-     * @param aliases a list of key aliases
-     * @return updated builder
-     * @deprecated this method is not useful
-      */
-    @Deprecated
-    public QueryBuilder setAliases(List<String> aliases) {
-      this.next.aliases = new ArrayList<>(aliases);
-      return this;
-    }
-
-    /**
      * Adds an id to the list of id of keys to be queried.
      * @param id a key id
      * @return updated builder
@@ -160,27 +128,14 @@ public class Key {
       this.next.ids.add(id);
       return this;
     }
-
-    /**
-     * Adds an alias to the list of aliases of keys to be queried.
-     * @param alias a key alias
-     * @return updated builder
-     * @deprecated this method is not useful
-     */
-    @Deprecated
-    public QueryBuilder addAlias(String alias) {
-      this.next.aliases.add(alias);
-      return this;
-    }
   }
 
   /**
-   * A composite key identifier, containing an alias and/or and ID.
+   * A composite key identifier, containing an ID.
    * @deprecated this class is no longer needed
    */
   @Deprecated
   public static class Handle {
-    public String alias;
     public String id;
 
     /**
@@ -190,10 +145,6 @@ public class Key {
      */
     public static Handle fromKey(Key k) {
       Handle h = new Handle();
-
-      if (k.alias != null && !k.alias.equals("")) {
-        h.alias = k.alias;
-      }
 
       if (k.id != null && !k.id.equals("")) {
         h.id = k.id;

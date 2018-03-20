@@ -163,30 +163,6 @@ public class Transaction {
     public Snapshot snapshot;
 
     /**
-     * The id of the action's asset.
-     * @deprecated use {@link #flavorId} instead
-     */
-    @Deprecated
-    @SerializedName("asset_id")
-    public String assetId;
-
-    /**
-     * The alias of the action's asset.
-     * @deprecated use {@link #flavorId} instead
-     */
-    @Deprecated
-    @SerializedName("asset_alias")
-    public String assetAlias;
-
-    /**
-     * The tags of the action's asset.
-     * @deprecated use {@link #snapshot} instead
-     */
-    @Deprecated
-    @SerializedName("asset_tags")
-    public Map<String, Object> assetTags;
-
-    /**
      * The number of flavor units issued, transferred, or retired.
      */
     public long amount;
@@ -197,14 +173,6 @@ public class Transaction {
      */
     @SerializedName("source_account_id")
     public String sourceAccountId;
-
-    /**
-     * The alias of the account serving as the source of asset units. Null for issuances.
-     * @deprecated see {@link #sourceAccountId} instead
-     */
-    @Deprecated
-    @SerializedName("source_account_alias")
-    public String sourceAccountAlias;
 
     /**
      * The tags of the account serving as the source of flavor units. Null for
@@ -220,14 +188,6 @@ public class Transaction {
      */
     @SerializedName("destination_account_id")
     public String destinationAccountId;
-
-    /**
-     * The alias of the account receiving the asset units. Null for retirements.
-     * @deprecated see {@link #destinationAccountId} instead
-     */
-    @Deprecated
-    @SerializedName("destination_account_alias")
-    public String destinationAccountAlias;
 
     /**
      * The tags of the account receiving the flavor units. Null for retirements.
@@ -350,30 +310,6 @@ public class Transaction {
         }
 
         /**
-         * Specifies the asset, identified by its alias, to be issued. You must specify either an ID or an alias.
-         * @param alias alias of an asset
-         * @return updated action
-         * @deprecated use {@link #setFlavorId(String)} instead
-         */
-        @Deprecated
-        public Issue setAssetAlias(String alias) {
-          put("asset_alias", alias);
-          return this;
-        }
-
-        /**
-         * Specifies the asset, identified by its ID, to be issued. You must specify either an ID or an alias.
-         * @param id ID of an asset
-         * @return updated action
-         * @deprecated use {@link #setFlavorId(String)} instead
-         */
-        @Deprecated
-        public Issue setAssetId(String id) {
-          put("asset_id", id);
-          return this;
-        }
-
-        /**
          * Specifies the amount to be issued.
          * @param amount number of flavor units
          * @return updated action
@@ -384,19 +320,8 @@ public class Transaction {
         }
 
         /**
-         * Specifies the destination account, identified by its alias. You must specify a destination account ID or alias.
-         * @param alias alias of an account
-         * @return updated action
-         * @deprecated see {@link #setDestinationAccountId(String)} instead
-         */
-        @Deprecated
-        public Issue setDestinationAccountAlias(String alias) {
-          put("destination_account_alias", alias);
-          return this;
-        }
-
-        /**
-         * Specifies the destination account, identified by its ID. You must specify a destination account ID or alias.
+         * Specifies the destination account, identified by its ID. You must
+         * specify a destination account ID.
          * @param id an account ID
          * @return updated action
          */
@@ -458,18 +383,6 @@ public class Transaction {
         }
 
         /**
-         * Specifies an account, identified by its alias, as the source of the asset units to be transferred. You must specify a source account ID, account alias, or contract ID.
-         * @param alias alias of an account
-         * @return updated action
-         * @deprecated see {@link #setSourceAccountId(String)} instead
-         */
-        @Deprecated
-        public Transfer setSourceAccountAlias(String alias) {
-          put("source_account_alias", alias);
-          return this;
-        }
-
-        /**
          * Specifies an account, identified by its ID, as the source of the
          * flavor units to be transferred. You must specify a source account ID.
          * @param id an account ID
@@ -491,30 +404,6 @@ public class Transaction {
         }
 
         /**
-         * Specifies the asset, identified by its alias, to be transferred. You must specify either an ID or an alias.
-         * @param alias alias of an asset
-         * @return updated action
-         * @deprecated use {@link #setFlavorId(String)} instead
-         */
-        @Deprecated
-        public Transfer setAssetAlias(String alias) {
-          put("asset_alias", alias);
-          return this;
-        }
-
-        /**
-         * Specifies the asset, identified by its ID, to be transferred. You must specify either an ID or an alias.
-         * @param id id of an asset
-         * @return updated action
-         * @deprecated use {@link #setFlavorId(String)} instead
-         */
-        @Deprecated
-        public Transfer setAssetId(String id) {
-          put("asset_id", id);
-          return this;
-        }
-
-        /**
          * Specifies the amount to be transferred.
          * @param amount number of flavor units
          * @return updated action
@@ -525,19 +414,8 @@ public class Transaction {
         }
 
         /**
-         * Specifies the destination account, identified by its alias. You must specify a destination account ID or alias.
-         * @param alias alias of an account
-         * @return updated action
-         * @deprecated see {@link #setDestinationAccountId(String)} instead
-         */
-        @Deprecated
-        public Transfer setDestinationAccountAlias(String alias) {
-          put("destination_account_alias", alias);
-          return this;
-        }
-
-        /**
-         * Specifies the destination account, identified by its ID.You must specify a destination account ID or alias.
+         * Specifies the destination account, identified by its ID. You must
+         * specify a destination account ID.
          * @param id an account ID
          * @return updated action
          */
@@ -619,19 +497,8 @@ public class Transaction {
         }
 
         /**
-         * Specifies an account, identified by its alias, as the source of the asset units to be retired. You must specify a source account ID, account alias, or contract ID.
-         * @param alias alias of an account
-         * @return updated action
-         * @deprecated see {@link #setSourceAccountId(String)} instead
-         */
-        @Deprecated
-        public Retire setSourceAccountAlias(String alias) {
-          put("source_account_alias", alias);
-          return this;
-        }
-
-        /**
-         * Specifies an account, identified by its ID, as the source of the asset units to be retired. You must specify a source account ID, account alias, or contract ID.
+         * Specifies an account, identified by its ID, as the source of the
+         * tokens to be retired. You must specify a source account ID.
          * @param id an account ID
          * @return updated action
          */
@@ -647,30 +514,6 @@ public class Transaction {
          */
         public Retire setFlavorId(String id) {
           put("flavor_id", id);
-          return this;
-        }
-
-        /**
-         * Specifies the asset, identified by its alias, to be retired. You must specify either an ID or an alias.
-         * @param alias alias of an asset
-         * @return updated action
-         * @deprecated use {@link #setFlavorId(String)} instead
-         */
-        @Deprecated
-        public Retire setAssetAlias(String alias) {
-          put("asset_alias", alias);
-          return this;
-        }
-
-        /**
-         * Specifies the asset, identified by its ID, to be retired. You must specify either an ID or an alias.
-         * @param id id of an asset
-         * @return updated action
-         * @deprecated use {@link #setFlavorId(String)} instead
-         */
-        @Deprecated
-        public Retire setAssetId(String id) {
-          put("asset_id", id);
           return this;
         }
 

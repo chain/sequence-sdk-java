@@ -188,9 +188,21 @@ public class Flavor {
 
     /**
      * Adds a key that can be used to sign transactions that issue the flavor.
-     * @param k a key
+     * @param id the key's ID
      * @return updated builder
      */
+    public Builder addKeyId(String id) {
+      this.keyIds.add(id);
+      return this;
+    }
+
+    /**
+     * Adds a key that can be used to sign transactions that issue the flavor.
+     * @param k a key
+     * @return updated builder
+     * @deprecated use {@link #addKeyId(String)} instead
+     */
+    @Deprecated
     public Builder addKey(Key k) {
       this.keyIds.add(k.id);
       return this;
@@ -200,7 +212,9 @@ public class Flavor {
      * Adds a key that can be used to sign transactions that issue the flavor.
      * @param id the key's ID
      * @return updated builder
+     * @deprecated use {@link #addKeyId(String)} instead
      */
+    @Deprecated
     public Builder addKeyById(String id) {
       this.keyIds.add(id);
       return this;

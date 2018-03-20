@@ -55,7 +55,11 @@ public class QueryTest {
     client = TestUtils.generateClient();
     key = new Key.Builder().create(client);
     String alice = UUID.randomUUID().toString();
-    new Account.Builder().setId(alice).addKey(key).setQuorum(1).create(client);
+    new Account.Builder()
+      .setId(alice)
+      .addKeyId(key.id)
+      .setQuorum(1)
+      .create(client);
 
     Account.Page items =
         new Account.QueryBuilder().setFilter("id=$1").addFilterParameter(alice).getPage(client);
@@ -99,7 +103,11 @@ public class QueryTest {
     client = TestUtils.generateClient();
     key = new Key.Builder().create(client);
     String flavor = UUID.randomUUID().toString();
-    new Flavor.Builder().setId(flavor).addKey(key).setQuorum(1).create(client);
+    new Flavor.Builder()
+      .setId(flavor)
+      .addKeyId(key.id)
+      .setQuorum(1)
+      .create(client);
     Flavor.Page items =
         new Flavor.QueryBuilder().setFilter("id=$1").addFilterParameter(flavor).getPage(client);
     assertEquals(1, items.items.size());
@@ -114,7 +122,11 @@ public class QueryTest {
     String test = UUID.randomUUID().toString();
     long amount = 100;
 
-    new Account.Builder().setId(alice).addKey(key).setQuorum(1).create(client);
+    new Account.Builder()
+      .setId(alice)
+      .addKeyId(key.id)
+      .setQuorum(1)
+      .create(client);
     new Asset.Builder().setAlias(asset).addKey(key).setQuorum(1).create(client);
 
     Map<String, Object> refData = new HashMap<>();
@@ -192,7 +204,11 @@ public class QueryTest {
 
     for (int i = 0; i < 10; i++) {
       Account account =
-          new Account.Builder().setId(alice + i).addKey(key).setQuorum(1).create(client);
+        new Account.Builder()
+          .setId(alice + i)
+          .addKeyId(key.id)
+          .setQuorum(1)
+          .create(client);
       txBuilder.addAction(
           new Transaction.Builder.Action.Issue()
               .setAssetAlias(asset)
@@ -332,17 +348,21 @@ public class QueryTest {
     long amount = 100;
 
     new Flavor.Builder()
-        .addKey(key)
-        .setId(flavor)
-        .addTag("name", flavor)
-        .setQuorum(1)
-        .create(client);
+      .addKeyId(key.id)
+      .setId(flavor)
+      .addTag("name", flavor)
+      .setQuorum(1)
+      .create(client);
 
     Transaction.Builder txBuilder = new Transaction.Builder();
 
     for (int i = 0; i < 10; i++) {
       Account account =
-          new Account.Builder().setId(alice + i).addKey(key).setQuorum(1).create(client);
+        new Account.Builder()
+          .setId(alice + i)
+          .addKeyId(key.id)
+          .setQuorum(1)
+          .create(client);
       txBuilder.addAction(
           new Transaction.Builder.Action.Issue()
               .setFlavorId(flavor)
@@ -427,7 +447,11 @@ public class QueryTest {
 
     for (int i = 0; i < 10; i++) {
       Account account =
-          new Account.Builder().setId(alice + i).addKey(key).setQuorum(1).create(client);
+        new Account.Builder()
+          .setId(alice + i)
+          .addKeyId(key.id)
+          .setQuorum(1)
+          .create(client);
       txBuilder.addAction(
           new Transaction.Builder.Action.Issue()
               .setAssetAlias(asset)
@@ -472,12 +496,12 @@ public class QueryTest {
 
     for (int i = 0; i < 10; i++) {
       Account account =
-          new Account.Builder()
-              .setId(alice + i)
-              .addKey(key)
-              .setQuorum(1)
-              .addTag("test", test)
-              .create(client);
+        new Account.Builder()
+          .setId(alice + i)
+          .addKeyId(key.id)
+          .setQuorum(1)
+          .addTag("test", test)
+          .create(client);
       txBuilder.addAction(
           new Transaction.Builder.Action.Issue()
               .setAssetAlias(asset)
@@ -515,7 +539,11 @@ public class QueryTest {
     key = new Key.Builder().create(client);
     String tag = UUID.randomUUID().toString();
     for (int i = 0; i < PAGE_SIZE + 1; i++) {
-      new Account.Builder().addKey(key).setQuorum(1).addTag("tag", tag).create(client);
+      new Account.Builder()
+        .addKeyId(key.id)
+        .setQuorum(1)
+        .addTag("tag", tag)
+        .create(client);
     }
 
     int counter;

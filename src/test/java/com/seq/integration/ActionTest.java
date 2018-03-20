@@ -34,9 +34,21 @@ public class ActionTest {
     String flavor = "TransactionTest-testSnapshotWithTags-issue-flavor";
     String test = "TransactionTest-testSnapshotWithTags-issue-test";
 
-    new Account.Builder().setId(alice).addKey(key).addTag("test-alice", test).create(client);
-    new Account.Builder().setId(bob).addKey(key).addTag("test-bob", test).create(client);
-    new Flavor.Builder().setId(flavor).addKey(key).addTag("test-flavor", test).create(client);
+    new Account.Builder()
+      .setId(alice)
+      .addKeyId(key.id)
+      .addTag("test-alice", test)
+      .create(client);
+    new Account.Builder()
+      .setId(bob)
+      .addKeyId(key.id)
+      .addTag("test-bob", test)
+      .create(client);
+    new Flavor.Builder()
+      .setId(flavor)
+      .addKeyId(key.id)
+      .addTag("test-flavor", test)
+      .create(client);
 
     Transaction resp =
         new Transaction.Builder()

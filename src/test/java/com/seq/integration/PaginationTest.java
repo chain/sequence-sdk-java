@@ -59,7 +59,7 @@ public class PaginationTest {
     for (int i = 0; i < PAGE_SIZE + 1; i++) {
       new Account.Builder()
         .setId(UUID.randomUUID().toString())
-        .addKey(key)
+        .addKeyId(key.id)
         .addTag("filter", testFilter)
         .create(client);
     }
@@ -87,7 +87,7 @@ public class PaginationTest {
     for (int i = 0; i < PAGE_SIZE + 1; i++) {
       new Flavor.Builder()
         .setId(UUID.randomUUID().toString())
-        .addKey(key)
+        .addKeyId(key.id)
         .addTag("filter", testFilter)
         .create(client);
     }
@@ -109,8 +109,8 @@ public class PaginationTest {
     client = TestUtils.generateClient();
     key = new Key.Builder().create(client);
 
-    Flavor flavor = new Flavor.Builder().addKey(key).create(client);
-    Account account = new Account.Builder().addKey(key).create(client);
+    Flavor flavor = new Flavor.Builder().addKeyId(key.id).create(client);
+    Account account = new Account.Builder().addKeyId(key.id).create(client);
 
     String testFilter = UUID.randomUUID().toString();
 

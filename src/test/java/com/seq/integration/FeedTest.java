@@ -62,8 +62,8 @@ public class FeedTest {
     final List<Action> actions = new ArrayList<>();
 
     Key key = new Key.Builder().create(client);
-    new Account.Builder().setId(uuid).addKey(key).create(client);
-    new Flavor.Builder().setId(uuid).addKey(key).create(client);
+    new Account.Builder().setId(uuid).addKeyId(key.id).create(client);
+    new Flavor.Builder().setId(uuid).addKeyId(key.id).create(client);
 
     final Feed<Action> feed = new Feed.Action.Builder()
       .setId(uuid)
@@ -110,8 +110,8 @@ public class FeedTest {
     final List<Transaction> txs = new ArrayList<>();
 
     Key key = new Key.Builder().create(client);
-    new Account.Builder().setId(uuid).addKey(key).create(client);
-    new Flavor.Builder().setId(uuid).addKey(key).create(client);
+    new Account.Builder().setId(uuid).addKeyId(key.id).create(client);
+    new Flavor.Builder().setId(uuid).addKeyId(key.id).create(client);
 
     final Feed<Transaction> feed = new Feed.Transaction.Builder()
       .setId(uuid)

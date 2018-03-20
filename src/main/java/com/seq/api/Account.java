@@ -184,10 +184,23 @@ public class Account {
     }
 
     /**
+     * Adds a key that can be used to sign transactions that spend from the
+     * account.
+     * @param id the key's ID
+     * @return updated builder
+     */
+    public Builder addKeyId(String id) {
+      this.keyIds.add(id);
+      return this;
+    }
+
+    /**
      * Adds a key that can be used to sign transactions that spend from the account.
      * @param k a key
      * @return updated builder
+     * @deprecated use {@link #addKeyId(String)} instead
      */
+    @Deprecated
     public Builder addKey(Key k) {
       this.keyIds.add(k.id);
       return this;
@@ -197,7 +210,9 @@ public class Account {
      * Adds a key that can be used to sign transactions that spend from the account.
      * @param id the key's ID
      * @return updated builder
+     * @deprecated use {@link #addKeyId(String)} instead
      */
+    @Deprecated
     public Builder addKeyById(String id) {
       this.keyIds.add(id);
       return this;
@@ -207,7 +222,7 @@ public class Account {
      * Adds a key that can be used to sign transactions that spend from the account.
      * @param alias the key's alias
      * @return updated builder
-     * @deprecated use {@link #addKeyById(String)} instead
+     * @deprecated use {@link #addKeyId(String)} instead
      */
     @Deprecated
     public Builder addKeyByAlias(String alias) {

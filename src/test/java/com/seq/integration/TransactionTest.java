@@ -38,8 +38,8 @@ public class TransactionTest {
     String asset = "TransactionTest-testBasicTransaction-asset";
     String test = "TransactionTest-testBasicTransaction-test";
 
-    new Account.Builder().setId(alice).addKey(key).create(client);
-    new Account.Builder().setId(bob).addKey(key).create(client);
+    new Account.Builder().setId(alice).addKeyId(key.id).create(client);
+    new Account.Builder().setId(bob).addKeyId(key.id).create(client);
     new Asset.Builder().setAlias(asset).addKey(key).create(client);
 
     Transaction resp =
@@ -106,18 +106,18 @@ public class TransactionTest {
     String asset = "TransactionTest-testMultiSigTransaction-asset";
 
     new Account.Builder()
-        .setId(alice)
-        .addKey(key)
-        .addKey(key2)
-        .addKey(key3)
-        .setQuorum(2)
-        .create(client);
+      .setId(alice)
+      .addKeyId(key.id)
+      .addKeyId(key2.id)
+      .addKeyId(key3.id)
+      .setQuorum(2)
+      .create(client);
     new Account.Builder()
-        .setId(bob)
-        .addKey(key)
-        .addKey(key2)
-        .addKey(key3)
-        .create(client);
+      .setId(bob)
+      .addKeyId(key.id)
+      .addKeyId(key2.id)
+      .addKeyId(key3.id)
+      .create(client);
     new Asset.Builder()
         .setAlias(asset)
         .addKey(key)
@@ -158,8 +158,8 @@ public class TransactionTest {
     String bob = "TransactionTest-testContract-bob";
     String asset = "TransactionTest-testContract-asset";
 
-    new Account.Builder().setId(alice).addKey(key).create(client);
-    new Account.Builder().setId(bob).addKey(key).create(client);
+    new Account.Builder().setId(alice).addKeyId(key.id).create(client);
+    new Account.Builder().setId(bob).addKeyId(key.id).create(client);
     new Asset.Builder().setAlias(asset).addKey(key).create(client);
 
     Transaction resp =
@@ -214,9 +214,9 @@ public class TransactionTest {
     String flavor = "TransactionTest-testTransactionWithFilter-flavor";
     String test = "TransactionTest-testTransactionWithFilter-test";
 
-    new Account.Builder().setId(alice).addKey(key).create(client);
-    new Account.Builder().setId(bob).addKey(key).create(client);
-    new Flavor.Builder().setId(flavor).addKey(key).create(client);
+    new Account.Builder().setId(alice).addKeyId(key.id).create(client);
+    new Account.Builder().setId(bob).addKeyId(key.id).create(client);
+    new Flavor.Builder().setId(flavor).addKeyId(key.id).create(client);
 
     Transaction resp =
         new Transaction.Builder()
@@ -298,9 +298,9 @@ public class TransactionTest {
     String flavor = "TransactionTest-testTransactionWithActionTags-issue-flavor";
     String test = "TransactionTest-testTransactionWithActionTags-issue-test";
 
-    new Account.Builder().setId(alice).addKey(key).create(client);
-    new Account.Builder().setId(bob).addKey(key).create(client);
-    new Flavor.Builder().setId(flavor).addKey(key).create(client);
+    new Account.Builder().setId(alice).addKeyId(key.id).create(client);
+    new Account.Builder().setId(bob).addKeyId(key.id).create(client);
+    new Flavor.Builder().setId(flavor).addKeyId(key.id).create(client);
 
     Transaction resp =
         new Transaction.Builder()

@@ -15,8 +15,7 @@ public class StatsTest {
 
     Key k = new Key.Builder().create(c);
 
-    Account acc = new Account.Builder().addKey(k).setQuorum(1).create(c);
-
+    Account acc = new Account.Builder().addKeyId(k.id).setQuorum(1).create(c);
     Asset asset = new Asset.Builder().addKey(k).setQuorum(1).create(c);
 
     new Transaction.Builder()

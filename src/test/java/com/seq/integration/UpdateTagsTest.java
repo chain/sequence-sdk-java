@@ -18,9 +18,17 @@ public class UpdateTagsTest {
     Key key = new Key.Builder().create(client);
 
     Account account1 =
-        new Account.Builder().addKey(key).setQuorum(1).addTag("x", "zero").create(client);
+      new Account.Builder()
+        .addKeyId(key.id)
+        .setQuorum(1)
+        .addTag("x", "zero")
+        .create(client);
     Account account2 =
-        new Account.Builder().addKey(key).setQuorum(1).addTag("y", "zero").create(client);
+      new Account.Builder()
+        .addKeyId(key.id)
+        .setQuorum(1)
+        .addTag("y", "zero")
+        .create(client);
 
     Map<String, Object> update1, update2;
 
@@ -105,8 +113,16 @@ public class UpdateTagsTest {
     Client client = TestUtils.generateClient();
     Key key = new Key.Builder().create(client);
 
-    Flavor flavor1 = new Flavor.Builder().addKey(key).setQuorum(1).addTag("x", "zero").create(client);
-    Flavor flavor2 = new Flavor.Builder().addKey(key).setQuorum(1).addTag("y", "zero").create(client);
+    Flavor flavor1 = new Flavor.Builder()
+      .addKeyId(key.id)
+      .setQuorum(1)
+      .addTag("x", "zero")
+      .create(client);
+    Flavor flavor2 = new Flavor.Builder()
+      .addKeyId(key.id)
+      .setQuorum(1)
+      .addTag("y", "zero")
+      .create(client);
 
     Map<String, Object> update1, update2;
 

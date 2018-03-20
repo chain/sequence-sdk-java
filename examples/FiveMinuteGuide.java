@@ -29,8 +29,8 @@ class FiveMinuteGuide {
 
     new Key.Builder().setId(key).create(ledger);
     new Asset.Builder().setAlias(usd).addKeyById(key).create(ledger);
-    new Account.Builder().setId(alice).addKeyById(key).create(ledger);
-    new Account.Builder().setId(bob).addKeyById(key).create(ledger);
+    new Account.Builder().setId(alice).addKeyId(key).create(ledger);
+    new Account.Builder().setId(bob).addKeyId(key).create(ledger);
 
     new Transaction.Builder()
         .addAction(

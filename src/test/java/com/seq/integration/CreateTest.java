@@ -48,13 +48,13 @@ public class CreateTest {
     Map<String, Object> tags = new HashMap<>();
     tags.put("name", alice);
     Account account =
-        new Account.Builder()
-            .setId(alice)
-            .addKey(key)
-            .setQuorum(1)
-            .setTags(tags)
-            .addTag("test", test)
-            .create(client);
+      new Account.Builder()
+        .setId(alice)
+        .addKeyId(key.id)
+        .setQuorum(1)
+        .setTags(tags)
+        .addTag("test", test)
+        .create(client);
     assertNotNull(account.id);
     assertEquals(alice, account.id);
     assertEquals(1, account.quorum);
@@ -64,11 +64,11 @@ public class CreateTest {
 
     try {
       new Account.Builder()
-          .setId(alice)
-          .addKey(key)
-          .setQuorum(1)
-          .addTag("name", alice)
-          .create(client);
+        .setId(alice)
+        .addKeyId(key.id)
+        .setQuorum(1)
+        .addTag("name", alice)
+        .create(client);
     } catch (APIException e) {
       return;
     }
@@ -116,13 +116,13 @@ public class CreateTest {
     Map<String, Object> tags = new HashMap<>();
     tags.put("name", flavor);
     Flavor testFlavor =
-        new Flavor.Builder()
-            .setId(flavor)
-            .addKey(key)
-            .setQuorum(1)
-            .setTags(tags)
-            .addTag("test", test)
-            .create(client);
+      new Flavor.Builder()
+        .setId(flavor)
+        .addKeyId(key.id)
+        .setQuorum(1)
+        .setTags(tags)
+        .addTag("test", test)
+        .create(client);
     assertEquals(flavor, testFlavor.id);
     assertEquals(1, testFlavor.quorum);
     assertEquals(flavor, testFlavor.tags.get("name"));
@@ -131,11 +131,11 @@ public class CreateTest {
 
     try {
       new Flavor.Builder()
-          .setId(flavor)
-          .addKey(key)
-          .setQuorum(1)
-          .addTag("name", flavor)
-          .create(client);
+        .setId(flavor)
+        .addKeyId(key.id)
+        .setQuorum(1)
+        .addTag("name", flavor)
+        .create(client);
     } catch (APIException e) {
       return;
     }

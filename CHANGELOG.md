@@ -1,6 +1,6 @@
 # Sequence Java SDK changelog
 
-## 1.5.1 (201803??)
+## 1.5.1 (20180320)
 
 * The `addKeyById` method on `Account.Builder` and `Flavor.Builder` has been
   deprecated; the new method is `addKeyId`.

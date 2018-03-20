@@ -32,14 +32,6 @@ public class Transaction {
   public long sequenceNumber;
 
   /**
-   * User-specified key-value data embedded into the transaction.
-   * @deprecated use {@link Action#tags} instead
-   */
-  @SerializedName("reference_data")
-  @Deprecated
-  public Map<String, Object> referenceData;
-
-  /**
    * List of actions taken by the transaction.
    */
   public List<Action> actions;
@@ -251,14 +243,6 @@ public class Transaction {
     @SerializedName("tags")
     public Map<String, Object> tags;
 
-    /**
-     * User-specified, key-value data embedded into the action.
-    * @deprecated use {@link Action#tags} instead
-     */
-    @Deprecated
-    @SerializedName("reference_data")
-    public Map<String, Object> referenceData;
-
     public static class Snapshot {
       /**
        * A snapshot of the actions's tags at the time of action creation
@@ -296,10 +280,6 @@ public class Transaction {
    * A configuration object for creating and submitting transactions.
    */
   public static class Builder {
-    @SerializedName("reference_data")
-    @Deprecated
-    protected Map<String, Object> referenceData;
-
     protected List<Action> actions;
 
     /**
@@ -314,34 +294,6 @@ public class Transaction {
 
     public Builder() {
       this.actions = new ArrayList<>();
-    }
-
-    /**
-     * Specifies key-value data to be recorded in the transaction.
-     * @param referenceData arbitrary key-value data
-     * @return updated builder
-     * @deprecated use the action's setActionTags method instead
-     */
-    @Deprecated
-    public Builder setReferenceData(Map<String, Object> referenceData) {
-      this.referenceData = referenceData;
-      return this;
-    }
-
-    /**
-     * Adds a key-value pair to the transaction's reference data.
-     * @param key key of the reference data field
-     * @param value value of reference data field
-     * @return updated builder
-     * @deprecated use the action's addActionTagsField method instead
-     */
-    @Deprecated
-    public Builder addReferenceDataField(String key, Object value) {
-      if (this.referenceData == null) {
-        this.referenceData = new HashMap<>();
-      }
-      this.referenceData.put(key, value);
-      return this;
     }
 
     /**
@@ -492,31 +444,6 @@ public class Transaction {
          */
         public Issue addActionTagsField(String key, Object value) {
           addKeyValueField("action_tags", key, value);
-          return this;
-        }
-
-        /**
-         * Specifies reference data for the action.
-         * @param referenceData arbitrary key-value data
-         * @return updated action
-         * @deprecated see {@link #setActionTags(Map)} or {@link #setTokenTags(Map)} instead
-         */
-        @Deprecated
-        public Issue setReferenceData(Map<String, Object> referenceData) {
-          put("reference_data", referenceData);
-          return this;
-        }
-
-        /**
-         * Adds a key-value pair to the reference data for the action.
-         * @param key key of the reference data field
-         * @param value value of reference data field
-         * @return updated action
-         * @deprecated see {@link #addActionTagsField(String, Object)} or {@link #addTokenTagsField(String, Object)} instead
-         */
-        @Deprecated
-        public Issue addReferenceDataField(String key, Object value) {
-          addKeyValueField("reference_data", key, value);
           return this;
         }
       }
@@ -680,31 +607,6 @@ public class Transaction {
           addListItem("filter_params", param);
           return this;
         }
-
-        /**
-         * Specifies reference data for the action.
-         * @param referenceData arbitrary key-value data
-         * @return updated action
-         * @deprecated see {@link #setActionTags(Map)} or {@link #setTokenTags(Map)} instead
-         */
-        @Deprecated
-        public Transfer setReferenceData(Map<String, Object> referenceData) {
-          put("reference_data", referenceData);
-          return this;
-        }
-
-        /**
-         * Adds a key-value pair to the reference data for the action.
-         * @param key key of the reference data field
-         * @param value value of reference data field
-         * @return updated action
-         * @deprecated see {@link #addActionTagsField(String, Object)} or {@link #addTokenTagsField(String, Object)} instead
-         */
-        @Deprecated
-        public Transfer addReferenceDataField(String key, Object value) {
-          addKeyValueField("reference_data", key, value);
-          return this;
-        }
       }
 
       /**
@@ -820,31 +722,6 @@ public class Transaction {
          */
         public Retire addFilterParameter(Object param) {
           addListItem("filter_params", param);
-          return this;
-        }
-
-        /**
-         * Specifies reference data for the action.
-         * @param referenceData arbitrary key-value data
-         * @return updated action
-         * @deprecated see {@link #setActionTags(Map)} instead
-         */
-        @Deprecated
-        public Retire setReferenceData(Map<String, Object> referenceData) {
-          put("reference_data", referenceData);
-          return this;
-        }
-
-        /**
-         * Adds a key-value pair to the reference data for the action.
-         * @param key key of the reference data field
-         * @param value value of reference data field
-         * @return updated action
-         * @deprecated see {@link #addActionTagsField(String, Object)} instead
-         */
-        @Deprecated
-        public Retire addReferenceDataField(String key, Object value) {
-          addKeyValueField("reference_data", key, value);
           return this;
         }
       }

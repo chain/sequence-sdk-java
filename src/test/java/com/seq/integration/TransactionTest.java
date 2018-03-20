@@ -48,8 +48,7 @@ public class TransactionTest {
                     .setFlavorId(flavorId)
                     .setAmount(100)
                     .setDestinationAccountId(alice)
-                    .addReferenceDataField("test", test))
-            .addReferenceDataField("test", test)
+                    .addActionTagsField("test", test))
             .transact(client);
     Transaction.Page txs =
         new Transaction.QueryBuilder()
@@ -67,8 +66,7 @@ public class TransactionTest {
                     .setFlavorId(flavorId)
                     .setAmount(10)
                     .setDestinationAccountId(bob)
-                    .addReferenceDataField("test", test))
-            .addReferenceDataField("test", test)
+                    .addActionTagsField("test", test))
             .transact(client);
     txs =
         new Transaction.QueryBuilder()
@@ -84,12 +82,11 @@ public class TransactionTest {
                 .setSourceAccountAlias(bob)
                 .setFlavorId(flavorId)
                 .setAmount(5)
-                .addReferenceDataField("test", test))
-        .addReferenceDataField("test", test)
+                .addActionTagsField("test", test))
         .transact(client);
     txs =
         new Transaction.QueryBuilder()
-            .setFilter("reference_data.test=$1")
+            .setFilter("actions(tags.test=$1)")
             .addFilterParameter(test)
             .getPage(client);
     assertEquals(3, txs.items.size());

@@ -121,12 +121,12 @@ public class PaginationTest {
               new Transaction.Builder.Action.Issue()
                   .setFlavorId(flavor.id)
                   .setAmount(1)
-                  .setDestinationAccountId(account.id))
-          .addReferenceDataField("filter", testFilter)
+                  .setDestinationAccountId(account.id)
+                  .addActionTagsField("filter", testFilter))
           .transact(client);
     }
     Transaction.Page page = new Transaction.QueryBuilder()
-      .setFilter("reference_data.filter = $1")
+      .setFilter("actions(tags.filter = $1)")
       .setFilterParameters(Arrays.asList(testFilter))
       .setPageSize(PAGE_SIZE)
       .getPage(client);

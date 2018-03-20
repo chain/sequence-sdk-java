@@ -125,22 +125,18 @@ public class QueryTest {
       .setQuorum(1)
       .create(client);
 
-    Map<String, Object> refData = new HashMap<>();
-    refData.put("flavor", flavorId);
     new Transaction.Builder()
       .addAction(
         new Transaction.Builder.Action.Issue()
           .setFlavorId(flavorId)
           .setAmount(amount)
           .setDestinationAccountId(alice)
-          .addReferenceDataField("test", test))
-      .setReferenceData(refData)
-      .addReferenceDataField("test", test)
+          .addActionTagsField("test", test))
       .transact(client);
 
     Transaction.Page txs =
         new Transaction.QueryBuilder()
-            .setFilter("reference_data.test=$1")
+            .setFilter("actions(tags.test=$1)")
             .addFilterParameter(test)
             .setStartTime(System.currentTimeMillis())
             .getPage(client);
@@ -148,7 +144,7 @@ public class QueryTest {
 
     txs =
         new Transaction.QueryBuilder()
-            .setFilter("reference_data.test=$1")
+            .setFilter("actions(tags.test=$1)")
             .addFilterParameter(test)
             .setEndTime(System.currentTimeMillis() - 100000000000L)
             .getPage(client);
@@ -156,13 +152,12 @@ public class QueryTest {
 
     txs =
         new Transaction.QueryBuilder()
-            .setFilter("reference_data.test=$1")
+            .setFilter("actions(tags.test=$1)")
             .addFilterParameter(test)
             .getPage(client);
     Transaction tx = txs.items.get(0);
     assertEquals(1, txs.items.size());
-    assertEquals(flavorId, tx.referenceData.get("flavor"));
-    assertEquals(test, tx.referenceData.get("test"));
+    assertEquals(test, tx.actions.get(0).tags.get("test"));
   }
 
   public void testActionQuery() throws Exception {
@@ -200,7 +195,7 @@ public class QueryTest {
           .setFlavorId(flavorId)
           .setAmount(amount)
           .setDestinationAccountId(account.id)
-          .addReferenceDataField("test", test));
+          .addActionTagsField("test", test));
 
       if (i == 0) {
         firstAccountId = account.id;
@@ -213,14 +208,14 @@ public class QueryTest {
             .setAmount(5)
             .setSourceAccountId(account.id)
             .setDestinationAccountId(firstAccountId)
-            .addReferenceDataField("test", test));
+            .addActionTagsField("test", test));
       }
     }
 
     txBuilder.transact(client);
 
     Action.ItemIterable actions = new Action.ListBuilder()
-      .setFilter("reference_data.test=$1")
+      .setFilter("tags.test=$1")
       .addFilterParameter(test)
       .getIterable(client);
     int i = 0;
@@ -231,14 +226,14 @@ public class QueryTest {
 
     Action.Page page =
         new Action.ListBuilder()
-            .setFilter("reference_data.test=$1")
+            .setFilter("tags.test=$1")
             .addFilterParameter(test)
             .getPage(client);
     assertEquals(12, page.items.size());
 
     page =
         new Action.ListBuilder()
-            .setFilter("reference_data.test=$1")
+            .setFilter("tags.test=$1")
             .addFilterParameter(test)
             .setPageSize(10)
             .getPage(client);
@@ -249,7 +244,7 @@ public class QueryTest {
 
     page =
         new Action.ListBuilder()
-            .setFilter("reference_data.test=$1 AND timestamp<$2")
+            .setFilter("tags.test=$1 AND timestamp<$2")
             .addFilterParameter(test)
             .addFilterParameter(oldTime)
             .getPage(client);
@@ -272,12 +267,12 @@ public class QueryTest {
 
     ActionSum.Page sumPage =
         new Action.SumBuilder()
-            .setFilter("type=$1 AND reference_data.test=$2 AND timestamp<$3")
+            .setFilter("type=$1 AND tags.test=$2 AND timestamp<$3")
             .addFilterParameter("issue")
             .addFilterParameter(test)
             .addFilterParameter(oldTime)
             .addGroupByField("type")
-            .addGroupByField("reference_data.test")
+            .addGroupByField("tags.test")
             .getPage(client);
     assertEquals(0, sumPage.items.size());
 
@@ -299,22 +294,22 @@ public class QueryTest {
 
     sumPage =
         new Action.SumBuilder()
-            .setFilter("type=$1 AND reference_data.test=$2")
+            .setFilter("type=$1 AND tags.test=$2")
             .addFilterParameter("issue")
             .addFilterParameter(test)
             .addGroupByField("type")
-            .addGroupByField("reference_data.test")
+            .addGroupByField("tags.test")
             .getPage(client);
     ActionSum as = sumPage.items.get(0);
     assertEquals(1, sumPage.items.size());
     assertEquals(1000, as.amount);
-    assertNotNull(as.referenceData);
-    Map<String, String> nestedField = (Map<String, String>) (as.referenceData);
+    assertNotNull(as.tags);
+    Map<String, String> nestedField = (Map<String, String>) (as.tags);
     assertNotNull(nestedField.get("test"));
 
     sumPage =
         new Action.SumBuilder()
-            .setFilter("type=$1 AND reference_data.test=$2")
+            .setFilter("type=$1 AND tags.test=$2")
             .addFilterParameter("transfer")
             .addGroupByField("type")
             .addFilterParameter(test)

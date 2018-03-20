@@ -138,13 +138,6 @@ public class Action {
   @SerializedName("tags")
   public Object tags;
 
-  /**
-   * User-specified key-value data embedded in the action.
-   */
-  @Deprecated
-  @SerializedName("reference_data")
-  public Object referenceData;
-
   public static class Snapshot {
     /**
      * A snapshot of the actions's tags at the time of action creation

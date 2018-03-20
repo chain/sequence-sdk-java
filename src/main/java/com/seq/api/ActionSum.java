@@ -93,8 +93,8 @@ public class ActionSum {
   /**
    * User-specified key-value data embedded in the action.
    */
-  @SerializedName("reference_data")
-  public Object referenceData;
+  @SerializedName("tags")
+  public Object tags;
 
   /**
    * A single page of actions returned from a query.

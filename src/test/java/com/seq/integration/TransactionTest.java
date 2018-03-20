@@ -25,7 +25,6 @@ public class TransactionTest {
   public void run() throws Exception {
     testBasicTransaction();
     testMultiSigTransaction();
-    testContract();
     testTransactionWithFilter();
     testTransactionWithActionTags();
   }
@@ -35,18 +34,18 @@ public class TransactionTest {
     key = new Key.Builder().create(client);
     String alice = "TransactionTest-testBasicTransaction-alice";
     String bob = "TransactionTest-testBasicTransaction-bob";
-    String asset = "TransactionTest-testBasicTransaction-asset";
+    String flavorId = "TransactionTest-testBasicTransaction-flavor";
     String test = "TransactionTest-testBasicTransaction-test";
 
     new Account.Builder().setId(alice).addKeyId(key.id).create(client);
     new Account.Builder().setId(bob).addKeyId(key.id).create(client);
-    new Asset.Builder().setAlias(asset).addKey(key).create(client);
+    new Flavor.Builder().setId(flavorId).addKeyId(key.id).create(client);
 
     Transaction resp =
         new Transaction.Builder()
             .addAction(
                 new Transaction.Builder.Action.Issue()
-                    .setAssetAlias(asset)
+                    .setFlavorId(flavorId)
                     .setAmount(100)
                     .setDestinationAccountId(alice)
                     .addReferenceDataField("test", test))
@@ -65,7 +64,7 @@ public class TransactionTest {
             .addAction(
                 new Transaction.Builder.Action.Transfer()
                     .setSourceAccountId(alice)
-                    .setAssetAlias(asset)
+                    .setFlavorId(flavorId)
                     .setAmount(10)
                     .setDestinationAccountId(bob)
                     .addReferenceDataField("test", test))
@@ -83,7 +82,7 @@ public class TransactionTest {
         .addAction(
             new Transaction.Builder.Action.Retire()
                 .setSourceAccountAlias(bob)
-                .setAssetAlias(asset)
+                .setFlavorId(flavorId)
                 .setAmount(5)
                 .addReferenceDataField("test", test))
         .addReferenceDataField("test", test)
@@ -103,7 +102,7 @@ public class TransactionTest {
     key3 = new Key.Builder().create(client);
     String alice = "TransactionTest-testMultiSigTransaction-alice";
     String bob = "TransactionTest-testMultiSigTransaction-bob";
-    String asset = "TransactionTest-testMultiSigTransaction-asset";
+    String flavorId = "TransactionTest-testMultiSigTransaction-flavor";
 
     new Account.Builder()
       .setId(alice)
@@ -118,17 +117,17 @@ public class TransactionTest {
       .addKeyId(key2.id)
       .addKeyId(key3.id)
       .create(client);
-    new Asset.Builder()
-        .setAlias(asset)
-        .addKey(key)
-        .addKey(key2)
-        .addKey(key3)
+    new Flavor.Builder()
+        .setId(flavorId)
+        .addKeyId(key.id)
+        .addKeyId(key2.id)
+        .addKeyId(key3.id)
         .create(client);
 
     new Transaction.Builder()
         .addAction(
             new Transaction.Builder.Action.Issue()
-                .setAssetAlias(asset)
+                .setFlavorId(flavorId)
                 .setAmount(100)
                 .setDestinationAccountId(alice))
         .transact(client);
@@ -137,7 +136,7 @@ public class TransactionTest {
         .addAction(
             new Transaction.Builder.Action.Transfer()
                 .setSourceAccountId(alice)
-                .setAssetAlias(asset)
+                .setFlavorId(flavorId)
                 .setAmount(10)
                 .setDestinationAccountId(bob))
         .transact(client);
@@ -146,63 +145,8 @@ public class TransactionTest {
         .addAction(
             new Transaction.Builder.Action.Retire()
                 .setSourceAccountId(bob)
-                .setAssetAlias(asset)
+                .setFlavorId(flavorId)
                 .setAmount(5))
-        .transact(client);
-  }
-
-  public void testContract() throws Exception {
-    client = TestUtils.generateClient();
-    key = new Key.Builder().create(client);
-    String alice = "TransactionTest-testContract-alice";
-    String bob = "TransactionTest-testContract-bob";
-    String asset = "TransactionTest-testContract-asset";
-
-    new Account.Builder().setId(alice).addKeyId(key.id).create(client);
-    new Account.Builder().setId(bob).addKeyId(key.id).create(client);
-    new Asset.Builder().setAlias(asset).addKey(key).create(client);
-
-    Transaction resp =
-        new Transaction.Builder()
-            .addAction(
-                new Transaction.Builder.Action.Issue()
-                    .setAssetAlias(asset)
-                    .setAmount(100)
-                    .setDestinationAccountId(alice))
-            .transact(client);
-
-    Transaction.Page txs =
-        new Transaction.QueryBuilder()
-            .setFilter("id=$1")
-            .addFilterParameter(resp.id)
-            .getPage(client);
-    Transaction tx = txs.items.get(0);
-
-    Contract contract = tx.contracts.get(0);
-
-    resp =
-        new Transaction.Builder()
-            .addAction(
-                new Transaction.Builder.Action.Transfer()
-                    .setSourceContractId(contract.id)
-                    .setDestinationAccountId(bob)
-                    .setAssetAlias(contract.assetAlias)
-                    .setAmount(contract.amount))
-            .transact(client);
-
-    Contract.Page items =
-        new Contract.QueryBuilder()
-            .setFilter("transaction_id=$1")
-            .addFilterParameter(resp.id)
-            .getPage(client);
-    Contract unspent = items.items.get(0);
-
-    new Transaction.Builder()
-        .addAction(
-            new Transaction.Builder.Action.Retire()
-                .setSourceContractId(unspent.id)
-                .setAssetAlias(asset)
-                .setAmount(unspent.amount))
         .transact(client);
   }
 

@@ -7,7 +7,7 @@ import com.google.gson.annotations.SerializedName;
 import java.util.*;
 
 /**
- * A container for asset balances on a ledger.
+ * A container for tokens on a ledger.
  */
 public class Account {
   /**

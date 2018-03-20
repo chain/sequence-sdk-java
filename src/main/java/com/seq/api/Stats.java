@@ -9,10 +9,10 @@ import com.google.gson.annotations.SerializedName;
  */
 public class Stats {
   /**
-   * The number of assets in the ledger.
+   * The number of flavors in the ledger.
    */
-  @SerializedName("asset_count")
-  public long assetCount;
+  @SerializedName("flavor_count")
+  public long flavorCount;
 
   /**
    * The number of accounts in the ledger.

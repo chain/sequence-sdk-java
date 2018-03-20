@@ -66,49 +66,6 @@ public class UpdateTagsTest {
   }
 
   @Test
-  public void assetTags() throws Exception {
-    Client client = TestUtils.generateClient();
-    Key key = new Key.Builder().create(client);
-
-    Asset asset1 = new Asset.Builder().addKey(key).setQuorum(1).addTag("x", "zero").create(client);
-    Asset asset2 = new Asset.Builder().addKey(key).setQuorum(1).addTag("y", "zero").create(client);
-
-    Map<String, Object> update1, update2;
-
-    // Asset tag update
-
-    update1 = new HashMap<>();
-    update1.put("x", "one");
-
-    new Asset.TagUpdateBuilder().forId(asset1.id).setTags(update1).update(client);
-
-    Asset.ItemIterable assets =
-        new Asset.QueryBuilder()
-            .setFilter("id=$1")
-            .addFilterParameter(asset1.id)
-            .getIterable(client);
-
-    for (Asset asset : assets) {
-      assertEquals(asset.tags.get("x"), "one");
-    }
-
-    // Asset tag update that raises an error
-
-    try {
-      update1 = new HashMap<>();
-      update1.put("x", "two");
-
-      new Asset.TagUpdateBuilder()
-          // ID intentionally omitted
-          .setTags(update1)
-          .update(client);
-    } catch (APIException e) {
-      assertEquals(e.code, "CH051");
-      assertEquals(e.seqCode, "SEQ051");
-    }
-  }
-
-  @Test
   public void flavorTags() throws Exception {
     Client client = TestUtils.generateClient();
     Key key = new Key.Builder().create(client);

@@ -22,12 +22,10 @@ public class QueryTest {
   public void run() throws Exception {
     testKeyQuery();
     testAccountQuery();
-    testAssetQuery();
+    testFlavorQuery();
     testTransactionQuery();
     testActionQuery();
-    testBalanceQuery();
     testTokenQuery();
-    testContractQuery();
     testPagination();
   }
 
@@ -88,37 +86,31 @@ public class QueryTest {
     }
   }
 
-  public void testAssetQuery() throws Exception {
-    client = TestUtils.generateClient();
-    key = new Key.Builder().create(client);
-    String asset = UUID.randomUUID().toString();
-    new Asset.Builder().setAlias(asset).addKey(key).setQuorum(1).create(client);
-    Asset.Page items =
-        new Asset.QueryBuilder().setFilter("alias=$1").addFilterParameter(asset).getPage(client);
-    assertEquals(1, items.items.size());
-    assertEquals(asset, items.items.get(0).alias);
-  }
-
   public void testFlavorQuery() throws Exception {
     client = TestUtils.generateClient();
     key = new Key.Builder().create(client);
-    String flavor = UUID.randomUUID().toString();
+    String flavorId = UUID.randomUUID().toString();
     new Flavor.Builder()
-      .setId(flavor)
+      .setId(flavorId)
       .addKeyId(key.id)
       .setQuorum(1)
       .create(client);
+
     Flavor.Page items =
-        new Flavor.QueryBuilder().setFilter("id=$1").addFilterParameter(flavor).getPage(client);
+        new Flavor.QueryBuilder()
+        .setFilter("id=$1")
+        .addFilterParameter(flavorId)
+        .getPage(client);
+
     assertEquals(1, items.items.size());
-    assertEquals(flavor, items.items.get(0).id);
+    assertEquals(flavorId, items.items.get(0).id);
   }
 
   public void testTransactionQuery() throws Exception {
     client = TestUtils.generateClient();
     key = new Key.Builder().create(client);
     String alice = UUID.randomUUID().toString();
-    String asset = UUID.randomUUID().toString();
+    String flavorId = UUID.randomUUID().toString();
     String test = UUID.randomUUID().toString();
     long amount = 100;
 
@@ -127,20 +119,24 @@ public class QueryTest {
       .addKeyId(key.id)
       .setQuorum(1)
       .create(client);
-    new Asset.Builder().setAlias(asset).addKey(key).setQuorum(1).create(client);
+    new Flavor.Builder()
+      .setId(flavorId)
+      .addKeyId(key.id)
+      .setQuorum(1)
+      .create(client);
 
     Map<String, Object> refData = new HashMap<>();
-    refData.put("asset", asset);
+    refData.put("flavor", flavorId);
     new Transaction.Builder()
-        .addAction(
-            new Transaction.Builder.Action.Issue()
-                .setAssetAlias(asset)
-                .setAmount(amount)
-                .setDestinationAccountId(alice)
-                .addReferenceDataField("test", test))
-        .setReferenceData(refData)
-        .addReferenceDataField("test", test)
-        .transact(client);
+      .addAction(
+        new Transaction.Builder.Action.Issue()
+          .setFlavorId(flavorId)
+          .setAmount(amount)
+          .setDestinationAccountId(alice)
+          .addReferenceDataField("test", test))
+      .setReferenceData(refData)
+      .addReferenceDataField("test", test)
+      .transact(client);
 
     Transaction.Page txs =
         new Transaction.QueryBuilder()
@@ -160,22 +156,12 @@ public class QueryTest {
 
     txs =
         new Transaction.QueryBuilder()
-            .setFilter("contracts(reference_data.test=$1)")
+            .setFilter("reference_data.test=$1")
             .addFilterParameter(test)
             .getPage(client);
     Transaction tx = txs.items.get(0);
     assertEquals(1, txs.items.size());
-    assertEquals(asset, tx.referenceData.get("asset"));
-    assertEquals(test, tx.referenceData.get("test"));
-
-    txs =
-        new Transaction.QueryBuilder()
-            .setFilter("reference_data.test=$1")
-            .addFilterParameter(test)
-            .getPage(client);
-    tx = txs.items.get(0);
-    assertEquals(1, txs.items.size());
-    assertEquals(asset, tx.referenceData.get("asset"));
+    assertEquals(flavorId, tx.referenceData.get("flavor"));
     assertEquals(test, tx.referenceData.get("test"));
   }
 
@@ -183,7 +169,7 @@ public class QueryTest {
     client = TestUtils.generateClient();
     DevUtils.reset(client);
     key = new Key.Builder().create(client);
-    String asset = UUID.randomUUID().toString();
+    String flavorId = UUID.randomUUID().toString();
     String alice = UUID.randomUUID().toString();
     String test = UUID.randomUUID().toString();
     String firstAccountId = "";
@@ -193,12 +179,12 @@ public class QueryTest {
             + "Z";
     long amount = 100;
 
-    new Asset.Builder()
-        .addKey(key)
-        .setAlias(asset)
-        .addTag("name", asset)
-        .setQuorum(1)
-        .create(client);
+    new Flavor.Builder()
+      .addKeyId(key.id)
+      .setId(flavorId)
+      .addTag("name", flavorId)
+      .setQuorum(1)
+      .create(client);
 
     Transaction.Builder txBuilder = new Transaction.Builder();
 
@@ -210,11 +196,11 @@ public class QueryTest {
           .setQuorum(1)
           .create(client);
       txBuilder.addAction(
-          new Transaction.Builder.Action.Issue()
-              .setAssetAlias(asset)
-              .setAmount(amount)
-              .setDestinationAccountId(account.id)
-              .addReferenceDataField("test", test));
+        new Transaction.Builder.Action.Issue()
+          .setFlavorId(flavorId)
+          .setAmount(amount)
+          .setDestinationAccountId(account.id)
+          .addReferenceDataField("test", test));
 
       if (i == 0) {
         firstAccountId = account.id;
@@ -222,12 +208,12 @@ public class QueryTest {
 
       if (i == 8 || i == 9) {
         txBuilder.addAction(
-            new Transaction.Builder.Action.Transfer()
-                .setAssetAlias(asset)
-                .setAmount(5)
-                .setSourceAccountId(account.id)
-                .setDestinationAccountId(firstAccountId)
-                .addReferenceDataField("test", test));
+          new Transaction.Builder.Action.Transfer()
+            .setFlavorId(flavorId)
+            .setAmount(5)
+            .setSourceAccountId(account.id)
+            .setDestinationAccountId(firstAccountId)
+            .addReferenceDataField("test", test));
       }
     }
 
@@ -426,109 +412,6 @@ public class QueryTest {
     for (TokenSum sum : tokenSums) {
       assertEquals(100, sum.amount);
     }
-  }
-
-  public void testBalanceQuery() throws Exception {
-    client = TestUtils.generateClient();
-    key = new Key.Builder().create(client);
-    String asset = UUID.randomUUID().toString();
-    String alice = UUID.randomUUID().toString();
-    String test = UUID.randomUUID().toString();
-    long amount = 100;
-
-    new Asset.Builder()
-        .addKey(key)
-        .setAlias(asset)
-        .addTag("name", asset)
-        .setQuorum(1)
-        .create(client);
-
-    Transaction.Builder txBuilder = new Transaction.Builder();
-
-    for (int i = 0; i < 10; i++) {
-      Account account =
-        new Account.Builder()
-          .setId(alice + i)
-          .addKeyId(key.id)
-          .setQuorum(1)
-          .create(client);
-      txBuilder.addAction(
-          new Transaction.Builder.Action.Issue()
-              .setAssetAlias(asset)
-              .setAmount(amount)
-              .setDestinationAccountId(account.id)
-              .addReferenceDataField("test", test));
-    }
-
-    txBuilder.transact(client);
-
-    Balance.Page items =
-        new Balance.QueryBuilder()
-            .setFilter("reference_data.test=$1")
-            .addFilterParameter(test)
-            .getPage(client);
-    Balance bal = items.items.get(0);
-    assertNotNull(bal.sumBy);
-    assertNotNull(bal.sumBy.get("account_alias"));
-    assertNotNull(bal.sumBy.get("account_id"));
-    assertNotNull(bal.sumBy.get("asset_alias"));
-    assertNotNull(bal.sumBy.get("asset_id"));
-    assertEquals(10, items.items.size());
-    assertEquals(100, bal.amount);
-  }
-
-  public void testContractQuery() throws Exception {
-    client = TestUtils.generateClient();
-    key = new Key.Builder().create(client);
-    String asset = UUID.randomUUID().toString();
-    String alice = UUID.randomUUID().toString();
-    String test = UUID.randomUUID().toString();
-    long amount = 100;
-
-    new Asset.Builder()
-        .addKey(key)
-        .setAlias(asset)
-        .addTag("name", asset)
-        .setQuorum(1)
-        .create(client);
-
-    Transaction.Builder txBuilder = new Transaction.Builder();
-
-    for (int i = 0; i < 10; i++) {
-      Account account =
-        new Account.Builder()
-          .setId(alice + i)
-          .addKeyId(key.id)
-          .setQuorum(1)
-          .addTag("test", test)
-          .create(client);
-      txBuilder.addAction(
-          new Transaction.Builder.Action.Issue()
-              .setAssetAlias(asset)
-              .setAmount(amount)
-              .setDestinationAccountId(account.id)
-              .addReferenceDataField("test", test));
-    }
-
-    txBuilder.transact(client);
-
-    Contract.Page items =
-        new Contract.QueryBuilder()
-            .setFilter("reference_data.test=$1")
-            .setFilterParameters(Arrays.asList((Object) test))
-            .getPage(client);
-    Contract contract = items.items.get(0);
-    assertNotNull(contract.id);
-    assertNotNull(contract.type);
-    assertNotNull(contract.transactionId);
-    assertNotNull(contract.assetId);
-    assertNotNull(contract.assetAlias);
-    assertNotNull(contract.accountId);
-    assertNotNull(contract.assetTags);
-    assertNotNull(contract.accountTags);
-    assertNotNull(contract.referenceData);
-    assertEquals(100, contract.amount);
-    assertEquals(10, items.items.size());
   }
 
   // Because BaseQueryBuilder#getPage is used in the execute

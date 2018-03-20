@@ -21,7 +21,6 @@ public class CreateTest {
   public void run() throws Exception {
     testKeyCreate();
     testAccountCreate();
-    testAssetCreate();
     testFlavorCreate();
   }
 
@@ -69,39 +68,6 @@ public class CreateTest {
         .setQuorum(1)
         .addTag("name", alice)
         .create(client);
-    } catch (APIException e) {
-      return;
-    }
-    throw new Exception("expecting APIException");
-  }
-
-  public void testAssetCreate() throws Exception {
-    client = TestUtils.generateClient();
-    key = new Key.Builder().create(client);
-    String asset = "CreateTest-testAssetCreate-asset";
-    String test = "CreateTest-testAssetCreate-test";
-    Map<String, Object> tags = new HashMap<>();
-    tags.put("name", asset);
-    Asset testAsset =
-        new Asset.Builder()
-            .setAlias(asset)
-            .addKey(key)
-            .setQuorum(1)
-            .setTags(tags)
-            .addTag("test", test)
-            .create(client);
-    assertEquals(asset, testAsset.alias);
-    assertEquals(1, testAsset.quorum);
-    assertEquals(asset, testAsset.tags.get("name"));
-    assertEquals(test, testAsset.tags.get("test"));
-
-    try {
-      new Asset.Builder()
-          .setAlias(asset)
-          .addKey(key)
-          .setQuorum(1)
-          .addTag("name", asset)
-          .create(client);
     } catch (APIException e) {
       return;
     }

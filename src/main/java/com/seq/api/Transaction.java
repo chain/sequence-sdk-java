@@ -45,11 +45,6 @@ public class Transaction {
   public List<Action> actions;
 
   /**
-   * List of contracts created by the transaction.
-   */
-  public List<Contract> contracts;
-
-  /**
    * A single page of transactions returned from a query.
    */
   public static class Page extends BasePage<Transaction> {}
@@ -527,8 +522,7 @@ public class Transaction {
       }
 
       /**
-       * Moves flavors from a source (an account or contract) to a destination
-       * account.
+       * Moves flavors from a source account to a destination account.
        */
       public static class Transfer extends Action {
 
@@ -550,26 +544,12 @@ public class Transaction {
 
         /**
          * Specifies an account, identified by its ID, as the source of the
-         * flavor units to be transferred. You must specify a source account ID,
-         * account alias, or contract ID.
+         * flavor units to be transferred. You must specify a source account ID.
          * @param id an account ID
          * @return updated action
          */
         public Transfer setSourceAccountId(String id) {
           put("source_account_id", id);
-          return this;
-        }
-
-        /**
-         * Specifies a contract as the source of the flavor to be transferred.
-         * You must specify a source account ID, account alias, or contract ID.
-         * @param id a contract ID
-         * @return updated action
-         * @deprecated see {@link #setSourceAccountId(String)} instead
-         */
-        @Deprecated
-        public Transfer setSourceContractId(String id) {
-          put("source_contract_id", id);
           return this;
         }
 
@@ -725,36 +705,10 @@ public class Transaction {
           addKeyValueField("reference_data", key, value);
           return this;
         }
-
-        /**
-         * Specifies reference data for the change contract.
-         * @param referenceData arbitrary key-value data
-         * @return updated action
-         * @deprecated this now happens automatically when using token tags
-         */
-        @Deprecated
-        public Transfer setChangeReferenceData(Map<String, Object> referenceData) {
-          put("change_reference_data", referenceData);
-          return this;
-        }
-
-        /**
-         * Adds a key-value pair to the reference data for the change contract.
-         * @param key key of the reference data field
-         * @param value value of reference data field
-         * @return updated action
-         * @deprecated this now happens automatically when using token tags
-         */
-        @Deprecated
-        public Transfer addChangeReferenceDataField(String key, Object value) {
-          addKeyValueField("change_reference_data", key, value);
-          return this;
-        }
       }
 
       /**
-       * Moves flavors from a source (an account or contract) to a destination
-       * account.
+       * Moves flavors from a source account to a destination account.
        */
       public static class Retire extends Action {
 
@@ -781,19 +735,6 @@ public class Transaction {
          */
         public Retire setSourceAccountId(String id) {
           put("source_account_id", id);
-          return this;
-        }
-
-        /**
-         * Specifies a contract as the source of the flavor to be retired. You
-         * must specify a source account ID, account alias, or contract ID.
-         * @param id a contract ID
-         * @return updated action
-         * @deprecated see {@link #setSourceAccountId(String)} instead
-         */
-        @Deprecated
-        public Retire setSourceContractId(String id) {
-          put("source_contract_id", id);
           return this;
         }
 
@@ -904,31 +845,6 @@ public class Transaction {
         @Deprecated
         public Retire addReferenceDataField(String key, Object value) {
           addKeyValueField("reference_data", key, value);
-          return this;
-        }
-
-        /**
-         * Specifies reference data for the change contract.
-         * @param referenceData arbitrary key-value data
-         * @return updated action
-         * @deprecated this now happens automatically when using token tags
-         */
-        @Deprecated
-        public Retire setChangeReferenceData(Map<String, Object> referenceData) {
-          put("change_reference_data", referenceData);
-          return this;
-        }
-
-        /**
-         * Add a key-value pair to the reference data for the change contract.
-         * @param key key of the reference data field
-         * @param value value of reference data field
-         * @return updated action
-         * @deprecated this now happens automatically when using token tags
-         */
-        @Deprecated
-        public Retire addChangeReferenceDataField(String key, Object value) {
-          addKeyValueField("change_reference_data", key, value);
           return this;
         }
       }

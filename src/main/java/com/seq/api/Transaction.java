@@ -789,7 +789,9 @@ public class Transaction {
          * must specify a source account ID, account alias, or contract ID.
          * @param id a contract ID
          * @return updated action
+         * @deprecated see {@link #setSourceAccountId(String)} instead
          */
+        @Deprecated
         public Retire setSourceContractId(String id) {
           put("source_contract_id", id);
           return this;

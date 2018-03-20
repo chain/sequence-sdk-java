@@ -1,5 +1,12 @@
 # Sequence Java SDK changelog
 
+## 1.5.1 (201803??)
+
+* The `addKeyById` method on `Account.Builder` and `Flavor.Builder` has been
+  deprecated; the new method is `addKeyId`.
+* The `addSourceContractId` method on `Transaction.Builder.Action.Transfer`
+  and `Transaction.Builder.Action.Retire` has been deprecated.
+
 ## 1.5 (20180316)
 
 For full details on the 1.5 release and how to migrate your code,

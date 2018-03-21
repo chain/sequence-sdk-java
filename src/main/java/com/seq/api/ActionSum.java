@@ -55,22 +55,10 @@ public class ActionSum {
   public String sourceAccountId;
 
   /**
-   * The tags of the source account executing the action.
-   */
-  @SerializedName("source_account_tags")
-  public Map<String, Object> sourceAccountTags;
-
-  /**
    * The ID of the destination account affected by the action.
    */
   @SerializedName("destination_account_id")
   public String destinationAccountId;
-
-  /**
-   * The tags of the destination account affected by the action.
-   */
-  @SerializedName("destination_account_tags")
-  public Map<String, Object> destinationAccountTags;
 
   /**
    * User-specified key-value data embedded in the action.

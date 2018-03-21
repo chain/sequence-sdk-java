@@ -139,7 +139,7 @@ public class HttpWrapper {
       try {
         APIException err =
             Utils.serializer.fromJson(response.body().charStream(), APIException.class);
-        if (err.code != null) {
+        if (err.seqCode != null) {
           err.requestId = rid;
           err.statusCode = response.code();
           throw err;

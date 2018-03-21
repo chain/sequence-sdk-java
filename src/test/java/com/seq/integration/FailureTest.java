@@ -32,7 +32,6 @@ public class FailureTest {
     try {
       new Account.Builder().create(client);
     } catch (APIException e) {
-      assertEquals(e.code, "CH202");
       assertEquals(e.seqCode, "SEQ202");
       return;
     }

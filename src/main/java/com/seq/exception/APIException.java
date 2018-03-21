@@ -12,13 +12,6 @@ import com.google.gson.annotations.SerializedName;
  */
 public class APIException extends ChainException {
   /**
-   * An error code of the format "CHXXX".
-   * @deprecated use {@link #seqCode} instead
-   */
-  @Deprecated
-  public String code;
-
-  /**
    * An error code of the format "SEQXXX".
    */
    @SerializedName("seq_code")
@@ -55,49 +48,6 @@ public class APIException extends ChainException {
    * HTTP status code returned by the server.
    */
   public int statusCode;
-
-  public APIException(String message, String requestId) {
-    super(message);
-    this.requestId = requestId;
-  }
-
-  public APIException(String code, String seqCode, String message, String detail, boolean retriable) {
-    super(message);
-    this.chainMessage = message;
-    this.code = code;
-    this.seqCode = seqCode;
-    this.detail = detail;
-    this.retriable = retriable;
-    this.temporary = temporary;
-  }
-
-  public APIException(String code, String seqCode, String message, String detail, String requestId) {
-    super(message);
-    this.chainMessage = message;
-    this.code = code;
-    this.seqCode = seqCode;
-    this.detail = detail;
-    this.requestId = requestId;
-  }
-
-  public APIException(
-      String code,
-      String seqCode,
-      String message,
-      String detail,
-      boolean retriable,
-      String requestId,
-      int statusCode) {
-    super(message);
-    this.chainMessage = message;
-    this.code = code;
-    this.seqCode = seqCode;
-    this.detail = detail;
-    this.retriable = retriable;
-    this.temporary = temporary;
-    this.requestId = requestId;
-    this.statusCode = statusCode;
-  }
 
   @Override
   public String getMessage() {

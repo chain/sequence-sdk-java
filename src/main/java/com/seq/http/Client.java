@@ -391,15 +391,6 @@ public class Client {
     }
 
     /**
-     * No-op. This method exists only for backward compatibility.
-	 * It has no effect. It will be removed in a future version.
-     * @param url unused.
-     */
-    @Deprecated public Builder setURL(String url) throws BadURLException {
-      return this;
-    }
-
-    /**
      * Sets the credential for the client
      * @param credential an API credential from a user of the ledger's team
      */
@@ -414,16 +405,6 @@ public class Client {
      * @param name The ledger name
      */
     public Builder setLedgerName(String name) {
-      this.ledger = name;
-      return this;
-    }
-
-    /**
-     * Sets the ledger name for the client.
-     * Deprecated; please use setLedgerName instead.
-     * @param name The ledger name
-     */
-    @Deprecated public Builder setLedger(String name) {
       this.ledger = name;
       return this;
     }

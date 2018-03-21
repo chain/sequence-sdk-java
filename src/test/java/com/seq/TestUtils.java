@@ -28,7 +28,6 @@ public class TestUtils {
 
     Client client =
         new Client.Builder()
-            .setURL("https://chain.localhost:1999")
             .setLedgerName(ledgerName)
             .setCredential(macaroon)
             .setTrustedCerts(new ByteArrayInputStream(System.getenv("ROOT_CA_CERTS").getBytes()))

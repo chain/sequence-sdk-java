@@ -51,15 +51,6 @@ public class Transaction {
   }
 
   /**
-   * Iterable interface for consuming pages of transactions from a query.
-   */
-  public static class PageIterable extends BasePageIterable<Page> {
-    public PageIterable(Client client, String path, Query nextQuery) {
-      super(client, path, nextQuery, Page.class);
-    }
-  }
-
-  /**
    * A builder class for querying transactions in the ledger.
    */
   public static class QueryBuilder extends BaseQueryBuilder<QueryBuilder> {
@@ -99,17 +90,6 @@ public class Transaction {
     }
 
     /**
-     * Executes a query on the ledger's transactions, returning an iterable over
-     * pages of transactoins that match the query.
-     * @param client ledger API connection object
-     * @return an iterable over pages of transactions
-     * @throws ChainException
-     */
-    public PageIterable getPageIterable(Client client) throws ChainException {
-      return new PageIterable(client, "list-transactions", this.next);
-    }
-
-    /**
      * Specifies the timestamp of the earliest transaction to include in the query results.
      * @param time unixtime in milliseconds
      * @return updated builder
@@ -142,7 +122,7 @@ public class Transaction {
      * A unique ID.
      */
     public String id;
-    
+
     /**
      * The type of the action. Possible values are "issue", "transfer" and "retire".
      */

@@ -46,15 +46,6 @@ public class Flavor {
   }
 
   /**
-   * Iterable interface for consuming pages of flavors from a query.
-   */
-  public static class PageIterable extends BasePageIterable<Page> {
-    public PageIterable(Client client, String path, Query nextQuery) {
-      super(client, path, nextQuery, Page.class);
-    }
-  }
-
-  /**
    * A builder class for querying flavors in the ledger.
    */
   public static class QueryBuilder extends BaseQueryBuilder<QueryBuilder> {
@@ -90,16 +81,6 @@ public class Flavor {
      */
     public ItemIterable getIterable(Client client) throws ChainException {
       return new ItemIterable(client, "list-flavors", this.next);
-    }
-
-    /**
-     * Executes the query, returning an iterable over pages of flavors that match the query
-     * @param client ledger API connection object
-     * @return an iterable over pages of flavors
-     * @throws ChainException
-     */
-    public PageIterable getPageIterable(Client client) throws ChainException {
-      return new PageIterable(client, "list-flavors", this.next);
     }
   }
 

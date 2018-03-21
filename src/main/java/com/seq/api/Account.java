@@ -47,15 +47,6 @@ public class Account {
   }
 
   /**
-   * Iterable interface for consuming pages of accounts from a query.
-   */
-  public static class PageIterable extends BasePageIterable<Page> {
-    public PageIterable(Client client, String path, Query nextQuery) {
-      super(client, path, nextQuery, Page.class);
-    }
-  }
-
-  /**
    * A builder class for querying accounts in the ledger.
    */
   public static class QueryBuilder extends BaseQueryBuilder<QueryBuilder> {
@@ -91,16 +82,6 @@ public class Account {
      */
     public ItemIterable getIterable(Client client) throws ChainException {
       return new ItemIterable(client, "list-accounts", this.next);
-    }
-
-    /**
-     * Executes the query, returning an iterable over pages of accounts that match the query.
-     * @param client ledger API connection object
-     * @return an iterable over pages of accounts
-     * @throws ChainException
-     */
-    public PageIterable getPageIterable(Client client) throws ChainException {
-      return new PageIterable(client, "list-accounts", this.next);
     }
   }
 

@@ -74,16 +74,6 @@ public class QueryTest {
     for (Account a : iter) {
       assertEquals(alice, a.id);
     }
-
-    Account.PageIterable piter =
-        new Account.QueryBuilder()
-            .setFilter("id=$1")
-            .addFilterParameter(alice)
-            .getPageIterable(client);
-
-    for (Account.Page p : piter) {
-      assertEquals(alice, p.items.get(0).id);
-    }
   }
 
   public void testFlavorQuery() throws Exception {
@@ -437,25 +427,6 @@ public class QueryTest {
     for (Account a : items) {
       assertNotNull(a.id);
       counter++;
-    }
-    assertEquals(PAGE_SIZE + 1, counter);
-
-    // Test page iterator
-    Account.PageIterable pages =
-        new Account.QueryBuilder()
-            .setFilter("tags.tag=$1")
-            .addFilterParameter(tag)
-            .getPageIterable(client);
-
-    counter = 0;
-    Boolean checkedFirstPage = false;
-    for (Account.Page p : pages) {
-      assertNotNull(p.items.get(0).id);
-      if (!checkedFirstPage) {
-        assertEquals(PAGE_SIZE, p.items.size());
-        checkedFirstPage = true;
-      }
-      counter = counter + p.items.size();
     }
     assertEquals(PAGE_SIZE + 1, counter);
   }

@@ -257,12 +257,6 @@ public class Feed<T> implements Iterable<T> {
     }
   }
 
-  public static class PageIterable extends BasePageIterable<Page> {
-    public PageIterable(Client client, String path, Query nextQuery) {
-      super(client, path, nextQuery, Page.class);
-    }
-  }
-
   /**
    * A builder class for querying feeds in the ledger.
    */
@@ -299,17 +293,6 @@ public class Feed<T> implements Iterable<T> {
      */
     public ItemIterable getIterable(Client client) throws ChainException {
       return new ItemIterable(client, "list-feeds", this.next);
-    }
-
-    /**
-     * Executes the query, returning an iterable over pages of feeds that match
-     * the query.
-     * @param client ledger API connection object
-     * @return an iterable over pages of feeds
-     * @throws ChainException
-     */
-    public PageIterable getPageIterable(Client client) throws ChainException {
-      return new PageIterable(client, "list-feeds", this.next);
     }
   }
 }

@@ -24,16 +24,6 @@ public abstract class BaseQueryBuilder<T extends BaseQueryBuilder<T>> {
   /**
    * Executes the API query.
    * @param client ledger API connection object
-   * @return an iterable over pages of S objects that satisfy the query
-   * @throws ChainException
-   */
-  @Deprecated
-  public abstract <S extends BasePageIterable> S getPageIterable(Client client)
-      throws ChainException;
-
-  /**
-   * Executes the API query.
-   * @param client ledger API connection object
    * @return an iterable over S objects that satisfy the query
    * @throws ChainException
    */
@@ -41,18 +31,6 @@ public abstract class BaseQueryBuilder<T extends BaseQueryBuilder<T>> {
 
   public BaseQueryBuilder() {
     this.next = new Query();
-  }
-
-  /**
-   * Specifies a cursor value for retrieving the next page.
-   * @param after an opaque cursor object
-   * @return updated builder
-   * @deprecated use getPage(Client client, String cursor) instead.
-   */
-  @Deprecated
-  public T setAfter(String after) {
-    this.next.after = after;
-    return (T) this;
   }
 
   /**

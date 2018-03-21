@@ -79,13 +79,4 @@ public class ActionSum {
       super(client, path, nextQuery, Page.class);
     }
   }
-
-  /**
-   * Iterable interface for consuming pages of actions from a query.
-   */
-  public static class PageIterable extends BasePageIterable<Page> {
-    public PageIterable(Client client, String path, Query nextQuery) {
-      super(client, path, nextQuery, Page.class);
-    }
-  }
 }

@@ -124,11 +124,6 @@ public class Token {
     public ItemIterable getIterable(Client client) throws ChainException {
       return new ItemIterable(client, "list-tokens", this.next);
     }
-
-    @Deprecated
-    public BasePageIterable getPageIterable(Client client) throws ChainException {
-      throw new ChainException("Deprecated");
-    }
   }
 
   /**
@@ -168,11 +163,6 @@ public class Token {
      */
     public TokenSum.ItemIterable getIterable(Client client) throws ChainException {
       return new TokenSum.ItemIterable(client, "sum-tokens", this.next);
-    }
-
-    @Deprecated
-    public BasePageIterable getPageIterable(Client client) throws ChainException {
-      throw new ChainException("Deprecated");
     }
 
     /**

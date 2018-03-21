@@ -23,13 +23,6 @@ public class Account {
   public List<String> keyIds;
 
   /**
-   * The set of keys used for signing transactions that spend from the account.
-   * @deprecated use {@link #keyIds} instead
-   */
-  @Deprecated
-  public List<Key.Handle> keys;
-
-  /**
    * The number of keys required to sign transactions that spend from the account.
    */
   public int quorum;
@@ -121,14 +114,9 @@ public class Account {
     @SerializedName("key_ids")
     private List<String> keyIds;
 
-    @SerializedName("keys")
-    @Deprecated
-    private List<Key.Handle> keys;
-
     private Map<String, Object> tags;
 
     public Builder() {
-      this.keys = new ArrayList<>();
       this.keyIds = new ArrayList<>();
     }
 

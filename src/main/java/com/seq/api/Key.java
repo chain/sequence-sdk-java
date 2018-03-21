@@ -129,28 +129,4 @@ public class Key {
       return this;
     }
   }
-
-  /**
-   * A composite key identifier, containing an ID.
-   * @deprecated this class is no longer needed
-   */
-  @Deprecated
-  public static class Handle {
-    public String id;
-
-    /**
-     * Creates a new Handle from a Key.
-     * @param k a key
-     * @return a new handle based on the provided key
-     */
-    public static Handle fromKey(Key k) {
-      Handle h = new Handle();
-
-      if (k.id != null && !k.id.equals("")) {
-        h.id = k.id;
-      }
-
-      return h;
-    }
-  }
 }

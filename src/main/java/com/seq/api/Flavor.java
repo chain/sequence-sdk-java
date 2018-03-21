@@ -22,13 +22,6 @@ public class Flavor {
   public List<String> keyIds;
 
   /**
-   * The set of keys used to sign transactions that issue the flavor.
-   * @deprecated use {@link #keyIds} instead
-   */
-  @Deprecated
-  public List<Key.Handle> keys;
-
-  /**
    * The number of keys required to sign transactions that issue the flavor.
    */
   public int quorum;
@@ -120,14 +113,9 @@ public class Flavor {
     @SerializedName("key_ids")
     private List<String> keyIds;
 
-    @SerializedName("keys")
-    @Deprecated
-    private List<Key.Handle> keys;
-
     private Integer quorum;
 
     public Builder() {
-      this.keys = new ArrayList<>();
       this.keyIds = new ArrayList<>();
     }
 

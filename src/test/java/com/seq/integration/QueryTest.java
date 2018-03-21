@@ -30,23 +30,15 @@ public class QueryTest {
   }
 
   public void testKeyQuery() throws Exception {
-    UUID idOne = UUID.randomUUID();
-    UUID idTwo = UUID.randomUUID();
-    UUID idThree = UUID.randomUUID();
-
     client = TestUtils.generateClient();
-    new Key.Builder().setId(idOne.toString()).create(client);
-    new Key.Builder().setId(idTwo.toString()).create(client);
-    new Key.Builder().setId(idThree.toString()).create(client);
+    DevUtils.reset(client);
     for (int i = 0; i < 3; i++) {
       new Key.Builder().setId(UUID.randomUUID().toString()).create(client);
     }
-    Key.Page items =
-        new Key.QueryBuilder()
-            .setIds(Arrays.asList(idOne.toString(), idTwo.toString()))
-            .addId(idThree.toString())
-            .getPage(client);
-    assertEquals(3, items.items.size());
+
+    Key.Page page = new Key.QueryBuilder().getPage(client);
+
+    assertEquals(3, page.items.size());
   }
 
   public void testAccountQuery() throws Exception {

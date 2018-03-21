@@ -29,15 +29,12 @@ public class PaginationTest {
 
   public void testKeyPageCursor() throws Exception {
     client = TestUtils.generateClient();
-
-    ArrayList<String> ids = new ArrayList<String>();
+    DevUtils.reset(client);
     for (int i = 0; i < PAGE_SIZE + 1; i++) {
-      String id = UUID.randomUUID().toString();
-      ids.add(id);
-      new Key.Builder().setId(id).create(client);
+      new Key.Builder().setId(UUID.randomUUID().toString()).create(client);
     }
+
     Key.Page page = new Key.QueryBuilder()
-      .setIds(ids)
       .setPageSize(PAGE_SIZE)
       .getPage(client);
     assertEquals(5, page.items.size());

@@ -87,29 +87,5 @@ public class Key {
     public ItemIterable getIterable(Client client) throws ChainException {
       return new ItemIterable(client, "list-keys", this.next);
     }
-
-    /**
-     * Specifies a list of ids of keys to be queried.
-     * @param ids a list of key ids
-     * @return updated builder
-     * @deprecated this method is not useful
-     */
-    @Deprecated
-    public QueryBuilder setIds(List<String> ids) {
-      this.next.ids = new ArrayList<>(ids);
-      return this;
-    }
-
-    /**
-     * Adds an id to the list of id of keys to be queried.
-     * @param id a key id
-     * @return updated builder
-     * @deprecated this method is not useful
-     */
-    @Deprecated
-    public QueryBuilder addId(String id) {
-      this.next.ids.add(id);
-      return this;
-    }
   }
 }

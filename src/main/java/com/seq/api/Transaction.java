@@ -155,27 +155,10 @@ public class Transaction {
     public String sourceAccountId;
 
     /**
-     * The tags of the account serving as the source of flavor units. Null for
-     * issuances.
-     * @deprecated use {@link #snapshot} instead
-     */
-    @Deprecated
-    @SerializedName("source_account_tags")
-    public Map<String, Object> sourceAccountTags;
-
-    /**
      * The ID of the account receiving the flavor units. Null for retirements.
      */
     @SerializedName("destination_account_id")
     public String destinationAccountId;
-
-    /**
-     * The tags of the account receiving the flavor units. Null for retirements.
-     * @deprecated use {@link #snapshot} instead
-     */
-    @Deprecated
-    @SerializedName("destination_account_tags")
-    public Map<String, Object> destinationAccountTags;
 
     /**
      * User-specified, key-value data embedded into the action.

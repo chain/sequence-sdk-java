@@ -49,6 +49,12 @@ public class ActionSum {
   public Date timestamp;
 
   /**
+   * The ID of the flavor of the tokens held by the action.
+   */
+  @SerializedName("flavor_id")
+  public String flavorId;
+
+  /**
    * The ID of the source account executing the action.
    */
   @SerializedName("source_account_id")
@@ -59,6 +65,13 @@ public class ActionSum {
    */
   @SerializedName("destination_account_id")
   public String destinationAccountId;
+
+  /**
+   * A copy of the associated tags (flavor, source account, destination account,
+   * action, and token) as they existed at the time of the transaction.
+   */
+  @SerializedName("snapshot")
+  public Action.Snapshot snapshot;
 
   /**
    * User-specified key-value data embedded in the action.

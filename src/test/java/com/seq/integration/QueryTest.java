@@ -157,7 +157,7 @@ public class QueryTest {
     key = new Key.Builder().create(client);
     String flavorId = UUID.randomUUID().toString();
     String alice = UUID.randomUUID().toString();
-    String test = UUID.randomUUID().toString();
+    String tagData = UUID.randomUUID().toString();
     String firstAccountId = "";
     String oldTime =
         new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
@@ -179,6 +179,7 @@ public class QueryTest {
         new Account.Builder()
           .setId(alice + i)
           .addKeyId(key.id)
+          .addTag("test", tagData)
           .setQuorum(1)
           .create(client);
       txBuilder.addAction(
@@ -186,7 +187,8 @@ public class QueryTest {
           .setFlavorId(flavorId)
           .setAmount(amount)
           .setDestinationAccountId(account.id)
-          .addActionTagsField("test", test));
+          .addActionTagsField("test", tagData)
+          .addTokenTagsField("test", tagData));
 
       if (i == 0) {
         firstAccountId = account.id;
@@ -199,7 +201,8 @@ public class QueryTest {
             .setAmount(5)
             .setSourceAccountId(account.id)
             .setDestinationAccountId(firstAccountId)
-            .addActionTagsField("test", test));
+            .addActionTagsField("test", tagData)
+            .addTokenTagsField("test", tagData));
       }
     }
 
@@ -207,7 +210,7 @@ public class QueryTest {
 
     Action.ItemIterable actions = new Action.ListBuilder()
       .setFilter("tags.test=$1")
-      .addFilterParameter(test)
+      .addFilterParameter(tagData)
       .getIterable(client);
     int i = 0;
     for (Action action : actions) {
@@ -218,14 +221,14 @@ public class QueryTest {
     Action.Page page =
         new Action.ListBuilder()
             .setFilter("tags.test=$1")
-            .addFilterParameter(test)
+            .addFilterParameter(tagData)
             .getPage(client);
     assertEquals(12, page.items.size());
 
     page =
         new Action.ListBuilder()
             .setFilter("tags.test=$1")
-            .addFilterParameter(test)
+            .addFilterParameter(tagData)
             .setPageSize(10)
             .getPage(client);
     assertEquals(10, page.items.size());
@@ -236,7 +239,7 @@ public class QueryTest {
     page =
         new Action.ListBuilder()
             .setFilter("tags.test=$1 AND timestamp<$2")
-            .addFilterParameter(test)
+            .addFilterParameter(tagData)
             .addFilterParameter(oldTime)
             .getPage(client);
     assertEquals(0, page.items.size());
@@ -260,7 +263,7 @@ public class QueryTest {
         new Action.SumBuilder()
             .setFilter("type=$1 AND tags.test=$2 AND timestamp<$3")
             .addFilterParameter("issue")
-            .addFilterParameter(test)
+            .addFilterParameter(tagData)
             .addFilterParameter(oldTime)
             .addGroupByField("type")
             .addGroupByField("tags.test")
@@ -287,7 +290,7 @@ public class QueryTest {
         new Action.SumBuilder()
             .setFilter("type=$1 AND tags.test=$2")
             .addFilterParameter("issue")
-            .addFilterParameter(test)
+            .addFilterParameter(tagData)
             .addGroupByField("type")
             .addGroupByField("tags.test")
             .getPage(client);
@@ -303,11 +306,33 @@ public class QueryTest {
             .setFilter("type=$1 AND tags.test=$2")
             .addFilterParameter("transfer")
             .addGroupByField("type")
-            .addFilterParameter(test)
+            .addFilterParameter(tagData)
             .getPage(client);
     as = sumPage.items.get(0);
     assertEquals(1, sumPage.items.size());
     assertEquals(10, as.amount);
+
+    sumPage =
+      new Action.SumBuilder()
+        .setFilter("type=$1 AND flavorId=$2")
+        .addFilterParameter("transfer")
+        .addFilterParameter(flavorId)
+        .addGroupByField("type")
+        .addGroupByField("flavor_id")
+        .addGroupByField("tags")
+        .addGroupByField("snapshot")
+        .getPage(client);
+    as = sumPage.items.get(0);
+    assertEquals(1, sumPage.items.size());
+    assertEquals(10, as.amount);
+    assertEquals(flavorId, as.flavorId);
+    Map<String, String> tagsField = (Map<String, String>) (as.tags);
+    assertEquals(tagData, tagsField.get("test"));
+    assertEquals(tagData, as.snapshot.actionTags.get("test"));
+    assertEquals(flavorId, as.snapshot.flavorTags.get("name"));
+    assertEquals(tagData, as.snapshot.tokenTags.get("test"));
+    assertEquals(tagData, as.snapshot.sourceAccountTags.get("test"));
+    assertEquals(tagData, as.snapshot.destinationAccountTags.get("test"));
   }
 
   public void testTokenQuery() throws Exception {

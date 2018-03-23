@@ -16,7 +16,6 @@ import static org.junit.Assert.assertTrue;
 public class QueryTest {
   static Client client;
   static Key key;
-  final static int PAGE_SIZE = 100;
 
   @Test
   public void run() throws Exception {
@@ -51,21 +50,27 @@ public class QueryTest {
       .setQuorum(1)
       .create(client);
 
-    Account.Page items =
-        new Account.QueryBuilder().setFilter("id=$1").addFilterParameter(alice).getPage(client);
+    Account.Page page =
+      new Account.QueryBuilder()
+        .setFilter("id=$1")
+        .addFilterParameter(alice)
+        .getPage(client);
 
-    assertEquals(1, items.items.size());
-    assertEquals(alice, items.items.get(0).id);
+    assertEquals(1, page.items.size());
+    assertEquals(alice, page.items.get(0).id);
 
-    Account.ItemIterable iter =
-        new Account.QueryBuilder()
-            .setFilter("id=$1")
-            .addFilterParameter(alice)
-            .getIterable(client);
+    Account.ItemIterable items =
+      new Account.QueryBuilder()
+        .setFilter("id=$1")
+        .addFilterParameter(alice)
+        .getIterable(client);
 
-    for (Account a : iter) {
+    int counter = 0;
+    for (Account a : items) {
       assertEquals(alice, a.id);
+      counter++;
     }
+    assertEquals(1, counter);
   }
 
   public void testFlavorQuery() throws Exception {
@@ -402,7 +407,7 @@ public class QueryTest {
     client = TestUtils.generateClient();
     key = new Key.Builder().create(client);
     String tag = UUID.randomUUID().toString();
-    for (int i = 0; i < PAGE_SIZE + 1; i++) {
+    for (int i = 0; i < 101; i++) {
       new Account.Builder()
         .addKeyId(key.id)
         .setQuorum(1)
@@ -410,20 +415,17 @@ public class QueryTest {
         .create(client);
     }
 
-    int counter;
-
-    // Test item iterator
     Account.ItemIterable items =
-        new Account.QueryBuilder()
-            .setFilter("tags.tag=$1")
-            .addFilterParameter(tag)
-            .getIterable(client);
+      new Account.QueryBuilder()
+        .setFilter("tags.tag=$1")
+        .addFilterParameter(tag)
+        .getIterable(client);
 
-    counter = 0;
+    int counter = 0;
     for (Account a : items) {
       assertNotNull(a.id);
       counter++;
     }
-    assertEquals(PAGE_SIZE + 1, counter);
+    assertEquals(101, counter);
   }
 }

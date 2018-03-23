@@ -12,18 +12,24 @@ public abstract class BaseItemIterable<T> implements Iterable<T> {
 
   private Client client;
   private String path;
-  private Query nextQuery;
+  private Query initialQuery;
   private final Type itemClass;
 
-  public BaseItemIterable(Client client, String path, Query nextQuery, final Type itemClass) {
+  public BaseItemIterable(Client client, String path, Query query, final Type itemClass) {
     this.client = client;
     this.path = path;
-    this.nextQuery = nextQuery;
+    this.initialQuery = query;
     this.itemClass = itemClass;
   }
 
   private BasePage<T> getPage() throws ChainException {
-    return this.client.request(this.path, this.nextQuery, this.itemClass);
+    return this.client.request(this.path, this.initialQuery, this.itemClass);
+  }
+
+  private BasePage<T> getPage(String cursor) throws ChainException {
+    Query next = new Query();
+    next.cursor = cursor;
+    return this.client.request(this.path, next, this.itemClass);
   }
 
   public Iterator<T> iterator() {
@@ -48,20 +54,25 @@ public abstract class BaseItemIterable<T> implements Iterable<T> {
         if (pos < items.size()) {
           return true;
         } else {
-          if (!lastPage) {
+          if (lastPage) {
+            return false;
+          } else {
             try {
-              BasePage<T> page = getPage();
+              BasePage<T> page;
+              if (initialQuery.cursor == null) {
+                page = getPage();
+              } else {
+                page = getPage(initialQuery.cursor);
+              }
               this.pos = 0;
               this.items = page.items;
               this.lastPage = page.lastPage;
-              nextQuery = page.next;
+              initialQuery.cursor = page.cursor;
 
               return this.items.size() > 0;
             } catch (ChainException e) {
               return false;
             }
-          } else {
-            return false;
           }
         }
       }

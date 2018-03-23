@@ -36,13 +36,6 @@ public abstract class BasePage<T> {
    */
   public String cursor;
 
-  /**
-   * Specifies the details of the next query.
-   * @deprecated use {@link #cursor} instead
-   */
-  @Deprecated
-  public Query next;
-
   public BasePage() {
     this.items = new ArrayList<>();
     this.lastPage = false;

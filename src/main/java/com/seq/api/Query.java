@@ -22,9 +22,6 @@ public class Query {
 
   public long timeout;
 
-  @Deprecated
-  public String after;
-
   @SerializedName("start_time")
   public long startTime;
 

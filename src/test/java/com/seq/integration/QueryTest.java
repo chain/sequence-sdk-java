@@ -95,7 +95,9 @@ public class QueryTest {
     String flavorId = UUID.randomUUID().toString();
     String test = UUID.randomUUID().toString();
     long amount = 100;
-
+    String before =
+      new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+        .format(new Date(System.currentTimeMillis() - 100000000000L));
     new Account.Builder()
       .setId(alice)
       .addKeyId(key.id)
@@ -116,30 +118,32 @@ public class QueryTest {
           .addActionTagsField("test", test))
       .transact(client);
 
-    Transaction.Page txs =
-        new Transaction.QueryBuilder()
-            .setFilter("actions(tags.test=$1)")
-            .addFilterParameter(test)
-            .setStartTime(System.currentTimeMillis())
-            .getPage(client);
-    assertEquals(0, txs.items.size());
+    String later =
+      new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+        .format(new Date(System.currentTimeMillis() + 100000000000L));
+    Transaction.Page page =
+      new Transaction.QueryBuilder()
+        .setFilter("actions(tags.test=$1) AND timestamp > $2")
+        .addFilterParameter(test)
+        .addFilterParameter(later)
+        .getPage(client);
+    assertEquals(0, page.items.size());
 
-    txs =
-        new Transaction.QueryBuilder()
-            .setFilter("actions(tags.test=$1)")
-            .addFilterParameter(test)
-            .setEndTime(System.currentTimeMillis() - 100000000000L)
-            .getPage(client);
-    assertEquals(0, txs.items.size());
+    page =
+      new Transaction.QueryBuilder()
+        .setFilter("actions(tags.test=$1) AND timestamp < $2")
+        .addFilterParameter(test)
+        .addFilterParameter(before)
+        .getPage(client);
+    assertEquals(0, page.items.size());
 
-    txs =
-        new Transaction.QueryBuilder()
-            .setFilter("actions(tags.test=$1)")
-            .addFilterParameter(test)
-            .getPage(client);
-    Transaction tx = txs.items.get(0);
-    assertEquals(1, txs.items.size());
-    assertEquals(test, tx.actions.get(0).tags.get("test"));
+    page =
+      new Transaction.QueryBuilder()
+        .setFilter("actions(tags.test=$1)")
+        .addFilterParameter(test)
+        .getPage(client);
+    assertEquals(1, page.items.size());
+    assertEquals(test, page.items.get(0).actions.get(0).tags.get("test"));
   }
 
   public void testActionQuery() throws Exception {

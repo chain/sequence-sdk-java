@@ -88,30 +88,6 @@ public class Transaction {
     public ItemIterable getIterable(Client client) throws ChainException {
       return new ItemIterable(client, "list-transactions", this.next);
     }
-
-    /**
-     * Specifies the timestamp of the earliest transaction to include in the query results.
-     * @param time unixtime in milliseconds
-     * @return updated builder
-     * @deprecated use "timestamp &gt;= $1" with {@link #setFilter} instead
-     */
-    @Deprecated
-    public QueryBuilder setStartTime(long time) {
-      this.next.startTime = time;
-      return this;
-    }
-
-    /**
-     * Specifies the timestamp of the most recent transaction to include in the query results.
-     * @param time unixtime in milliseconds
-     * @deprecated use "timestamp &lt;= $1" with {@link #setFilter} instead
-     * @return updated builder
-     */
-    @Deprecated
-    public QueryBuilder setEndTime(long time) {
-      this.next.endTime = time;
-      return this;
-    }
   }
 
   /**

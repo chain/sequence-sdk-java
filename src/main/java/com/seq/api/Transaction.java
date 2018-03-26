@@ -75,7 +75,9 @@ public class Transaction {
 
   /**
    * A builder class for querying transactions in the ledger.
+   * @deprecated Use {@link Transaction.ListBuilder} instead
    */
+  @Deprecated
   public static class QueryBuilder extends BaseQueryBuilder<QueryBuilder> {
     /**
      * Executes the query, returning a page of transactions.
@@ -118,7 +120,7 @@ public class Transaction {
      * @param client ledger API connection object
      * @return an iterable over pages of transactions
      * @throws ChainException
-     * @deprecated use {@link #getPage} instead
+     * @deprecated use {@link Transaction.ListBuilder#getPage} instead
      */
     @Deprecated
     public PageIterable getPageIterable(Client client) throws ChainException {
@@ -147,6 +149,57 @@ public class Transaction {
     public QueryBuilder setEndTime(long time) {
       this.next.endTime = time;
       return this;
+    }
+  }
+
+  /**
+   * A builder class for listing transactions in the ledger.
+   */
+  public static class ListBuilder extends BaseQueryBuilder<ListBuilder> {
+    /**
+     * Executes the query, returning a page of transactions.
+     * @param client ledger API connection object
+     * @return a page of transactions
+     * @throws ChainException
+     */
+    public Page getPage(Client client) throws ChainException {
+      return client.request("list-transactions", this.next, Page.class);
+    }
+
+    /**
+     * Executes the query, returning a page of transactions that match the query
+     * beginning with provided cursor.
+     * @param client ledger API connection object
+     * @param cursor string representing encoded query object
+     * @return a page of transactions
+     * @throws ChainException
+     */
+    public Page getPage(Client client, String cursor) throws ChainException {
+      Query next = new Query();
+      next.cursor = cursor;
+      return client.request("list-transactions", next, Page.class);
+    }
+
+    /**
+     * Executes the query, returning an iterable over transactions that match
+     * the query.
+     * @param client ledger API connection object
+     * @return an iterable over transactions
+     * @throws ChainException
+     */
+    public ItemIterable getIterable(Client client) throws ChainException {
+      return new ItemIterable(client, "list-transactions", this.next);
+    }
+
+    /**
+     * Not implemented, throws an exception.
+     * @param client ledger API connection object
+     * @throws ChainException
+     * @deprecated use {@link #getPage} instead
+     */
+    @Deprecated
+    public PageIterable getPageIterable(Client client) throws ChainException {
+      throw new ChainException("not implemented");
     }
   }
 

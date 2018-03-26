@@ -29,21 +29,21 @@ public class PaginationTest {
 
   public void testKeyPageCursor() throws Exception {
     client = TestUtils.generateClient();
-
+    DevUtils.reset(client);
     ArrayList<String> ids = new ArrayList<String>();
     for (int i = 0; i < PAGE_SIZE + 1; i++) {
       String id = UUID.randomUUID().toString();
       ids.add(id);
       new Key.Builder().setId(id).create(client);
     }
-    Key.Page page = new Key.QueryBuilder()
-      .setIds(ids)
+
+    Key.Page page = new Key.ListBuilder()
       .setPageSize(PAGE_SIZE)
       .getPage(client);
     assertEquals(5, page.items.size());
     assertEquals(false, page.lastPage);
 
-    Key.Page page2 = new Key.QueryBuilder()
+    Key.Page page2 = new Key.ListBuilder()
       .getPage(client, page.cursor);
     assertEquals(1, page2.items.size());
     assertEquals(true, page2.lastPage);
@@ -63,7 +63,7 @@ public class PaginationTest {
         .addTag("filter", testFilter)
         .create(client);
     }
-    Account.Page page = new Account.QueryBuilder()
+    Account.Page page = new Account.ListBuilder()
       .setFilter("tags.filter = $1")
       .setFilterParameters(Arrays.asList(testFilter))
       .setPageSize(PAGE_SIZE)
@@ -71,7 +71,7 @@ public class PaginationTest {
     assertEquals(5, page.items.size());
     assertEquals(false, page.lastPage);
 
-    Account.Page page2 = new Account.QueryBuilder()
+    Account.Page page2 = new Account.ListBuilder()
       .getPage(client, page.cursor);
     assertEquals(1, page2.items.size());
     assertEquals(true, page2.lastPage);
@@ -149,13 +149,13 @@ public class PaginationTest {
     Feed f2 = new Feed.Action.Builder().setId("zzzzy" + uuid).create(client);
     Feed f3 = new Feed.Transaction.Builder().setId("zzzzx" + uuid).create(client);
 
-    Feed.Page feeds = new Feed.QueryBuilder()
+    Feed.Page feeds = new Feed.ListBuilder()
       .setPageSize(1)
       .getPage(client);
 
     assertEquals(feeds.items.get(0).id, f1.id);
 
-    feeds = new Feed.QueryBuilder()
+    feeds = new Feed.ListBuilder()
       .getPage(client, feeds.cursor);
 
     assertEquals(feeds.items.get(0).id, f2.id);

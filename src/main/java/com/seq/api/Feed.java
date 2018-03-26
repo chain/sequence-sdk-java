@@ -266,7 +266,9 @@ public class Feed<T> implements Iterable<T> {
 
   /**
    * A builder class for querying feeds in the ledger.
+   * @deprecated Use {@link ListBuilder} instead
    */
+  @Deprecated
   public static class QueryBuilder extends BaseQueryBuilder<QueryBuilder> {
     /**
      * Executes the query, returning a page of feeds that match the query.
@@ -308,11 +310,61 @@ public class Feed<T> implements Iterable<T> {
      * @param client ledger API connection object
      * @return an iterable over pages of feeds
      * @throws ChainException
-     * @deprecated use {@link #getPage} instead
+     * @deprecated use {@link Feed.ListBuilder#getPage} instead
      */
     @Deprecated
     public PageIterable getPageIterable(Client client) throws ChainException {
       return new PageIterable(client, "list-feeds", this.next);
+    }
+  }
+
+  /**
+   * A builder class for listing feeds in the ledger.
+   */
+  public static class ListBuilder extends BaseQueryBuilder<ListBuilder> {
+    /**
+     * Executes the query, returning a page of feeds that match the query.
+     * @param client ledger API connection object
+     * @return a page of feeds
+     * @throws ChainException
+     */
+    public Page getPage(Client client) throws ChainException {
+      return client.request("list-feeds", this.next, Page.class);
+    }
+
+    /**
+     * Executes the query, returning a page of feeds that match the query
+     * beginning with provided cursor.
+     * @param client ledger API connection object
+     * @param cursor string representing encoded query object
+     * @return a page of feeds
+     * @throws ChainException
+     */
+    public Page getPage(Client client, String cursor) throws ChainException {
+      Query next = new Query();
+      next.cursor = cursor;
+      return client.request("list-feeds", next, Page.class);
+    }
+
+    /**
+     * Executes the query, returning an iterable over feeds that match the query.
+     * @param client ledger API connection object
+     * @return an iterable over feeds
+     * @throws ChainException
+     */
+    public ItemIterable getIterable(Client client) throws ChainException {
+      return new ItemIterable(client, "list-feeds", this.next);
+    }
+
+    /**
+     * Not implemented, throws an exception.
+     * @param client ledger API connection object
+     * @throws ChainException
+     * @deprecated use {@link #getPage} instead
+     */
+    @Deprecated
+    public PageIterable getPageIterable(Client client) throws ChainException {
+      throw new ChainException("not implemented");
     }
   }
 }

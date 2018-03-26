@@ -64,7 +64,9 @@ public class Flavor {
 
   /**
    * A builder class for querying flavors in the ledger.
+   * @deprecated Use {@link Flavor.ListBuilder} instead
    */
+  @Deprecated
   public static class QueryBuilder extends BaseQueryBuilder<QueryBuilder> {
     /**
      * Executes the query, returning a page of flavors that match the query.
@@ -105,11 +107,61 @@ public class Flavor {
      * @param client ledger API connection object
      * @return an iterable over pages of flavors
      * @throws ChainException
-     * @deprecated use {@link #getPage} instead
+     * @deprecated use {@link Flavor.ListBuilder#getPage} instead
      */
     @Deprecated
     public PageIterable getPageIterable(Client client) throws ChainException {
       return new PageIterable(client, "list-flavors", this.next);
+    }
+  }
+
+  /**
+   * A builder class for listing flavors in the ledger.
+   */
+  public static class ListBuilder extends BaseQueryBuilder<ListBuilder> {
+    /**
+     * Executes the query, returning a page of flavors that match the query.
+     * @param client ledger API connection object
+     * @return a page of flavors
+     * @throws ChainException
+     */
+    public Page getPage(Client client) throws ChainException {
+      return client.request("list-flavors", this.next, Page.class);
+    }
+
+    /**
+     * Executes the query, returning a page of flavors that match the query
+     * beginning with provided cursor.
+     * @param client ledger API connection object
+     * @param cursor string representing encoded query object
+     * @return a page of flavors
+     * @throws ChainException
+     */
+    public Page getPage(Client client, String cursor) throws ChainException {
+      Query next = new Query();
+      next.cursor = cursor;
+      return client.request("list-flavors", next, Page.class);
+    }
+
+    /**
+     * Executes the query, returning an iterable over flavors that match the query
+     * @param client ledger API connection object
+     * @return an iterable over flavors
+     * @throws ChainException
+     */
+    public ItemIterable getIterable(Client client) throws ChainException {
+      return new ItemIterable(client, "list-flavors", this.next);
+    }
+
+    /**
+     * Not implemented, throws an exception.
+     * @param client ledger API connection object
+     * @throws ChainException
+     * @deprecated use {@link #getPage} instead
+     */
+    @Deprecated
+    public PageIterable getPageIterable(Client client) throws ChainException {
+      throw new ChainException("not implemented");
     }
   }
 

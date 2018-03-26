@@ -72,7 +72,9 @@ public class Account {
 
   /**
    * A builder class for querying accounts in the ledger.
+   * @deprecated Use {@link Account.ListBuilder} instead
    */
+  @Deprecated
   public static class QueryBuilder extends BaseQueryBuilder<QueryBuilder> {
     /**
      * Executes the query, returning a page of accounts that match the query.
@@ -113,11 +115,61 @@ public class Account {
      * @param client ledger API connection object
      * @return an iterable over pages of accounts
      * @throws ChainException
-     * @deprecated use {@link #getPage} instead
+     * @deprecated use {@link Account.ListBuilder#getPage} instead
      */
     @Deprecated
     public PageIterable getPageIterable(Client client) throws ChainException {
       return new PageIterable(client, "list-accounts", this.next);
+    }
+  }
+
+  /**
+   * A builder class for listing accounts in the ledger.
+   */
+  public static class ListBuilder extends BaseQueryBuilder<ListBuilder> {
+    /**
+     * Executes the query, returning a page of accounts that match the query.
+     * @param client ledger API connection object
+     * @return a page of accounts
+     * @throws ChainException
+     */
+    public Page getPage(Client client) throws ChainException {
+      return client.request("list-accounts", this.next, Page.class);
+    }
+
+    /**
+     * Executes the query, returning a page of accounts that match the query
+     * beginning with provided cursor.
+     * @param client ledger API connection object
+     * @param cursor string representing encoded query object
+     * @return a page of accounts
+     * @throws ChainException
+     */
+    public Page getPage(Client client, String cursor) throws ChainException {
+      Query next = new Query();
+      next.cursor = cursor;
+      return client.request("list-accounts", next, Page.class);
+    }
+
+    /**
+     * Executes the query, returning an iterable over accounts that match the query.
+     * @param client ledger API connection object
+     * @return an iterable over accounts
+     * @throws ChainException
+     */
+    public ItemIterable getIterable(Client client) throws ChainException {
+      return new ItemIterable(client, "list-accounts", this.next);
+    }
+
+    /**
+     * Not implemented, throws an exception.
+     * @param client ledger API connection object
+     * @throws ChainException
+     * @deprecated use {@link #getPage} instead
+     */
+    @Deprecated
+    public PageIterable getPageIterable(Client client) throws ChainException {
+      throw new ChainException("not implemented");
     }
   }
 

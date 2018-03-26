@@ -1,6 +1,6 @@
 # Sequence Java SDK changelog
 
-## 1.5.2 (20180321)
+## 1.5.2 (201803??)
 
 * The `assetTags`, `sourceAccountTags`, and `destinationAccountTags` properties
   on `ActionSum` have been deprecated; the new property is `snapshot`.
@@ -15,6 +15,8 @@
   `Key.PageIterable`, and `Transaction.PageIterable` have been deprecated;
   seee [Pagination](https://dashboard.seq.com/docs/pagination) for new
   interfaces.
+* `QueryBuilder` classes on `Action`, `Feed`, `Flavor`, `Key`, and `Transaction`
+  have been deprecated; use `ListBuilder` instead.
 
 ## 1.5.1 (20180320)
 

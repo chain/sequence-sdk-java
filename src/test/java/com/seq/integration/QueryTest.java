@@ -32,23 +32,15 @@ public class QueryTest {
   }
 
   public void testKeyQuery() throws Exception {
-    UUID idOne = UUID.randomUUID();
-    UUID idTwo = UUID.randomUUID();
-    UUID idThree = UUID.randomUUID();
-
     client = TestUtils.generateClient();
-    new Key.Builder().setId(idOne.toString()).create(client);
-    new Key.Builder().setId(idTwo.toString()).create(client);
-    new Key.Builder().setId(idThree.toString()).create(client);
+    DevUtils.reset(client);
     for (int i = 0; i < 3; i++) {
       new Key.Builder().setId(UUID.randomUUID().toString()).create(client);
     }
-    Key.Page items =
-        new Key.QueryBuilder()
-            .setIds(Arrays.asList(idOne.toString(), idTwo.toString()))
-            .addId(idThree.toString())
-            .getPage(client);
-    assertEquals(3, items.items.size());
+
+    Key.Page page = new Key.ListBuilder().getPage(client);
+
+    assertEquals(3, page.items.size());
   }
 
   public void testAccountQuery() throws Exception {
@@ -61,30 +53,23 @@ public class QueryTest {
       .setQuorum(1)
       .create(client);
 
-    Account.Page items =
-        new Account.QueryBuilder().setFilter("id=$1").addFilterParameter(alice).getPage(client);
+    Account.Page page =
+      new Account.ListBuilder()
+        .setFilter("id=$1")
+        .addFilterParameter(alice)
+        .getPage(client);
 
-    assertEquals(1, items.items.size());
-    assertEquals(alice, items.items.get(0).id);
+    assertEquals(1, page.items.size());
+    assertEquals(alice, page.items.get(0).id);
 
     Account.ItemIterable iter =
-        new Account.QueryBuilder()
+        new Account.ListBuilder()
             .setFilter("id=$1")
             .addFilterParameter(alice)
             .getIterable(client);
 
     for (Account a : iter) {
       assertEquals(alice, a.id);
-    }
-
-    Account.PageIterable piter =
-        new Account.QueryBuilder()
-            .setFilter("alias=$1")
-            .addFilterParameter(alice)
-            .getPageIterable(client);
-
-    for (Account.Page p : piter) {
-      assertEquals(alice, p.items.get(0).id);
     }
   }
 
@@ -108,14 +93,20 @@ public class QueryTest {
       .addKeyId(key.id)
       .setQuorum(1)
       .create(client);
-    Flavor.Page items =
-        new Flavor.QueryBuilder().setFilter("id=$1").addFilterParameter(flavor).getPage(client);
-    assertEquals(1, items.items.size());
-    assertEquals(flavor, items.items.get(0).id);
+
+    Flavor.Page page =
+      new Flavor.ListBuilder()
+        .setFilter("id=$1")
+        .addFilterParameter(flavor)
+        .getPage(client);
+
+    assertEquals(1, page.items.size());
+    assertEquals(flavor, page.items.get(0).id);
   }
 
   public void testTransactionQuery() throws Exception {
     client = TestUtils.generateClient();
+    DevUtils.reset(client);
     key = new Key.Builder().create(client);
     String alice = UUID.randomUUID().toString();
     String asset = UUID.randomUUID().toString();
@@ -142,39 +133,13 @@ public class QueryTest {
         .addReferenceDataField("test", test)
         .transact(client);
 
-    Transaction.Page txs =
-        new Transaction.QueryBuilder()
-            .setFilter("reference_data.test=$1")
-            .addFilterParameter(test)
-            .setStartTime(System.currentTimeMillis())
-            .getPage(client);
-    assertEquals(0, txs.items.size());
-
-    txs =
-        new Transaction.QueryBuilder()
-            .setFilter("reference_data.test=$1")
-            .addFilterParameter(test)
-            .setEndTime(System.currentTimeMillis() - 100000000000L)
-            .getPage(client);
-    assertEquals(0, txs.items.size());
-
-    txs =
-        new Transaction.QueryBuilder()
+    Transaction.Page page =
+        new Transaction.ListBuilder()
             .setFilter("contracts(reference_data.test=$1)")
             .addFilterParameter(test)
             .getPage(client);
-    Transaction tx = txs.items.get(0);
-    assertEquals(1, txs.items.size());
-    assertEquals(asset, tx.referenceData.get("asset"));
-    assertEquals(test, tx.referenceData.get("test"));
-
-    txs =
-        new Transaction.QueryBuilder()
-            .setFilter("reference_data.test=$1")
-            .addFilterParameter(test)
-            .getPage(client);
-    tx = txs.items.get(0);
-    assertEquals(1, txs.items.size());
+    Transaction tx = page.items.get(0);
+    assertEquals(1, page.items.size());
     assertEquals(asset, tx.referenceData.get("asset"));
     assertEquals(test, tx.referenceData.get("test"));
   }
@@ -575,7 +540,7 @@ public class QueryTest {
 
     // Test item iterator
     Account.ItemIterable items =
-        new Account.QueryBuilder()
+        new Account.ListBuilder()
             .setFilter("tags.tag=$1")
             .addFilterParameter(tag)
             .getIterable(client);
@@ -584,25 +549,6 @@ public class QueryTest {
     for (Account a : items) {
       assertNotNull(a.id);
       counter++;
-    }
-    assertEquals(PAGE_SIZE + 1, counter);
-
-    // Test page iterator
-    Account.PageIterable pages =
-        new Account.QueryBuilder()
-            .setFilter("tags.tag=$1")
-            .addFilterParameter(tag)
-            .getPageIterable(client);
-
-    counter = 0;
-    Boolean checkedFirstPage = false;
-    for (Account.Page p : pages) {
-      assertNotNull(p.items.get(0).id);
-      if (!checkedFirstPage) {
-        assertEquals(PAGE_SIZE, p.items.size());
-        checkedFirstPage = true;
-      }
-      counter = counter + p.items.size();
     }
     assertEquals(PAGE_SIZE + 1, counter);
   }

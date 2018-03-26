@@ -79,7 +79,9 @@ public class Key {
 
   /**
    * A builder class for querying keys in the ledger.
+   * @deprecated Use {@link Key.ListBuilder} instead
    */
+  @Deprecated
   public static class QueryBuilder extends BaseQueryBuilder<QueryBuilder> {
     /**
      * Executes the query, returning a page of keys that match the query.
@@ -121,7 +123,7 @@ public class Key {
      * @param client ledger API connection object
      * @return an iterable over pages of keys
      * @throws ChainException
-     * @deprecated use {@link #getPage} instead
+     * @deprecated use {@link Key.ListBuilder#getPage} instead
      */
     @Deprecated
     public PageIterable getPageIterable(Client client) throws ChainException {
@@ -174,6 +176,56 @@ public class Key {
     public QueryBuilder addAlias(String alias) {
       this.next.aliases.add(alias);
       return this;
+    }
+  }
+
+  /**
+   * A builder class for listing keys in the ledger.
+   */
+  public static class ListBuilder extends BaseQueryBuilder<ListBuilder> {
+    /**
+     * Executes the query, returning a page of keys that match the query.
+     * @param client ledger API connection object
+     * @return a page of keys
+     * @throws ChainException
+     */
+    public Page getPage(Client client) throws ChainException {
+      return client.request("list-keys", this.next, Page.class);
+    }
+
+    /**
+     * Executes the query, returning a page of keys that match the query
+     * beginning with provided cursor.
+     * @param client ledger API connection object
+     * @param cursor string representing encoded query object
+     * @return a page of keys
+     * @throws ChainException
+     */
+    public Page getPage(Client client, String cursor) throws ChainException {
+      Query next = new Query();
+      next.cursor = cursor;
+      return client.request("list-keys", next, Page.class);
+    }
+
+    /**
+     * Executes the query, returning an iterable over keys that match the query.
+     * @param client ledger API connection object
+     * @return an iterable over keys
+     * @throws ChainException
+     */
+    public ItemIterable getIterable(Client client) throws ChainException {
+      return new ItemIterable(client, "list-keys", this.next);
+    }
+
+    /**
+     * Not implemented, throws an exception.
+     * @param client ledger API connection object
+     * @throws ChainException
+     * @deprecated use {@link #getPage} instead
+     */
+    @Deprecated
+    public PageIterable getPageIterable(Client client) throws ChainException {
+      throw new ChainException("not implemented");
     }
   }
 

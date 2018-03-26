@@ -1,5 +1,16 @@
 # Sequence Java SDK changelog
 
+## 1.5.2 (201803??)
+
+* The `assetTags`, `sourceAccountTags`, and `destinationAccountTags` properties
+  on `ActionSum` have been deprecated; the new property is `snapshot`.
+  Use `snapshot.FlavorTags` instead of `assetTags`.
+  Use `snapshot.SourceAccountTags` and `snapshot.destinationAccountTags`.
+* The `referenceData` property on `ActionSum` has been deprecated; the new
+  property is `tags`.
+* The `assetAlias` and `assetId` properties on `ActionSum` have been deprecated;
+  the new property is `flavorId`.
+
 ## 1.5.1 (20180320)
 
 * The `addKeyById` method on `Account.Builder` and `Flavor.Builder` has been

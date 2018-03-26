@@ -185,7 +185,7 @@ public class QueryTest {
     key = new Key.Builder().create(client);
     String asset = UUID.randomUUID().toString();
     String alice = UUID.randomUUID().toString();
-    String test = UUID.randomUUID().toString();
+    String tagData = UUID.randomUUID().toString();
     String firstAccountId = "";
     String oldTime =
         new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
@@ -207,6 +207,7 @@ public class QueryTest {
         new Account.Builder()
           .setId(alice + i)
           .addKeyId(key.id)
+          .addTag("test", tagData)
           .setQuorum(1)
           .create(client);
       txBuilder.addAction(
@@ -214,7 +215,8 @@ public class QueryTest {
               .setAssetAlias(asset)
               .setAmount(amount)
               .setDestinationAccountId(account.id)
-              .addReferenceDataField("test", test));
+              .addActionTagsField("test", tagData)
+              .addTokenTagsField("test", tagData));
 
       if (i == 0) {
         firstAccountId = account.id;
@@ -227,15 +229,16 @@ public class QueryTest {
                 .setAmount(5)
                 .setSourceAccountId(account.id)
                 .setDestinationAccountId(firstAccountId)
-                .addReferenceDataField("test", test));
+                .addActionTagsField("test", tagData)
+                .addTokenTagsField("test", tagData));
       }
     }
 
     txBuilder.transact(client);
 
     Action.ItemIterable actions = new Action.ListBuilder()
-      .setFilter("reference_data.test=$1")
-      .addFilterParameter(test)
+      .setFilter("tags.test=$1")
+      .addFilterParameter(tagData)
       .getIterable(client);
     int i = 0;
     for (Action action : actions) {
@@ -245,15 +248,15 @@ public class QueryTest {
 
     Action.Page page =
         new Action.ListBuilder()
-            .setFilter("reference_data.test=$1")
-            .addFilterParameter(test)
+            .setFilter("tags.test=$1")
+            .addFilterParameter(tagData)
             .getPage(client);
     assertEquals(12, page.items.size());
 
     page =
         new Action.ListBuilder()
-            .setFilter("reference_data.test=$1")
-            .addFilterParameter(test)
+            .setFilter("tags.test=$1")
+            .addFilterParameter(tagData)
             .setPageSize(10)
             .getPage(client);
     assertEquals(10, page.items.size());
@@ -263,8 +266,8 @@ public class QueryTest {
 
     page =
         new Action.ListBuilder()
-            .setFilter("reference_data.test=$1 AND timestamp<$2")
-            .addFilterParameter(test)
+            .setFilter("tags.test=$1 AND timestamp<$2")
+            .addFilterParameter(tagData)
             .addFilterParameter(oldTime)
             .getPage(client);
     assertEquals(0, page.items.size());
@@ -286,12 +289,12 @@ public class QueryTest {
 
     ActionSum.Page sumPage =
         new Action.SumBuilder()
-            .setFilter("type=$1 AND reference_data.test=$2 AND timestamp<$3")
+            .setFilter("type=$1 AND tags.test=$2 AND timestamp<$3")
             .addFilterParameter("issue")
-            .addFilterParameter(test)
+            .addFilterParameter(tagData)
             .addFilterParameter(oldTime)
             .addGroupByField("type")
-            .addGroupByField("reference_data.test")
+            .addGroupByField("tags.test")
             .getPage(client);
     assertEquals(0, sumPage.items.size());
 
@@ -313,25 +316,25 @@ public class QueryTest {
 
     sumPage =
         new Action.SumBuilder()
-            .setFilter("type=$1 AND reference_data.test=$2")
+            .setFilter("type=$1 AND tags.test=$2")
             .addFilterParameter("issue")
-            .addFilterParameter(test)
+            .addFilterParameter(tagData)
             .addGroupByField("type")
-            .addGroupByField("reference_data.test")
+            .addGroupByField("tags.test")
             .getPage(client);
     ActionSum as = sumPage.items.get(0);
     assertEquals(1, sumPage.items.size());
     assertEquals(1000, as.amount);
-    assertNotNull(as.referenceData);
-    Map<String, String> nestedField = (Map<String, String>) (as.referenceData);
+    assertNotNull(as.tags);
+    Map<String, String> nestedField = (Map<String, String>) (as.tags);
     assertNotNull(nestedField.get("test"));
 
     sumPage =
         new Action.SumBuilder()
-            .setFilter("type=$1 AND reference_data.test=$2")
+            .setFilter("type=$1 AND tags.test=$2")
             .addFilterParameter("transfer")
             .addGroupByField("type")
-            .addFilterParameter(test)
+            .addFilterParameter(tagData)
             .getPage(client);
     as = sumPage.items.get(0);
     assertEquals(1, sumPage.items.size());
@@ -344,11 +347,20 @@ public class QueryTest {
             .addFilterParameter(asset)
             .addGroupByField("type")
             .addGroupByField("flavor_id")
+            .addGroupByField("tags")
+            .addGroupByField("snapshot")
             .getPage(client);
     as = sumPage.items.get(0);
     assertEquals(1, sumPage.items.size());
     assertEquals(10, as.amount);
     assertEquals(asset, as.flavorId);
+    Map<String, String> tagsField = (Map<String, String>) (as.tags);
+    assertEquals(tagData, tagsField.get("test"));
+    assertEquals(tagData, as.snapshot.actionTags.get("test"));
+    assertEquals(asset, as.snapshot.flavorTags.get("name"));
+    assertEquals(tagData, as.snapshot.tokenTags.get("test"));
+    assertEquals(tagData, as.snapshot.sourceAccountTags.get("test"));
+    assertEquals(tagData, as.snapshot.destinationAccountTags.get("test"));
   }
 
   public void testTokenQuery() throws Exception {

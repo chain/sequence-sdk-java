@@ -85,8 +85,10 @@ public class ActionSum {
 
   /**
    * The tags of the source account executing the action.
+   * @deprecated Use {@link #snapshot} instead.
    */
   @SerializedName("source_account_tags")
+  @Deprecated
   public Map<String, Object> sourceAccountTags;
 
   /**
@@ -97,15 +99,32 @@ public class ActionSum {
 
   /**
    * The tags of the destination account affected by the action.
+   * @deprecated Use {@link #snapshot} instead.
    */
   @SerializedName("destination_account_tags")
+  @Deprecated
   public Map<String, Object> destinationAccountTags;
 
   /**
    * User-specified key-value data embedded in the action.
+   * @deprecated Use {@link #tags} instead.
    */
   @SerializedName("reference_data")
+  @Deprecated
   public Object referenceData;
+
+  /**
+   * A copy of the associated tags (flavor, source account, destination account,
+   * action, and token) as they existed at the time of the transaction.
+   */
+  @SerializedName("snapshot")
+  public Action.Snapshot snapshot;
+
+  /**
+   * User-specified key-value data embedded in the action.
+   */
+  @SerializedName("tags")
+  public Object tags;
 
   /**
    * A single page of actions returned from a query.

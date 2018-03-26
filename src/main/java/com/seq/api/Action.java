@@ -177,7 +177,6 @@ public class Action {
     public Map<String, Object> tokenTags;
   }
 
-
   /**
    * A single page of actions returned from a query.
    */

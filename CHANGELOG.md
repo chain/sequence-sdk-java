@@ -1,6 +1,6 @@
 # Sequence Java SDK changelog
 
-## 1.5.2 (201803??)
+## 1.5.2 (20180321)
 
 * The `assetTags`, `sourceAccountTags`, and `destinationAccountTags` properties
   on `ActionSum` have been deprecated; the new property is `snapshot`.

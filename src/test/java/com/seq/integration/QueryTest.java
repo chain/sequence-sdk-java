@@ -336,6 +336,19 @@ public class QueryTest {
     as = sumPage.items.get(0);
     assertEquals(1, sumPage.items.size());
     assertEquals(10, as.amount);
+
+    sumPage =
+        new Action.SumBuilder()
+            .setFilter("type=$1 AND flavorId=$2")
+            .addFilterParameter("transfer")
+            .addFilterParameter(asset)
+            .addGroupByField("type")
+            .addGroupByField("flavor_id")
+            .getPage(client);
+    as = sumPage.items.get(0);
+    assertEquals(1, sumPage.items.size());
+    assertEquals(10, as.amount);
+    assertEquals(asset, as.flavorId);
   }
 
   public void testTokenQuery() throws Exception {

@@ -49,20 +49,31 @@ public class ActionSum {
   public Date timestamp;
 
   /**
+   * The ID of the flavor of the tokens held by the action.
+   */
+  @SerializedName("flavor_id")
+  public String flavorId;
+
+  /**
    * The ID of the asset held by the action.
+   * @deprecated Use {@link #flavorId} instead.
    */
   @SerializedName("asset_id")
+  @Deprecated
   public String assetId;
 
   /**
    * The alias of the asset held by the action.
+   * @deprecated Use {@link #flavorId} instead.
    */
+  @Deprecated
   @SerializedName("asset_alias")
   public String assetAlias;
 
   /**
    * The tags of the asset held by the action.
    */
+  @Deprecated
   @SerializedName("asset_tags")
   public Map<String, Object> assetTags;
 

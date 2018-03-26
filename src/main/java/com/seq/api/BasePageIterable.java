@@ -6,6 +6,7 @@ import com.seq.http.Client;
 import java.lang.reflect.Type;
 import java.util.Iterator;
 
+@Deprecated
 public abstract class BasePageIterable<T extends BasePage> implements Iterable<T> {
 
   private Client client;

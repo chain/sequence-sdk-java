@@ -143,6 +143,7 @@ public class ActionSum {
   /**
    * Iterable interface for consuming pages of actions from a query.
    */
+  @Deprecated
   public static class PageIterable extends BasePageIterable<Page> {
     public PageIterable(Client client, String path, Query nextQuery) {
       super(client, path, nextQuery, Page.class);

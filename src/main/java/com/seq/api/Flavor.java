@@ -55,6 +55,7 @@ public class Flavor {
   /**
    * Iterable interface for consuming pages of flavors from a query.
    */
+  @Deprecated
   public static class PageIterable extends BasePageIterable<Page> {
     public PageIterable(Client client, String path, Query nextQuery) {
       super(client, path, nextQuery, Page.class);
@@ -104,7 +105,9 @@ public class Flavor {
      * @param client ledger API connection object
      * @return an iterable over pages of flavors
      * @throws ChainException
+     * @deprecated use {@link #getPage} instead
      */
+    @Deprecated
     public PageIterable getPageIterable(Client client) throws ChainException {
       return new PageIterable(client, "list-flavors", this.next);
     }

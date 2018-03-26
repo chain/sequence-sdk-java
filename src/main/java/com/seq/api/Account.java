@@ -63,6 +63,7 @@ public class Account {
   /**
    * Iterable interface for consuming pages of accounts from a query.
    */
+  @Deprecated
   public static class PageIterable extends BasePageIterable<Page> {
     public PageIterable(Client client, String path, Query nextQuery) {
       super(client, path, nextQuery, Page.class);
@@ -112,7 +113,9 @@ public class Account {
      * @param client ledger API connection object
      * @return an iterable over pages of accounts
      * @throws ChainException
+     * @deprecated use {@link #getPage} instead
      */
+    @Deprecated
     public PageIterable getPageIterable(Client client) throws ChainException {
       return new PageIterable(client, "list-accounts", this.next);
     }

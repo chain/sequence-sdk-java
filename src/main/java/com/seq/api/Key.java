@@ -70,6 +70,7 @@ public class Key {
     }
   }
 
+  @Deprecated
   public static class PageIterable extends BasePageIterable<Page> {
     public PageIterable(Client client, String path, Query nextQuery) {
       super(client, path, nextQuery, Page.class);
@@ -120,7 +121,9 @@ public class Key {
      * @param client ledger API connection object
      * @return an iterable over pages of keys
      * @throws ChainException
+     * @deprecated use {@link #getPage} instead
      */
+    @Deprecated
     public PageIterable getPageIterable(Client client) throws ChainException {
       return new PageIterable(client, "list-keys", this.next);
     }

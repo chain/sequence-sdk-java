@@ -257,6 +257,7 @@ public class Feed<T> implements Iterable<T> {
     }
   }
 
+  @Deprecated
   public static class PageIterable extends BasePageIterable<Page> {
     public PageIterable(Client client, String path, Query nextQuery) {
       super(client, path, nextQuery, Page.class);
@@ -307,7 +308,9 @@ public class Feed<T> implements Iterable<T> {
      * @param client ledger API connection object
      * @return an iterable over pages of feeds
      * @throws ChainException
+     * @deprecated use {@link #getPage} instead
      */
+    @Deprecated
     public PageIterable getPageIterable(Client client) throws ChainException {
       return new PageIterable(client, "list-feeds", this.next);
     }

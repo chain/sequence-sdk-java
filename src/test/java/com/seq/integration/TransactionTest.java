@@ -50,13 +50,13 @@ public class TransactionTest {
                     .setDestinationAccountId(alice)
                     .addActionTagsField("test", test))
             .transact(client);
-    Transaction.Page txs =
-        new Transaction.QueryBuilder()
+    Transaction.Page page =
+        new Transaction.ListBuilder()
             .setFilter("id=$1")
             .addFilterParameter(resp.id)
             .getPage(client);
-    Transaction tx = txs.items.get(0);
-    assertEquals(1, txs.items.size());
+    Transaction tx = page.items.get(0);
+    assertEquals(1, page.items.size());
 
     resp =
         new Transaction.Builder()
@@ -68,13 +68,13 @@ public class TransactionTest {
                     .setDestinationAccountId(bob)
                     .addActionTagsField("test", test))
             .transact(client);
-    txs =
-        new Transaction.QueryBuilder()
+    page =
+        new Transaction.ListBuilder()
             .setFilter("id=$1")
             .addFilterParameter(resp.id)
             .getPage(client);
-    tx = txs.items.get(0);
-    assertEquals(1, txs.items.size());
+    tx = page.items.get(0);
+    assertEquals(1, page.items.size());
 
     new Transaction.Builder()
         .addAction(
@@ -84,12 +84,12 @@ public class TransactionTest {
                 .setAmount(5)
                 .addActionTagsField("test", test))
         .transact(client);
-    txs =
-        new Transaction.QueryBuilder()
+    page =
+        new Transaction.ListBuilder()
             .setFilter("actions(tags.test=$1)")
             .addFilterParameter(test)
             .getPage(client);
-    assertEquals(3, txs.items.size());
+    assertEquals(3, page.items.size());
   }
 
   public void testMultiSigTransaction() throws Exception {
@@ -169,13 +169,13 @@ public class TransactionTest {
                     .addTokenTagsField("test", test))
             .transact(client);
 
-    Transaction.Page txs =
-        new Transaction.QueryBuilder()
+    Transaction.Page page =
+        new Transaction.ListBuilder()
             .setFilter("id=$1")
             .addFilterParameter(resp.id)
             .getPage(client);
 
-    assertEquals(1, txs.items.size());
+    assertEquals(1, page.items.size());
 
     resp =
         new Transaction.Builder()

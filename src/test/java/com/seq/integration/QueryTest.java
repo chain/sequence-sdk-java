@@ -35,7 +35,7 @@ public class QueryTest {
       new Key.Builder().setId(UUID.randomUUID().toString()).create(client);
     }
 
-    Key.Page page = new Key.QueryBuilder().getPage(client);
+    Key.Page page = new Key.ListBuilder().getPage(client);
 
     assertEquals(3, page.items.size());
   }
@@ -51,7 +51,7 @@ public class QueryTest {
       .create(client);
 
     Account.Page page =
-      new Account.QueryBuilder()
+      new Account.ListBuilder()
         .setFilter("id=$1")
         .addFilterParameter(alice)
         .getPage(client);
@@ -60,7 +60,7 @@ public class QueryTest {
     assertEquals(alice, page.items.get(0).id);
 
     Account.ItemIterable items =
-      new Account.QueryBuilder()
+      new Account.ListBuilder()
         .setFilter("id=$1")
         .addFilterParameter(alice)
         .getIterable(client);
@@ -83,14 +83,14 @@ public class QueryTest {
       .setQuorum(1)
       .create(client);
 
-    Flavor.Page items =
-        new Flavor.QueryBuilder()
+    Flavor.Page page =
+        new Flavor.ListBuilder()
         .setFilter("id=$1")
         .addFilterParameter(flavorId)
         .getPage(client);
 
-    assertEquals(1, items.items.size());
-    assertEquals(flavorId, items.items.get(0).id);
+    assertEquals(1, page.items.size());
+    assertEquals(flavorId, page.items.get(0).id);
   }
 
   public void testTransactionQuery() throws Exception {
@@ -127,7 +127,7 @@ public class QueryTest {
       new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
         .format(new Date(System.currentTimeMillis() + 100000000000L));
     Transaction.Page page =
-      new Transaction.QueryBuilder()
+      new Transaction.ListBuilder()
         .setFilter("actions(tags.test=$1) AND timestamp > $2")
         .addFilterParameter(test)
         .addFilterParameter(later)
@@ -135,7 +135,7 @@ public class QueryTest {
     assertEquals(0, page.items.size());
 
     page =
-      new Transaction.QueryBuilder()
+      new Transaction.ListBuilder()
         .setFilter("actions(tags.test=$1) AND timestamp < $2")
         .addFilterParameter(test)
         .addFilterParameter(before)
@@ -143,7 +143,7 @@ public class QueryTest {
     assertEquals(0, page.items.size());
 
     page =
-      new Transaction.QueryBuilder()
+      new Transaction.ListBuilder()
         .setFilter("actions(tags.test=$1)")
         .addFilterParameter(test)
         .getPage(client);
@@ -441,7 +441,7 @@ public class QueryTest {
     }
 
     Account.ItemIterable items =
-      new Account.QueryBuilder()
+      new Account.ListBuilder()
         .setFilter("tags.tag=$1")
         .addFilterParameter(tag)
         .getIterable(client);

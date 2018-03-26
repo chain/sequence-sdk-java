@@ -47,9 +47,9 @@ public class Account {
   }
 
   /**
-   * A builder class for querying accounts in the ledger.
+   * A builder class for listing accounts in the ledger.
    */
-  public static class QueryBuilder extends BaseQueryBuilder<QueryBuilder> {
+  public static class ListBuilder extends BaseQueryBuilder<ListBuilder> {
     /**
      * Executes the query, returning a page of accounts that match the query.
      * @param client ledger API connection object

@@ -14,6 +14,13 @@
   property is `tags`.
 * The `assetAlias` and `assetId` properties on `ActionSum` have been deprecated;
   the new property is `flavorId`.
+* `BasePageIterable` and its subclasses `Account.PageIterable`,
+  `ActionSum.PageIterable`, `Feed.PageIterable`, `Flavor.PageIterable`,
+  `Key.PageIterable`, and `Transaction.PageIterable` have been deprecated;
+  seee [Pagination](https://dashboard.seq.com/docs/pagination) for new
+  interfaces.
+* `QueryBuilder` classes on `Action`, `Feed`, `Flavor`, `Key`, and `Transaction`
+  have been deprecated; use `ListBuilder` instead.
 
 ## 1.5.1 (20180320)
 

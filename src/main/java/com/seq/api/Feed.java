@@ -258,9 +258,9 @@ public class Feed<T> implements Iterable<T> {
   }
 
   /**
-   * A builder class for querying feeds in the ledger.
+   * A builder class for listing feeds in the ledger.
    */
-  public static class QueryBuilder extends BaseQueryBuilder<QueryBuilder> {
+  public static class ListBuilder extends BaseQueryBuilder<ListBuilder> {
     /**
      * Executes the query, returning a page of feeds that match the query.
      * @param client ledger API connection object

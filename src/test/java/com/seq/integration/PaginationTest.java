@@ -34,13 +34,13 @@ public class PaginationTest {
       new Key.Builder().setId(UUID.randomUUID().toString()).create(client);
     }
 
-    Key.Page page = new Key.QueryBuilder()
+    Key.Page page = new Key.ListBuilder()
       .setPageSize(PAGE_SIZE)
       .getPage(client);
     assertEquals(5, page.items.size());
     assertEquals(false, page.lastPage);
 
-    Key.Page page2 = new Key.QueryBuilder()
+    Key.Page page2 = new Key.ListBuilder()
       .getPage(client, page.cursor);
     assertEquals(1, page2.items.size());
     assertEquals(true, page2.lastPage);
@@ -60,7 +60,7 @@ public class PaginationTest {
         .addTag("filter", testFilter)
         .create(client);
     }
-    Account.Page page = new Account.QueryBuilder()
+    Account.Page page = new Account.ListBuilder()
       .setFilter("tags.filter = $1")
       .setFilterParameters(Arrays.asList(testFilter))
       .setPageSize(PAGE_SIZE)
@@ -68,7 +68,7 @@ public class PaginationTest {
     assertEquals(5, page.items.size());
     assertEquals(false, page.lastPage);
 
-    Account.Page page2 = new Account.QueryBuilder()
+    Account.Page page2 = new Account.ListBuilder()
       .getPage(client, page.cursor);
     assertEquals(1, page2.items.size());
     assertEquals(true, page2.lastPage);
@@ -88,7 +88,7 @@ public class PaginationTest {
         .addTag("filter", testFilter)
         .create(client);
     }
-    Flavor.Page page = new Flavor.QueryBuilder()
+    Flavor.Page page = new Flavor.ListBuilder()
       .setFilter("tags.filter = $1")
       .setFilterParameters(Arrays.asList(testFilter))
       .setPageSize(PAGE_SIZE)
@@ -96,7 +96,7 @@ public class PaginationTest {
     assertEquals(5, page.items.size());
     assertEquals(false, page.lastPage);
 
-    Flavor.Page page2 = new Flavor.QueryBuilder()
+    Flavor.Page page2 = new Flavor.ListBuilder()
       .getPage(client, page.cursor);
     assertEquals(1, page2.items.size());
     assertEquals(true, page2.lastPage);
@@ -122,7 +122,7 @@ public class PaginationTest {
                   .addActionTagsField("filter", testFilter))
           .transact(client);
     }
-    Transaction.Page page = new Transaction.QueryBuilder()
+    Transaction.Page page = new Transaction.ListBuilder()
       .setFilter("actions(tags.filter = $1)")
       .setFilterParameters(Arrays.asList(testFilter))
       .setPageSize(PAGE_SIZE)
@@ -130,7 +130,7 @@ public class PaginationTest {
     assertEquals(5, page.items.size());
     assertEquals(false, page.lastPage);
 
-    Transaction.Page page2 = new Transaction.QueryBuilder()
+    Transaction.Page page2 = new Transaction.ListBuilder()
       .getPage(client, page.cursor);
     assertEquals(1, page2.items.size());
     assertEquals(true, page2.lastPage);
@@ -146,13 +146,13 @@ public class PaginationTest {
     Feed f2 = new Feed.Action.Builder().setId("zzzzy" + uuid).create(client);
     Feed f3 = new Feed.Transaction.Builder().setId("zzzzx" + uuid).create(client);
 
-    Feed.Page feeds = new Feed.QueryBuilder()
+    Feed.Page feeds = new Feed.ListBuilder()
       .setPageSize(1)
       .getPage(client);
 
     assertEquals(feeds.items.get(0).id, f1.id);
 
-    feeds = new Feed.QueryBuilder()
+    feeds = new Feed.ListBuilder()
       .getPage(client, feeds.cursor);
 
     assertEquals(feeds.items.get(0).id, f2.id);

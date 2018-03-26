@@ -40,7 +40,7 @@ public class UpdateTagsTest {
     new Account.TagUpdateBuilder().forId(account1.id).setTags(update1).update(client);
 
     Account.ItemIterable accounts =
-        new Account.QueryBuilder()
+        new Account.ListBuilder()
             .setFilter("id=$1")
             .addFilterParameter(account1.id)
             .getIterable(client);
@@ -90,7 +90,7 @@ public class UpdateTagsTest {
     new Flavor.TagUpdateBuilder().forId(flavor1.id).setTags(update1).update(client);
 
     Flavor.ItemIterable flavors =
-        new Flavor.QueryBuilder()
+        new Flavor.ListBuilder()
             .setFilter("id=$1")
             .addFilterParameter(flavor1.id)
             .getIterable(client);

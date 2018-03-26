@@ -51,9 +51,9 @@ public class Transaction {
   }
 
   /**
-   * A builder class for querying transactions in the ledger.
+   * A builder class for listing transactions in the ledger.
    */
-  public static class QueryBuilder extends BaseQueryBuilder<QueryBuilder> {
+  public static class ListBuilder extends BaseQueryBuilder<ListBuilder> {
     /**
      * Executes the query, returning a page of transactions.
      * @param client ledger API connection object

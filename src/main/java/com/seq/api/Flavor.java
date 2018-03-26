@@ -46,9 +46,9 @@ public class Flavor {
   }
 
   /**
-   * A builder class for querying flavors in the ledger.
+   * A builder class for listing flavors in the ledger.
    */
-  public static class QueryBuilder extends BaseQueryBuilder<QueryBuilder> {
+  public static class ListBuilder extends BaseQueryBuilder<ListBuilder> {
     /**
      * Executes the query, returning a page of flavors that match the query.
      * @param client ledger API connection object

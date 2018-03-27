@@ -27,6 +27,12 @@ public class Stats {
   public long txCount;
 
   /**
+   * The ledger type. Value can be 'dev' or 'prod'.
+   */
+  @SerializedName("ledger_type")
+  public String ledgerType;
+
+  /**
    * Gets stats from the ledger.
    * @param client ledger API connection object
    * @return a Stats object

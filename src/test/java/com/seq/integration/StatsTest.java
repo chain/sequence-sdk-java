@@ -31,5 +31,6 @@ public class StatsTest {
     assertEquals(got.flavorCount, initial.flavorCount + 1);
     assertEquals(got.accountCount, initial.accountCount + 1);
     assertEquals(got.txCount, initial.txCount + 1);
+    assertEquals(got.ledgerType, "dev");
   }
 }

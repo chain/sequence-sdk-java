@@ -3,6 +3,7 @@
 ## 2 (201803??)
 
 * Removed all deprecated code.
+* Added `Stats#ledgerType`.
 
 ## 1.5.2 (201803??)
 

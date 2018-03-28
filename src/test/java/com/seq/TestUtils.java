@@ -15,8 +15,7 @@ public class TestUtils {
   public static Client generateClient() throws Exception {
     String ledgerName = System.getenv("LEDGER_NAME");
     String teamName = System.getenv("TEAM_NAME");
-    String macaroon = System.getenv("MACAROON");
-    String dischargeMacaroon = System.getenv("DISCHARGE_MACAROON");
+    String credential = System.getenv("SEQCRED");
 
     if (ledgerName == null || ledgerName.isEmpty()) {
       ledgerName = "test";
@@ -29,10 +28,10 @@ public class TestUtils {
     Client client =
         new Client.Builder()
             .setLedgerName(ledgerName)
-            .setCredential(macaroon)
+            .setCredential(credential)
             .setTrustedCerts(new ByteArrayInputStream(System.getenv("ROOT_CA_CERTS").getBytes()))
             .build();
-    client.refresher = new TestRefresher(teamName, dischargeMacaroon);
+    client.refresher = new TestRefresher(teamName, "");
     return client;
   }
 }

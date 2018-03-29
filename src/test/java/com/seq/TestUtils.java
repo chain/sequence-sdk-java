@@ -29,7 +29,6 @@ public class TestUtils {
         new Client.Builder()
             .setLedgerName(ledgerName)
             .setCredential(credential)
-            .setTrustedCerts(new ByteArrayInputStream(System.getenv("ROOT_CA_CERTS").getBytes()))
             .build();
     client.refresher = new TestRefresher(teamName, "");
     return client;

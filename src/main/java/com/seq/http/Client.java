@@ -113,17 +113,6 @@ public class Client {
   }
 
   /**
-   * Pins a public key to the HTTP client.
-   * @param provider certificate provider
-   * @param subjPubKeyInfoHash public key hash
-   */
-  public void pinCertificate(String provider, String subjPubKeyInfoHash) {
-    CertificatePinner cp =
-        new CertificatePinner.Builder().add(provider, subjPubKeyInfoHash).build();
-    this.httpClient.setCertificatePinner(cp);
-  }
-
-  /**
    * Sets the default connect timeout for new connections. A value of 0 means no timeout.
    * @param timeout the number of time units for the default timeout
    * @param unit the unit of time
@@ -252,15 +241,47 @@ public class Client {
   private OkHttpClient buildHttpClient(Builder builder) throws ConfigurationException {
     OkHttpClient httpClient = builder.baseHttpClient.clone();
 
-    try {
-      if (builder.trustManagers != null) {
+    final String cafile = System.getenv("SEQTLSCA");
+    if (cafile != null && cafile.length() > 0) {
+      try (InputStream is = new FileInputStream(cafile)) {
+        // Extract certs from PEM-encoded input.
+        CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
+        Collection<? extends Certificate> certificates =
+          certificateFactory.generateCertificates(is);
+        if (certificates.isEmpty()) {
+          throw new IllegalArgumentException("expected non-empty set of trusted certificates");
+        }
+
+        // Create a new key store and input the cert.
+        KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
+        keyStore.load(null, DEFAULT_KEYSTORE_PASSWORD);
+        int index = 0;
+        for (Certificate certificate : certificates) {
+          String certificateAlias = Integer.toString(index++);
+          keyStore.setCertificateEntry(certificateAlias, certificate);
+        }
+
+        // Use key store to build an X509 trust manager.
+        KeyManagerFactory keyManagerFactory =
+          KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+        keyManagerFactory.init(keyStore, DEFAULT_KEYSTORE_PASSWORD);
+        TrustManagerFactory trustManagerFactory =
+          TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+        trustManagerFactory.init(keyStore);
+        TrustManager[] trustManagers = trustManagerFactory.getTrustManagers();
+        if (trustManagers.length != 1 || !(trustManagers[0] instanceof X509TrustManager)) {
+          throw new IllegalStateException(
+              "Unexpected default trust managers:" + Arrays.toString(trustManagers));
+        }
+
         SSLContext sslContext = SSLContext.getInstance("TLSv1.2");
-        sslContext.init(builder.keyManagers, builder.trustManagers, null);
+        sslContext.init(null, trustManagers, null);
         httpClient.setSslSocketFactory(sslContext.getSocketFactory());
+      } catch (GeneralSecurityException | IOException ex) {
+        throw new ConfigurationException("Unable to configure trusted CA certs", ex);
       }
-    } catch (GeneralSecurityException ex) {
-      throw new ConfigurationException("Unable to configure TLS", ex);
     }
+
     if (builder.readTimeoutUnit != null) {
       httpClient.setReadTimeout(builder.readTimeout, builder.readTimeoutUnit);
     }
@@ -275,9 +296,6 @@ public class Client {
     }
     if (builder.proxy != null) {
       httpClient.setProxy(builder.proxy);
-    }
-    if (builder.cp != null) {
-      httpClient.setCertificatePinner(builder.cp);
     }
     if (builder.logger != null) {
       httpClient.interceptors().add(new LoggingInterceptor(builder.logger, builder.logLevel));
@@ -362,9 +380,6 @@ public class Client {
     private OkHttpClient baseHttpClient;
     private String credential;
     private String ledger;
-    private CertificatePinner cp;
-    private KeyManager[] keyManagers;
-    private TrustManager[] trustManagers;
     private long connectTimeout;
     private TimeUnit connectTimeoutUnit;
     private long readTimeout;
@@ -410,62 +425,6 @@ public class Client {
     }
 
     /**
-     * Sets the client's certificate and key for TLS client authentication.
-     * PEM-encoded, ECDSA or RSA private keys adhering to PKCS#1 or PKCS#8
-     * are supported.
-     * @param certStream input stream of PEM-encoded X.509 certificate
-     * @param keyStream input stream of PEM-encoded private key
-     */
-    public Builder setX509KeyPair(InputStream certStream, InputStream keyStream)
-        throws ConfigurationException {
-      try (PEMParser parser = new PEMParser(new InputStreamReader(keyStream))) {
-        // Extract certs from PEM-encoded input.
-        CertificateFactory factory = CertificateFactory.getInstance("X.509");
-        X509Certificate certificate = (X509Certificate) factory.generateCertificate(certStream);
-        Security.addProvider(new BouncyCastleProvider());
-
-        // TODO(vniu): dynamic support for ECDSA and RSA
-        // Parse the private key from PEM-encoded input.
-        Object obj = parser.readObject();
-        PrivateKey key = null;
-        while (obj != null) {
-          if (obj instanceof PEMKeyPair) {
-            // PKCS#1 Private Key found.
-            PEMKeyPair kp = (PEMKeyPair) obj;
-            key = getPrivateKey(kp.getPrivateKeyInfo().getEncoded());
-            break;
-          } else if (obj instanceof PrivateKeyInfo) {
-            // PKCS#8 Private Key found.
-            PrivateKeyInfo info = (PrivateKeyInfo) obj;
-            key = getPrivateKey(info.getEncoded());
-            break;
-          } else {
-            obj = parser.readObject();
-          }
-        }
-        if (key == null) {
-          throw new ConfigurationException("Unsupported private key provided");
-        }
-        // Create a new key store and input the pair.
-        KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
-        keyStore.load(null, DEFAULT_KEYSTORE_PASSWORD);
-        keyStore.setCertificateEntry("cert", certificate);
-        keyStore.setKeyEntry(
-            "key", key, DEFAULT_KEYSTORE_PASSWORD, new X509Certificate[] {certificate});
-
-        // Use key store to build a key manager.
-        KeyManagerFactory keyManagerFactory =
-            KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
-        keyManagerFactory.init(keyStore, DEFAULT_KEYSTORE_PASSWORD);
-
-        this.keyManagers = keyManagerFactory.getKeyManagers();
-        return this;
-      } catch (GeneralSecurityException | IOException ex) {
-        throw new ConfigurationException("Unable to store X.509 cert/key pair", ex);
-      }
-    }
-
-    /**
      * Retrieves the correct private key by trying all supported algorithms. ECDSA and RSA
      * keys are currently supported.
      * @param encodedKey ASN1 encoded private key
@@ -479,89 +438,6 @@ public class Client {
         }
       }
       return null;
-    }
-
-    /**
-     * Sets the client's certificate and key for TLS client authentication.
-     * @param certPath file path to PEM-encoded X.509 certificate
-     * @param keyPath file path to PEM-encoded private key
-     */
-    public Builder setX509KeyPair(String certPath, String keyPath) throws ConfigurationException {
-      try (InputStream certStream =
-              new ByteArrayInputStream(Files.readAllBytes(Paths.get(certPath)));
-          InputStream keyStream =
-              new ByteArrayInputStream(Files.readAllBytes(Paths.get(keyPath)))) {
-        return setX509KeyPair(certStream, keyStream);
-      } catch (IOException ex) {
-        throw new ConfigurationException("Unable to store X509 cert/key pair", ex);
-      }
-    }
-
-    /**
-     * Trusts the given CA certs, and no others. Use this if you are running
-     * your own CA, or are using a self-signed server certificate.
-     * @param is input stream of the certificates to trust, in PEM format.
-     */
-    public Builder setTrustedCerts(InputStream is) throws ConfigurationException {
-      try {
-        // Extract certs from PEM-encoded input.
-        CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
-        Collection<? extends Certificate> certificates =
-            certificateFactory.generateCertificates(is);
-        if (certificates.isEmpty()) {
-          throw new IllegalArgumentException("expected non-empty set of trusted certificates");
-        }
-
-        // Create a new key store and input the cert.
-        KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
-        keyStore.load(null, DEFAULT_KEYSTORE_PASSWORD);
-        int index = 0;
-        for (Certificate certificate : certificates) {
-          String certificateAlias = Integer.toString(index++);
-          keyStore.setCertificateEntry(certificateAlias, certificate);
-        }
-
-        // Use key store to build an X509 trust manager.
-        KeyManagerFactory keyManagerFactory =
-            KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
-        keyManagerFactory.init(keyStore, DEFAULT_KEYSTORE_PASSWORD);
-        TrustManagerFactory trustManagerFactory =
-            TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
-        trustManagerFactory.init(keyStore);
-        TrustManager[] trustManagers = trustManagerFactory.getTrustManagers();
-        if (trustManagers.length != 1 || !(trustManagers[0] instanceof X509TrustManager)) {
-          throw new IllegalStateException(
-              "Unexpected default trust managers:" + Arrays.toString(trustManagers));
-        }
-
-        this.trustManagers = trustManagers;
-        return this;
-      } catch (GeneralSecurityException | IOException ex) {
-        throw new ConfigurationException("Unable to configure trusted CA certs", ex);
-      }
-    }
-
-    /**
-     * Trusts the given CA certs, and no others. Use this if you are running
-     * your own CA, or are using a self-signed server certificate.
-     * @param path The path of a file containing certificates to trust, in PEM format.
-     */
-    public Builder setTrustedCerts(String path) throws ConfigurationException {
-      try (InputStream is = new FileInputStream(path)) {
-        return setTrustedCerts(is);
-      } catch (IOException ex) {
-        throw new ConfigurationException("Unable to configure trusted CA certs", ex);
-      }
-    }
-
-    /**
-     * Sets the certificate pinner for the client
-     * @param provider certificate provider
-     * @param subjPubKeyInfoHash public key hash
-     */
-    public Builder pinCertificate(String provider, String subjPubKeyInfoHash) {
-      this.cp = new CertificatePinner.Builder().add(provider, subjPubKeyInfoHash).build();
-      return this;
     }
 
     /**

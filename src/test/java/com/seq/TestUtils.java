@@ -1,7 +1,6 @@
 package com.seq;
 
 import com.seq.http.Client;
-import com.seq.http.session.TestRefresher;
 
 import java.io.IOException;
 import java.io.ByteArrayInputStream;
@@ -14,15 +13,10 @@ public class TestUtils {
 
   public static Client generateClient() throws Exception {
     String ledgerName = System.getenv("LEDGER_NAME");
-    String teamName = System.getenv("TEAM_NAME");
     String credential = System.getenv("SEQCRED");
 
     if (ledgerName == null || ledgerName.isEmpty()) {
       ledgerName = "test";
-    }
-
-    if (teamName == null || teamName.isEmpty()) {
-      teamName = "team";
     }
 
     Client client =
@@ -30,7 +24,6 @@ public class TestUtils {
             .setLedgerName(ledgerName)
             .setCredential(credential)
             .build();
-    client.refresher = new TestRefresher(teamName, "");
     return client;
   }
 }

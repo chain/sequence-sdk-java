@@ -23,8 +23,7 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import com.seq.http.session.ProdRefresher;
-import com.seq.http.session.Refresher;
+import com.google.gson.annotations.SerializedName;
 import com.google.gson.Gson;
 
 import com.squareup.okhttp.CertificatePinner;
@@ -47,9 +46,10 @@ import javax.net.ssl.*;
  */
 public class Client {
   private OkHttpClient httpClient;
-  private String macaroon;
+  private String credential;
   private String ledgerName;
-  public Refresher refresher;
+  private String teamName;
+  private Boolean teamNameRequested;
 
   // Used to create empty, in-memory key stores.
   private static final char[] DEFAULT_KEYSTORE_PASSWORD = "password".toCharArray();
@@ -58,6 +58,15 @@ public class Client {
 
   private static class BuildProperties {
     public String version;
+  }
+
+  private static class TeamResponse {
+    @SerializedName("team_name")
+    public String teamName;
+
+    public TeamResponse() {
+      this.teamName = null;
+    }
   }
 
   static {
@@ -76,9 +85,17 @@ public class Client {
       throw new ConfigurationException("No credential provided");
     }
     this.ledgerName = builder.ledger;
-    this.macaroon = builder.credential;
+    this.credential = builder.credential;
     this.httpClient = buildHttpClient(builder);
-    this.refresher = new ProdRefresher();
+    this.teamName = null;
+    this.teamNameRequested = false;
+  }
+
+  public void getTeamName(String credential) throws ChainException {
+    this.teamNameRequested = true;
+    TeamResponse teamResp = new TeamResponse();
+    teamResp = request("hello", new Object(), TeamResponse.class);
+    this.teamName = teamResp.teamName;
   }
 
   /**
@@ -98,18 +115,18 @@ public class Client {
           }
         };
 
-    if (this.refresher.needsRefresh()) {
-      this.refresher.refresh(this.macaroon);
+    if(this.teamNameRequested == false && this.teamName == null) {
+      getTeamName(this.credential);
     }
     return post(action, body, rc);
   }
 
   /**
-   * Returns the macaroon (possibly null).
-   * @return the macaroon
+   * Returns the credential (possibly null).
+   * @return the credential
    */
-  public String macaroon() {
-    return macaroon;
+  public String credential() {
+    return credential;
   }
 
   /**
@@ -188,8 +205,10 @@ public class Client {
         if (urlParts.endsWith("/")) {
           urlParts = urlParts.substring(0, urlParts.length() - 1);
         }
-        urlParts += "/" + this.refresher.teamName();
-        urlParts += "/" + this.ledgerName;
+        if (this.teamName != null) {
+          urlParts += "/" + this.teamName;
+          urlParts += "/" + this.ledgerName;
+        }
         urlParts += "/" + path;
         endpointURL = new URL(urlParts);
       } catch (MalformedURLException ex) {
@@ -199,8 +218,7 @@ public class Client {
       Request req =
           new Request.Builder()
               .header("User-Agent", "sequence-sdk-java/" + version)
-              .header("Macaroon", this.macaroon)
-              .header("Discharge-Macaroon", this.refresher.dischargeMacaroon())
+              .header("Credential", this.credential)
               .header("Idempotency-Key", idempotencyKey)
               .header("Name-Set", "camel|snake")
               .url(endpointURL)
@@ -353,8 +371,8 @@ public class Client {
   @Override
   public int hashCode() {
     int code = 0;
-    if (this.macaroon != null) {
-      code = code * 31 + this.macaroon.hashCode();
+    if (this.credential != null) {
+      code = code * 31 + this.credential.hashCode();
     }
     return code;
   }
@@ -370,7 +388,7 @@ public class Client {
     if (!(o instanceof Client)) return false;
 
     Client other = (Client) o;
-    return Objects.equals(this.macaroon, other.macaroon);
+    return Objects.equals(this.credential, other.credential);
   }
 
   /**

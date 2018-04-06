@@ -112,6 +112,7 @@ public class QueryTest {
       .setId(flavorId)
       .addKeyId(key.id)
       .setQuorum(1)
+      .addTag("test", test)
       .create(client);
 
     new Transaction.Builder()
@@ -149,6 +150,13 @@ public class QueryTest {
         .getPage(client);
     assertEquals(1, page.items.size());
     assertEquals(test, page.items.get(0).actions.get(0).tags.get("test"));
+
+    page =
+      new Transaction.ListBuilder()
+        .setFilter("actions(snapshot.flavorTags.test=$1)")
+        .addFilterParameter(test)
+        .getPage(client);
+    assertEquals(1, page.items.size());
   }
 
   public void testActionQuery() throws Exception {
@@ -318,7 +326,7 @@ public class QueryTest {
         .addFilterParameter("transfer")
         .addFilterParameter(flavorId)
         .addGroupByField("type")
-        .addGroupByField("flavor_id")
+        .addGroupByField("flavorId")
         .addGroupByField("tags")
         .addGroupByField("snapshot")
         .getPage(client);
@@ -403,13 +411,13 @@ public class QueryTest {
 
     TokenSum.Page sumPage =
         new Token.SumBuilder()
-            .addGroupByField("account_id")
+            .addGroupByField("accountId")
             .getPage(client);
     assertEquals(10, sumPage.items.size());
 
     sumPage =
         new Token.SumBuilder()
-            .addGroupByField("account_id")
+            .addGroupByField("accountId")
             .setPageSize(7)
             .getPage(client);
     assertEquals(7, sumPage.items.size());
@@ -418,7 +426,7 @@ public class QueryTest {
     assertEquals(3, sumPage.items.size());
 
     TokenSum.ItemIterable tokenSums = new Token.SumBuilder()
-      .addGroupByField("account_id")
+      .addGroupByField("accountId")
       .getIterable(client);
     for (TokenSum sum : tokenSums) {
       assertEquals(100, sum.amount);

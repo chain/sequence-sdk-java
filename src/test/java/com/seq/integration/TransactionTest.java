@@ -192,14 +192,14 @@ public class TransactionTest {
 
     Token.Page tokens =
         new Token.ListBuilder()
-            .setFilter("account_id=$1")
+            .setFilter("accountId=$1")
             .addFilterParameter(alice)
             .getPage(client);
     assertEquals(0, tokens.items.size());
 
     tokens =
         new Token.ListBuilder()
-            .setFilter("account_id=$1")
+            .setFilter("accountId=$1")
             .addFilterParameter(bob)
             .getPage(client);
 
@@ -219,7 +219,7 @@ public class TransactionTest {
 
     tokens =
         new Token.ListBuilder()
-            .setFilter("account_id=$1")
+            .setFilter("accountId=$1")
             .addFilterParameter(bob)
             .getPage(client);
 

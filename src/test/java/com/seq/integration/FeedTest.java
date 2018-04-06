@@ -67,7 +67,7 @@ public class FeedTest {
 
     final Feed<Action> feed = new Feed.Action.Builder()
       .setId(uuid)
-      .setFilter("snapshot.action_tags.test=$1")
+      .setFilter("snapshot.actionTags.test=$1")
       .addFilterParameter(uuid)
       .create(client);
 
@@ -115,7 +115,7 @@ public class FeedTest {
 
     final Feed<Transaction> feed = new Feed.Transaction.Builder()
       .setId(uuid)
-      .setFilter("actions(snapshot.action_tags.test=$1)")
+      .setFilter("actions(snapshot.actionTags.test=$1)")
       .addFilterParameter(uuid)
       .create(client);
 

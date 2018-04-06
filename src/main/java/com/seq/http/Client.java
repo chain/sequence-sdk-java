@@ -220,7 +220,7 @@ public class Client {
               .header("User-Agent", "sequence-sdk-java/" + version)
               .header("Credential", this.credential)
               .header("Idempotency-Key", idempotencyKey)
-              .header("Name-Set", "camel|snake")
+              .header("Name-Set", "camel")
               .url(endpointURL)
               .method("POST", requestBody)
               .build();

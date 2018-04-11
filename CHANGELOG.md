@@ -1,11 +1,11 @@
 # Sequence Java SDK changelog
 
-## 2 (201803??)
+## 2-rc1 (20180411)
 
 * Removed all deprecated code.
 * Added `Stats#ledgerType`.
 
-## 1.5.2 (201803??)
+## 1.5.2 (20180327)
 
 * The `assetTags`, `sourceAccountTags`, and `destinationAccountTags` properties
   on `ActionSum` have been deprecated; the new property is `snapshot`.

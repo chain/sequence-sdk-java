@@ -46,7 +46,9 @@ public class Transaction {
 
   /**
    * List of contracts created by the transaction.
+   * @deprecated use {@link Token.ListBuilder} instead.
    */
+   @Deprecated
   public List<Contract> contracts;
 
   /**
@@ -211,7 +213,7 @@ public class Transaction {
      * A unique ID.
      */
     public String id;
-    
+
     /**
      * The type of the action. Possible values are "issue", "transfer" and "retire".
      */

@@ -1,5 +1,9 @@
 # Sequence Java SDK changelog
 
+## 1.5.3 (20180411)
+
+* The `contracts` property on `Transaction` has been deprecated. Use `Token.ListBuilder` instead.
+
 ## 1.5.2 (20180327)
 
 * The `assetTags`, `sourceAccountTags`, and `destinationAccountTags` properties

@@ -7,7 +7,7 @@ import com.google.gson.annotations.SerializedName;
 import java.util.*;
 
 /**
- * A type or class of value that can be tracked on a ledger.
+ * A taxonomy used to differentiate different types of tokens in a ledger.
  */
 public class Flavor {
   /**
@@ -16,13 +16,14 @@ public class Flavor {
   public String id;
 
   /**
-   * The set of key IDs used to sign transactions that issue the flavor.
+   * The list of IDs for the keys that control the flavor.
    */
   @SerializedName("key_ids")
   public List<String> keyIds;
 
   /**
-   * The number of keys required to sign transactions that issue the flavor.
+   * The number of keys required to sign transactions that issue tokens of the
+   * flavor.
    */
   public int quorum;
 
@@ -145,8 +146,8 @@ public class Flavor {
     }
 
     /**
-     * Specifies the number of keys required to sign transactions that issue the
-     * flavor. Defaults to the number of keys provided.
+     * Specifies the number of keys required to sign transactions that issue
+     * tokens of the flavor. Defaults to the number of keys provided.
      * @param quorum a number less than or equal to the number of keys
      * @return updated builder
      */
@@ -156,7 +157,7 @@ public class Flavor {
     }
 
     /**
-     * Adds a key that can be used to sign transactions that issue the flavor.
+     * Adds a key that controls the flavor.
      * @param id the key's ID
      * @return updated builder
      */

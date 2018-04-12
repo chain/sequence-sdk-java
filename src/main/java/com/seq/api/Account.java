@@ -7,7 +7,7 @@ import com.google.gson.annotations.SerializedName;
 import java.util.*;
 
 /**
- * A container for tokens on a ledger.
+ * A container that holds tokens in a ledger.
  */
 public class Account {
   /**
@@ -16,14 +16,14 @@ public class Account {
   public String id;
 
   /**
-   * The set of key IDs used for signing transactions that spend from the
-   * account.
+   * The list of IDs for the keys that control the account.
    */
   @SerializedName("key_ids")
   public List<String> keyIds;
 
   /**
-   * The number of keys required to sign transactions that spend from the account.
+  * The number of keys required to sign transactions that transfer for retire
+  * tokens from the account.
    */
   public int quorum;
 
@@ -122,8 +122,9 @@ public class Account {
     }
 
     /**
-     * Specifies the number of keys required to sign transactions that spend
-     * from the account. Defaults to the number of keys provided.
+    * Specifies the number of keys required to sign transactions that transfer
+    * or retire tokens from the account. Defaults to the number of keys
+    * provided.
      * @param quorum a number less than or equal to the number of keys
      * @return updated builder
      */
@@ -133,8 +134,7 @@ public class Account {
     }
 
     /**
-     * Adds a key that can be used to sign transactions that spend from the
-     * account.
+     * Adds a key that controls the account.
      * @param id the key's ID
      * @return updated builder
      */

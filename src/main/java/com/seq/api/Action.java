@@ -80,7 +80,7 @@ public class Action {
    * User-specified key-value data embedded in the action.
    */
   @SerializedName("tags")
-  public Object tags;
+  public Map<String, Object> tags;
 
   public static class Snapshot {
     /**

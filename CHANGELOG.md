@@ -1,5 +1,9 @@
 # Sequence Java SDK changelog
 
+## 2-rc2 (????????)
+
+* Changed `Action|ActionSum.tags` type from `Object` to `Map<String, Object>`.
+
 ## 2-rc1 (20180411)
 
 * Removed all deprecated code.

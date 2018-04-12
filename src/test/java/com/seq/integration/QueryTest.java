@@ -306,7 +306,7 @@ public class QueryTest {
     assertEquals(1, sumPage.items.size());
     assertEquals(1000, as.amount);
     assertNotNull(as.tags);
-    Map<String, String> nestedField = (Map<String, String>) (as.tags);
+    Map<String, Object> nestedField = (Map<String, Object>) (as.tags);
     assertNotNull(nestedField.get("test"));
 
     sumPage =
@@ -334,7 +334,7 @@ public class QueryTest {
     assertEquals(1, sumPage.items.size());
     assertEquals(10, as.amount);
     assertEquals(flavorId, as.flavorId);
-    Map<String, String> tagsField = (Map<String, String>) (as.tags);
+    Map<String, Object> tagsField = (Map<String, Object>) (as.tags);
     assertEquals(tagData, tagsField.get("test"));
     assertEquals(tagData, as.snapshot.actionTags.get("test"));
     assertEquals(flavorId, as.snapshot.flavorTags.get("name"));

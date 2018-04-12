@@ -77,7 +77,7 @@ public class ActionSum {
    * User-specified key-value data embedded in the action.
    */
   @SerializedName("tags")
-  public Object tags;
+  public Map<String, Object> tags;
 
   /**
    * A single page of actions returned from a query.

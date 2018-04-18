@@ -1,5 +1,9 @@
 # Sequence Java SDK changelog
 
+## 2 (20180418)
+
+* Updated copyright year in LICENSE to be 2018.
+
 ## 2-rc2 (20180413)
 
 * Changed `Action|ActionSum.tags` type from `Object` to `Map<String, Object>`.

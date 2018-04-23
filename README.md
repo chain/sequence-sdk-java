@@ -6,7 +6,7 @@
 
 The Sequence SDK is available [via
 maven](https://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.seq%22).
-This library requires Java 8 or newer.
+Java 8, 9, and 10 are supported.
 
 Add the following to your `pom.xml`:
 

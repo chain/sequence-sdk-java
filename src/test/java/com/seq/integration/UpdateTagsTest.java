@@ -60,7 +60,7 @@ public class UpdateTagsTest {
           .setTags(update1)
           .update(client);
     } catch (APIException e) {
-      assertEquals(e.seqCode, "SEQ051");
+      assertEquals(e.seqCode, "SEQ008");
     }
   }
 
@@ -110,7 +110,7 @@ public class UpdateTagsTest {
           .setTags(update1)
           .update(client);
     } catch (APIException e) {
-      assertEquals(e.seqCode, "SEQ051");
+      assertEquals(e.seqCode, "SEQ008");
     }
   }
 }

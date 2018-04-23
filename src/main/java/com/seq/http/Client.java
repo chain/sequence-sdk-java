@@ -6,38 +6,27 @@ import com.seq.common.*;
 import java.io.*;
 import java.lang.reflect.Type;
 import java.net.*;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.security.GeneralSecurityException;
 import java.security.KeyFactory;
 import java.security.KeyStore;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
-import java.security.Security;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateFactory;
-import java.security.cert.X509Certificate;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import com.google.gson.annotations.SerializedName;
 import com.google.gson.Gson;
 
-import com.squareup.okhttp.CertificatePinner;
-import com.squareup.okhttp.ConnectionPool;
-import com.squareup.okhttp.MediaType;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.RequestBody;
-import com.squareup.okhttp.Response;
-
-import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.openssl.PEMKeyPair;
-import org.bouncycastle.openssl.PEMParser;
+import okhttp3.ConnectionPool;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 import javax.net.ssl.*;
 
@@ -130,41 +119,6 @@ public class Client {
   }
 
   /**
-   * Sets the default connect timeout for new connections. A value of 0 means no timeout.
-   * @param timeout the number of time units for the default timeout
-   * @param unit the unit of time
-   */
-  public void setConnectTimeout(long timeout, TimeUnit unit) {
-    this.httpClient.setConnectTimeout(timeout, unit);
-  }
-
-  /**
-   * Sets the default read timeout for new connections. A value of 0 means no timeout.
-   * @param timeout the number of time units for the default timeout
-   * @param unit the unit of time
-   */
-  public void setReadTimeout(long timeout, TimeUnit unit) {
-    this.httpClient.setReadTimeout(timeout, unit);
-  }
-
-  /**
-   * Sets the default write timeout for new connections. A value of 0 means no timeout.
-   * @param timeout the number of time units for the default timeout
-   * @param unit the unit of time
-   */
-  public void setWriteTimeout(long timeout, TimeUnit unit) {
-    this.httpClient.setWriteTimeout(timeout, unit);
-  }
-
-  /**
-   * Sets the proxy information for the HTTP client.
-   * @param proxy proxy object
-   */
-  public void setProxy(Proxy proxy) {
-    this.httpClient.setProxy(proxy);
-  }
-
-  /**
    * Defines an interface for deserializing HTTP responses into objects.
    * @param <T> the type of object to return
    */
@@ -179,6 +133,7 @@ public class Client {
      */
     T create(Response response, Gson deserializer) throws ChainException, IOException;
   }
+
   /**
    * Builds and executes an HTTP Post request.
    * @param path the path to the endpoint
@@ -257,7 +212,7 @@ public class Client {
   }
 
   private OkHttpClient buildHttpClient(Builder builder) throws ConfigurationException {
-    OkHttpClient httpClient = builder.baseHttpClient.clone();
+    OkHttpClient.Builder httpClientBuilder = builder.httpClientBuilder;
 
     final String cafile = System.getenv("SEQTLSCA");
     if (cafile != null && cafile.length() > 0) {
@@ -294,32 +249,20 @@ public class Client {
 
         SSLContext sslContext = SSLContext.getInstance("TLSv1.2");
         sslContext.init(null, trustManagers, null);
-        httpClient.setSslSocketFactory(sslContext.getSocketFactory());
+        httpClientBuilder.sslSocketFactory(
+                sslContext.getSocketFactory(),
+                (X509TrustManager)trustManagers[0]
+        );
       } catch (GeneralSecurityException | IOException ex) {
         throw new ConfigurationException("Unable to configure trusted CA certs", ex);
       }
     }
 
-    if (builder.readTimeoutUnit != null) {
-      httpClient.setReadTimeout(builder.readTimeout, builder.readTimeoutUnit);
-    }
-    if (builder.writeTimeoutUnit != null) {
-      httpClient.setWriteTimeout(builder.writeTimeout, builder.writeTimeoutUnit);
-    }
-    if (builder.connectTimeoutUnit != null) {
-      httpClient.setConnectTimeout(builder.connectTimeout, builder.connectTimeoutUnit);
-    }
-    if (builder.pool != null) {
-      httpClient.setConnectionPool(builder.pool);
-    }
-    if (builder.proxy != null) {
-      httpClient.setProxy(builder.proxy);
-    }
     if (builder.logger != null) {
-      httpClient.interceptors().add(new LoggingInterceptor(builder.logger, builder.logLevel));
+      httpClientBuilder.addInterceptor(new LoggingInterceptor(builder.logger, builder.logLevel));
     }
 
-    return httpClient;
+    return httpClientBuilder.build();
   }
 
   private static final Random randomGenerator = new Random();
@@ -349,7 +292,6 @@ public class Client {
     }
 
     if ((response.code() / 100) != 2) {
-      try {
         APIException err =
             Utils.serializer.fromJson(response.body().charStream(), APIException.class);
         if (err.seqCode != null) {
@@ -357,9 +299,6 @@ public class Client {
           err.statusCode = response.code();
           throw err;
         }
-      } catch (IOException ex) {
-        throw new JSONException("Unable to read body. " + ex.getMessage(), rid);
-      }
     }
     return response;
   }
@@ -395,33 +334,22 @@ public class Client {
    * A builder class for creating client objects
    */
   public static class Builder {
-    private OkHttpClient baseHttpClient;
+    private OkHttpClient.Builder httpClientBuilder;
     private String credential;
     private String ledger;
-    private long connectTimeout;
-    private TimeUnit connectTimeoutUnit;
-    private long readTimeout;
-    private TimeUnit readTimeoutUnit;
-    private long writeTimeout;
-    private TimeUnit writeTimeoutUnit;
-    private Proxy proxy;
-    private ConnectionPool pool;
     private OutputStream logger;
     private LoggingInterceptor.Level logLevel;
 
     public Builder() {
-      this.baseHttpClient = new OkHttpClient();
-      this.baseHttpClient.setFollowRedirects(false);
-      this.setDefaults();
+      this.logLevel = LoggingInterceptor.Level.ERRORS;
+      this.httpClientBuilder = new OkHttpClient.Builder()
+              .followSslRedirects(false)
+              .readTimeout(30, TimeUnit.SECONDS)
+              .writeTimeout(30, TimeUnit.SECONDS)
+              .connectTimeout(30, TimeUnit.SECONDS)
+              .connectionPool(new ConnectionPool(50, 2, TimeUnit.MINUTES));
     }
 
-    private void setDefaults() {
-      this.setReadTimeout(30, TimeUnit.SECONDS);
-      this.setWriteTimeout(30, TimeUnit.SECONDS);
-      this.setConnectTimeout(30, TimeUnit.SECONDS);
-      this.setConnectionPool(50, 2, TimeUnit.MINUTES);
-      this.logLevel = LoggingInterceptor.Level.ERRORS;
-    }
 
     /**
      * Sets the credential for the client
@@ -464,8 +392,7 @@ public class Client {
      * @param unit the unit of time
      */
     public Builder setConnectTimeout(long timeout, TimeUnit unit) {
-      this.connectTimeout = timeout;
-      this.connectTimeoutUnit = unit;
+      this.httpClientBuilder = this.httpClientBuilder.connectTimeout(timeout, unit);
       return this;
     }
 
@@ -475,8 +402,7 @@ public class Client {
      * @param unit the unit of time
      */
     public Builder setReadTimeout(long timeout, TimeUnit unit) {
-      this.readTimeout = timeout;
-      this.readTimeoutUnit = unit;
+      this.httpClientBuilder = this.httpClientBuilder.readTimeout(timeout, unit);
       return this;
     }
 
@@ -486,8 +412,7 @@ public class Client {
      * @param unit the unit of time
      */
     public Builder setWriteTimeout(long timeout, TimeUnit unit) {
-      this.writeTimeout = timeout;
-      this.writeTimeoutUnit = unit;
+      this.httpClientBuilder = this.httpClientBuilder.writeTimeout(timeout, unit);
       return this;
     }
 
@@ -496,7 +421,7 @@ public class Client {
      * @param proxy
      */
     public Builder setProxy(Proxy proxy) {
-      this.proxy = proxy;
+      this.httpClientBuilder = this.httpClientBuilder.proxy(proxy);
       return this;
     }
 
@@ -507,7 +432,7 @@ public class Client {
      * @param unit the unit of time
      */
     public Builder setConnectionPool(int maxIdle, long timeout, TimeUnit unit) {
-      this.pool = new ConnectionPool(maxIdle, unit.toMillis(timeout));
+      this.httpClientBuilder = this.httpClientBuilder.connectionPool(new ConnectionPool(maxIdle, timeout, unit));
       return this;
     }
 

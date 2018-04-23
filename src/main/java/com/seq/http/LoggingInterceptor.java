@@ -1,8 +1,8 @@
 package com.seq.http;
 
-import com.squareup.okhttp.Interceptor;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.Response;
+import okhttp3.Interceptor;
+import okhttp3.Request;
+import okhttp3.Response;
 import okio.BufferedSink;
 import okio.BufferedSource;
 
@@ -67,7 +67,7 @@ public class LoggingInterceptor implements Interceptor {
                 "%s:\n\treqid=%s\n\turl=%s\n\tcode=%d\n\trequest=%s\n\tresponse=%s\n",
                 label,
                 reqid,
-                request.urlString(),
+                request.url().toString(),
                 response.code(),
                 requestBody,
                 source.buffer().clone().readString(Charset.forName("UTF-8")))

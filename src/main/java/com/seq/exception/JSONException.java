@@ -1,5 +1,7 @@
 package com.seq.exception;
 
+import com.google.gson.annotations.Expose;
+
 /**
  * JSONException should be very rare, and will only arise if there is a bug in the
  * Sequence API, or if the upstream server is spoofing common Sequence API response
@@ -10,6 +12,7 @@ public class JSONException extends ChainException {
   /**
    * Unique indentifier of the request to the server.
    */
+  @Expose
   public String requestId;
 
   /**

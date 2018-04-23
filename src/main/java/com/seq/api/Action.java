@@ -8,6 +8,7 @@ import com.seq.http.Client;
 import com.seq.exception.ConnectivityException;
 import com.seq.exception.JSONException;
 import com.google.gson.annotations.SerializedName;
+import com.google.gson.annotations.Expose;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -27,34 +28,40 @@ public class Action {
   /**
    * The number of units of the action's flavor
    */
+  @Expose
   public long amount;
 
   /**
    * The type of the action.
    * Currently, there are three options: "issue", "transfer", "retire".
    */
+  @Expose
   public String type;
 
   /**
    * A unique ID.
    */
+  @Expose
   public String id;
 
   /**
    * The ID of the transaction in which the action appears.
    */
   @SerializedName("transaction_id")
+  @Expose
   public String transactionId;
 
   /**
    * Time of the action.
    */
+  @Expose
   public Date timestamp;
 
   /**
    * The ID of the flavor held by the action.
    */
   @SerializedName("flavor_id")
+  @Expose
   public String flavorId;
 
   /**
@@ -62,24 +69,28 @@ public class Action {
    * action, and token) as they existed at the time of the transaction.
    */
   @SerializedName("snapshot")
+  @Expose
   public Snapshot snapshot;
 
   /**
    * The ID of the source account executing the action.
    */
   @SerializedName("source_account_id")
+  @Expose
   public String sourceAccountId;
 
   /**
    * The ID of the destination account affected by the action.
    */
   @SerializedName("destination_account_id")
+  @Expose
   public String destinationAccountId;
 
   /**
    * User-specified key-value data embedded in the action.
    */
   @SerializedName("tags")
+  @Expose
   public Map<String, Object> tags;
 
   public static class Snapshot {
@@ -87,30 +98,35 @@ public class Action {
      * A snapshot of the actions's tags at the time of action creation
      */
     @SerializedName("action_tags")
+    @Expose
     public Map<String, Object> actionTags;
 
     /**
      * A snapshot of the flavor's tags at the time of action creation
      */
     @SerializedName("flavor_tags")
+    @Expose
     public Map<String, Object> flavorTags;
 
     /**
      * A snapshot of the source account's tags at the time of action creation
      */
     @SerializedName("source_account_tags")
+    @Expose
     public Map<String, Object> sourceAccountTags;
 
     /**
      * A snapshot of the destination account's tags at the time of action creation
      */
     @SerializedName("destination_account_tags")
+    @Expose
     public Map<String, Object> destinationAccountTags;
 
     /**
      * A snapshot of the tokens's tags at the time of action creation
      */
     @SerializedName("token_tags")
+    @Expose
     public Map<String, Object> tokenTags;
   }
 

@@ -34,6 +34,7 @@ public abstract class BasePage<T> {
   /**
    * Specifies the details of the next query.
    */
+  @Expose
   public String cursor;
 
   public BasePage() {

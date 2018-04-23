@@ -2,6 +2,7 @@ package com.seq.api;
 
 import com.seq.exception.*;
 import com.seq.http.Client;
+import com.google.gson.annotations.Expose;
 
 import java.net.MalformedURLException;
 import java.util.*;
@@ -13,12 +14,14 @@ public class Key {
   /**
    * Unique identifier of the key.
    */
+  @Expose
   public String id;
 
   /**
    * Configuration object for creating keys.
    */
   public static class Builder {
+    @Expose
     private String id;
 
     /**

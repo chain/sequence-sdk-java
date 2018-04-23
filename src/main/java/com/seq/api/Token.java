@@ -8,6 +8,7 @@ import com.seq.http.Client;
 import com.seq.exception.ConnectivityException;
 import com.seq.exception.JSONException;
 import com.google.gson.annotations.SerializedName;
+import com.google.gson.annotations.Expose;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -28,36 +29,42 @@ public class Token {
   /**
    * The amount of tokens in the group.
    */
+  @Expose
   public long amount;
 
   /**
    * The flavor of the tokens in the group.
    */
   @SerializedName("flavor_id")
+  @Expose
   public String flavorId;
 
   /**
    * The tags of the flavor of the tokens in the group.
    */
   @SerializedName("flavor_tags")
+  @Expose
   public Map<String, Object> flavorTags;
 
   /**
    * The ID of the account containing the tokens.
    */
   @SerializedName("account_id")
+  @Expose
   public String accountId;
 
   /**
    * The tags of the account containing the tokens.
    */
   @SerializedName("account_tags")
+  @Expose
   public Map<String, Object> accountTags;
 
   /**
    * The tags of the tokens in the group.
    */
   @SerializedName("tags")
+  @Expose
   public Map<String, Object> tags;
 
   /**

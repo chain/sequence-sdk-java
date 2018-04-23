@@ -8,6 +8,7 @@ import com.seq.http.Client;
 import com.seq.exception.ConnectivityException;
 import com.seq.exception.JSONException;
 import com.google.gson.annotations.SerializedName;
+import com.google.gson.annotations.Expose;
 
 import java.util.Date;
 import java.util.Map;
@@ -24,46 +25,54 @@ public class ActionSum {
   /**
    * Summation of the amount fields of the matching actions
    */
+  @Expose
   public long amount;
 
   /**
    * The type of the action.
    * Currently, there are three options: "issue", "transfer", "retire".
    */
+  @Expose
   public String type;
 
   /**
    * A unique ID.
    */
+  @Expose
   public String id;
 
   /**
    * The ID of the transaction in which the action appears.
    */
   @SerializedName("transaction_id")
+  @Expose
   public String transactionId;
 
   /**
    * Time of the action.
    */
+  @Expose
   public Date timestamp;
 
   /**
    * The ID of the flavor of the tokens held by the action.
    */
   @SerializedName("flavor_id")
+  @Expose
   public String flavorId;
 
   /**
    * The ID of the source account executing the action.
    */
   @SerializedName("source_account_id")
+  @Expose
   public String sourceAccountId;
 
   /**
    * The ID of the destination account affected by the action.
    */
   @SerializedName("destination_account_id")
+  @Expose
   public String destinationAccountId;
 
   /**
@@ -71,12 +80,14 @@ public class ActionSum {
    * action, and token) as they existed at the time of the transaction.
    */
   @SerializedName("snapshot")
+  @Expose
   public Action.Snapshot snapshot;
 
   /**
    * User-specified key-value data embedded in the action.
    */
   @SerializedName("tags")
+  @Expose
   public Map<String, Object> tags;
 
   /**

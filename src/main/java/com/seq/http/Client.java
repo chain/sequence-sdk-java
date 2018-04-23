@@ -19,6 +19,7 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 import com.google.gson.annotations.SerializedName;
+import com.google.gson.annotations.Expose;
 import com.google.gson.Gson;
 
 import okhttp3.ConnectionPool;
@@ -51,7 +52,7 @@ public class Client {
 
   private static class TeamResponse {
     @SerializedName("team_name")
-    public String teamName;
+    @Expose public String teamName;
 
     public TeamResponse() {
       this.teamName = null;

@@ -2,6 +2,7 @@ package com.seq.api;
 
 import com.google.gson.JsonObject;
 import com.google.gson.annotations.SerializedName;
+import com.google.gson.annotations.Expose;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -18,22 +19,26 @@ public class Transaction {
   /**
    * A unique ID.
    */
+  @Expose
   public String id;
 
   /**
    * Time of transaction.
    */
+  @Expose
   public Date timestamp;
 
   /**
    * Sequence number of the transaction.
    */
   @SerializedName("sequence_number")
+  @Expose
   public long sequenceNumber;
 
   /**
    * List of actions taken by the transaction.
    */
+  @Expose
   public List<Action> actions;
 
   /**
@@ -97,17 +102,20 @@ public class Transaction {
     /**
      * A unique ID.
      */
+    @Expose
     public String id;
 
     /**
      * The type of the action. Possible values are "issue", "transfer" and "retire".
      */
+    @Expose
     public String type;
 
     /**
      * The id of the action's flavor.
      */
     @SerializedName("flavor_id")
+    @Expose
     public String flavorId;
 
     /**
@@ -116,11 +124,13 @@ public class Transaction {
      * transaction.
      */
     @SerializedName("snapshot")
+    @Expose
     public Snapshot snapshot;
 
     /**
      * The number of flavor units issued, transferred, or retired.
      */
+    @Expose
     public long amount;
 
     /**
@@ -128,18 +138,21 @@ public class Transaction {
      * issuances.
      */
     @SerializedName("source_account_id")
+    @Expose
     public String sourceAccountId;
 
     /**
      * The ID of the account receiving the flavor units. Null for retirements.
      */
     @SerializedName("destination_account_id")
+    @Expose
     public String destinationAccountId;
 
     /**
      * User-specified, key-value data embedded into the action.
      */
     @SerializedName("tags")
+    @Expose
     public Map<String, Object> tags;
 
     public static class Snapshot {
@@ -147,30 +160,35 @@ public class Transaction {
        * A snapshot of the actions's tags at the time of action creation
        */
       @SerializedName("action_tags")
+      @Expose
       public Map<String, Object> actionTags;
 
       /**
        * A snapshot of the flavor's tags at the time of action creation
        */
       @SerializedName("flavor_tags")
+      @Expose
       public Map<String, Object> flavorTags;
 
       /**
        * A snapshot of the source account's tags at the time of action creation
        */
       @SerializedName("source_account_tags")
+      @Expose
       public Map<String, Object> sourceAccountTags;
 
       /**
        * A snapshot of the destination account's tags at the time of action creation
        */
       @SerializedName("destination_account_tags")
+      @Expose
       public Map<String, Object> destinationAccountTags;
 
       /**
        * A snapshot of the tokens's tags at the time of action creation
        */
       @SerializedName("token_tags")
+      @Expose
       public Map<String, Object> tokenTags;
     }
   }
@@ -179,6 +197,7 @@ public class Transaction {
    * A configuration object for creating and submitting transactions.
    */
   public static class Builder {
+    @Expose
     protected List<Action> actions;
 
     /**

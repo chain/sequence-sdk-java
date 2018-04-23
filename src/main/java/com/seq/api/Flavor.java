@@ -3,6 +3,7 @@ package com.seq.api;
 import com.seq.exception.*;
 import com.seq.http.*;
 import com.google.gson.annotations.SerializedName;
+import com.google.gson.annotations.Expose;
 
 import java.util.*;
 
@@ -13,23 +14,27 @@ public class Flavor {
   /**
    * Unique, user-specified identifier.
    */
+  @Expose
   public String id;
 
   /**
    * The list of IDs for the keys that control the flavor.
    */
   @SerializedName("key_ids")
+  @Expose
   public List<String> keyIds;
 
   /**
    * The number of keys required to sign transactions that issue tokens of the
    * flavor.
    */
+  @Expose
   public int quorum;
 
   /**
    * User-specified key-value data describing the flavor.
    */
+  @Expose
   public Map<String, Object> tags;
 
   /**
@@ -89,12 +94,17 @@ public class Flavor {
    * A builder for defining flavors in the ledger.
    */
   public static class Builder {
+    @Expose
     private String id;
+
+    @Expose
     private Map<String, Object> tags;
 
     @SerializedName("key_ids")
+    @Expose
     private List<String> keyIds;
 
+    @Expose
     private Integer quorum;
 
     public Builder() {
@@ -171,7 +181,10 @@ public class Flavor {
    * A builder for updating a flavor's tags.
    */
   public static class TagUpdateBuilder {
+    @Expose
     private String id;
+
+    @Expose
     private Map<String, Object> tags;
 
     /**

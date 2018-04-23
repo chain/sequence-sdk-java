@@ -1,6 +1,7 @@
 package com.seq.exception;
 
 import com.google.gson.annotations.SerializedName;
+import com.google.gson.annotations.Expose;
 
 /**
  * APIException is thrown when the ledger API encounters an error handling a
@@ -14,39 +15,46 @@ public class APIException extends ChainException {
   /**
    * An error code of the format "SEQXXX".
    */
-   @SerializedName("seq_code")
+  @SerializedName("seq_code")
+  @Expose
   public String seqCode;
 
   /**
    * Message describing the general nature of the error.
    */
   @SerializedName("message")
+  @Expose
   public String chainMessage;
 
   /**
    * Additional information about the error (possibly null).
    */
+  @Expose
   public String detail;
 
   /**
    * Specifies whether the error is considered to be transient and that the
    * request should be retried.
    */
+  @Expose
   public boolean retriable;
 
   /**
    * Deprecated. Alias for retriable. Will be removed in 2.0.0.
    */
+  @Expose
   public boolean temporary;
 
   /**
    * Unique identifier of the request to the server.
    */
+  @Expose
   public String requestId;
 
   /**
    * HTTP status code returned by the server.
    */
+  @Expose
   public int statusCode;
 
   @Override

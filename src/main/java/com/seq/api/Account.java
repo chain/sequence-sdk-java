@@ -3,6 +3,7 @@ package com.seq.api;
 import com.seq.exception.*;
 import com.seq.http.*;
 import com.google.gson.annotations.SerializedName;
+import com.google.gson.annotations.Expose;
 
 import java.util.*;
 
@@ -13,23 +14,27 @@ public class Account {
   /**
    * Unique identifier of the account.
    */
+  @Expose
   public String id;
 
   /**
    * The list of IDs for the keys that control the account.
    */
   @SerializedName("key_ids")
+  @Expose
   public List<String> keyIds;
 
   /**
   * The number of keys required to sign transactions that transfer for retire
   * tokens from the account.
    */
+  @Expose
   public int quorum;
 
   /**
    * User-specified key-value data describing the account.
    */
+  @Expose
   public Map<String, Object> tags;
 
   /**
@@ -89,12 +94,17 @@ public class Account {
    * A builder for creating accounts in the ledger.
    */
   public static class Builder {
+    @Expose
     private String id;
+
+    @Expose
     private Integer quorum;
 
     @SerializedName("key_ids")
+    @Expose
     private List<String> keyIds;
 
+    @Expose
     private Map<String, Object> tags;
 
     public Builder() {
@@ -172,7 +182,10 @@ public class Account {
    * A builder for updating an account's tags.
    */
   public static class TagUpdateBuilder {
+    @Expose
     private String id;
+
+    @Expose
     private Map<String, Object> tags;
 
     /**

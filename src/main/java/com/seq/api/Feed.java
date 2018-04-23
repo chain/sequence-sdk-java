@@ -3,6 +3,7 @@ package com.seq.api;
 import com.seq.exception.*;
 import com.seq.http.*;
 import com.google.gson.annotations.SerializedName;
+import com.google.gson.annotations.Expose;
 
 import java.util.*;
 
@@ -10,27 +11,32 @@ public class Feed<T> implements Iterable<T> {
   /**
    * Unique identifier of the feed.
    */
+  @Expose
   public String id;
 
   /**
    * Type of feed, "action" or "transaction".
    */
+  @Expose
   public String type;
 
   /**
    * The query filter used in /stream-feed-items.
    */
+  @Expose
   public String filter;
 
   /**
    * A list of parameters to be interpolated into the filter expression.
    */
   @SerializedName("filter_params")
+  @Expose
   public List<Object> filterParams;
 
   /**
    * Indicates the last transaction consumed by this feed.
    */
+  @Expose
   public String cursor;
 
   private Client _client;
@@ -39,7 +45,10 @@ public class Feed<T> implements Iterable<T> {
   private String latestCursor;
 
   class IterablePage<S> {
+    @Expose
     public List<S> items;
+
+    @Expose
     public List<String> cursors;
 
     public IterablePage() {
@@ -166,11 +175,17 @@ public class Feed<T> implements Iterable<T> {
   }
 
   abstract public static class Builder<T> {
+    @Expose
     private String id;
+
+    @Expose
     protected String type;
+
+    @Expose
     private String filter;
 
     @SerializedName("filter_params")
+    @Expose
     private List<Object> filterParams;
 
     private Builder(String type) {

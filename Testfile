@@ -1,1 +1,2 @@
-tests: $CHAIN/sdk/java/bin/tests
+java8: asdf local java 8.172 && $CHAIN/sdk/java/bin/tests
+java10: asdf local java 10.0.1 && $CHAIN/sdk/java/bin/tests

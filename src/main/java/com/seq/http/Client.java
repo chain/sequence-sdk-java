@@ -18,6 +18,8 @@ import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
+import javax.xml.bind.DatatypeConverter;
+
 import com.google.gson.annotations.SerializedName;
 import com.google.gson.annotations.Expose;
 import com.google.gson.Gson;
@@ -146,10 +148,16 @@ public class Client {
   private <T> T post(String path, Object body, ResponseCreator<T> respCreator)
       throws ChainException {
     RequestBody requestBody = RequestBody.create(Client.JSON, Utils.serializer.toJson(body));
+
+    byte[] bytes = new byte[10];
+    new Random().nextBytes(bytes);
+    String requestId = DatatypeConverter.printHexBinary(bytes).toLowerCase();
+
     String idempotencyKey = UUID.randomUUID().toString();
 
     ChainException exception = null;
     for (int attempt = 1; attempt - 1 <= MAX_RETRIES; attempt++) {
+      String attemptId = requestId + '/' + attempt;
       String urlParts = "https://api.seq.com";
       String addr = System.getenv("SEQADDR");
       if (addr != null) {
@@ -177,6 +185,7 @@ public class Client {
               .header("Credential", this.credential)
               .header("Idempotency-Key", idempotencyKey)
               .header("Name-Set", "camel")
+              .header("Id", attemptId)
               .url(endpointURL)
               .method("POST", requestBody)
               .build();

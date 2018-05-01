@@ -1,5 +1,10 @@
 # Sequence Java SDK changelog
 
+## 2.0.1 (20180501)
+
+* Generate unique request IDs in the client for easier debugging support
+* Support compilation under Java 9, 10
+
 ## 2 (20180418)
 
 * Updated copyright year in LICENSE to be 2018.

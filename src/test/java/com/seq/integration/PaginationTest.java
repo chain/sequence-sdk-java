@@ -19,14 +19,6 @@ public class PaginationTest {
   final static int PAGE_SIZE = 5;
 
   @Test
-  public void run() throws Exception {
-    testKeyPageCursor();
-    testAccountPageCursor();
-    testFlavorPageCursor();
-    testTransactionPageCursor();
-    testFeedPageCursor();
-  }
-
   public void testKeyPageCursor() throws Exception {
     client = TestUtils.generateClient();
     DevUtils.reset(client);
@@ -46,6 +38,7 @@ public class PaginationTest {
     assertEquals(true, page2.lastPage);
   }
 
+  @Test
   public void testAccountPageCursor() throws Exception {
     client = TestUtils.generateClient();
     key = new Key.Builder().create(client);
@@ -74,6 +67,7 @@ public class PaginationTest {
     assertEquals(true, page2.lastPage);
   }
 
+  @Test
   public void testFlavorPageCursor() throws Exception {
     client = TestUtils.generateClient();
     key = new Key.Builder().create(client);
@@ -102,6 +96,7 @@ public class PaginationTest {
     assertEquals(true, page2.lastPage);
   }
 
+  @Test
   public void testTransactionPageCursor() throws Exception {
     client = TestUtils.generateClient();
     key = new Key.Builder().create(client);
@@ -136,6 +131,7 @@ public class PaginationTest {
     assertEquals(true, page2.lastPage);
   }
 
+  @Test
   public void testFeedPageCursor() throws Exception {
     client = TestUtils.generateClient();
     String uuid = UUID.randomUUID().toString();

@@ -22,10 +22,6 @@ public class ActionTest {
   static Key key3;
 
   @Test
-  public void run() throws Exception {
-    testSnapshotWithTags();
-  }
-
   public void testSnapshotWithTags() throws Exception {
     client = TestUtils.generateClient();
     key = new Key.Builder().create(client);

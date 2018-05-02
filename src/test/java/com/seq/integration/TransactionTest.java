@@ -22,13 +22,6 @@ public class TransactionTest {
   static Key key3;
 
   @Test
-  public void run() throws Exception {
-    testBasicTransaction();
-    testMultiSigTransaction();
-    testTransactionWithFilter();
-    testTransactionWithActionTags();
-  }
-
   public void testBasicTransaction() throws Exception {
     client = TestUtils.generateClient();
     key = new Key.Builder().create(client);
@@ -92,6 +85,7 @@ public class TransactionTest {
     assertEquals(3, page.items.size());
   }
 
+  @Test
   public void testMultiSigTransaction() throws Exception {
     client = TestUtils.generateClient();
     key = new Key.Builder().create(client);
@@ -147,6 +141,7 @@ public class TransactionTest {
         .transact(client);
   }
 
+  @Test
   public void testTransactionWithFilter() throws Exception {
     client = TestUtils.generateClient();
     key = new Key.Builder().create(client);
@@ -231,6 +226,7 @@ public class TransactionTest {
     assertEquals(tokenTags, token.tags);
   }
 
+  @Test
   public void testTransactionWithActionTags() throws Exception {
     client = TestUtils.generateClient();
     key = new Key.Builder().create(client);

@@ -19,14 +19,6 @@ public class FeedTest {
   static Client client;
 
   @Test
-  public void run() throws Exception {
-    testActionFeedCreation();
-    testTransactionFeedCreation();
-    testActionFeedConsumption();
-    testTransactionFeedConsumption();
-    testFeedDeletion();
-  }
-
   public void testActionFeedCreation() throws Exception {
     client = TestUtils.generateClient();
     String id = UUID.randomUUID().toString();
@@ -46,6 +38,7 @@ public class FeedTest {
     assertEquals(created.type, got.type);
   }
 
+  @Test
   public void testTransactionFeedCreation() throws Exception {
     client = TestUtils.generateClient();
     String id = UUID.randomUUID().toString();
@@ -56,6 +49,7 @@ public class FeedTest {
     assertEquals(created.type, "transaction");
   }
 
+  @Test
   public void testActionFeedConsumption() throws Exception {
     client = TestUtils.generateClient();
     String uuid = UUID.randomUUID().toString();
@@ -104,6 +98,7 @@ public class FeedTest {
     assertEquals(actions.get(1).id, tx.actions.get(1).id);
   }
 
+  @Test
   public void testTransactionFeedConsumption() throws Exception {
     client = TestUtils.generateClient();
     String uuid = UUID.randomUUID().toString();
@@ -156,6 +151,7 @@ public class FeedTest {
     assertEquals(txs.get(1).id, tx2.id);
   }
 
+  @Test
   public void testFeedDeletion() throws Exception {
     client = TestUtils.generateClient();
     String uuid = UUID.randomUUID().toString();

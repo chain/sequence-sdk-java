@@ -20,13 +20,6 @@ public class FailureTest {
   static Client client;
 
   @Test
-  public void run() throws Exception {
-    testErrorCode();
-    testCreateAccount();
-    testCreateFlavor();
-    testTransact();
-  }
-
   public void testErrorCode() throws Exception {
     client = TestUtils.generateClient();
     try {
@@ -38,7 +31,7 @@ public class FailureTest {
     throw new Exception("expecting APIException");
   }
 
-
+  @Test
   public void testCreateAccount() throws Exception {
     client = TestUtils.generateClient();
     try {
@@ -49,6 +42,7 @@ public class FailureTest {
     throw new Exception("expecting APIException");
   }
 
+  @Test
   public void testCreateFlavor() throws Exception {
     client = TestUtils.generateClient();
     try {
@@ -59,6 +53,7 @@ public class FailureTest {
     throw new Exception("expecting APIException");
   }
 
+  @Test
   public void testTransact() throws Exception {
     client = TestUtils.generateClient();
     try {

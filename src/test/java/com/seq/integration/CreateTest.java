@@ -18,12 +18,6 @@ public class CreateTest {
   static Key key;
 
   @Test
-  public void run() throws Exception {
-    testKeyCreate();
-    testAccountCreate();
-    testFlavorCreate();
-  }
-
   public void testKeyCreate() throws Exception {
     client = TestUtils.generateClient();
     String id = "CreateTest-testKeyCreate-id";
@@ -39,6 +33,7 @@ public class CreateTest {
     throw new Exception("expecting APIException");
   }
 
+  @Test
   public void testAccountCreate() throws Exception {
     client = TestUtils.generateClient();
     key = new Key.Builder().create(client);
@@ -74,6 +69,7 @@ public class CreateTest {
     throw new Exception("expecting APIException");
   }
 
+  @Test
   public void testFlavorCreate() throws Exception {
     client = TestUtils.generateClient();
     key = new Key.Builder().create(client);

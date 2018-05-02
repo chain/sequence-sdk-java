@@ -18,16 +18,6 @@ public class QueryTest {
   static Key key;
 
   @Test
-  public void run() throws Exception {
-    testKeyQuery();
-    testAccountQuery();
-    testFlavorQuery();
-    testTransactionQuery();
-    testActionQuery();
-    testTokenQuery();
-    testPagination();
-  }
-
   public void testKeyQuery() throws Exception {
     client = TestUtils.generateClient();
     DevUtils.reset(client);
@@ -40,6 +30,7 @@ public class QueryTest {
     assertEquals(3, page.items.size());
   }
 
+  @Test
   public void testAccountQuery() throws Exception {
     client = TestUtils.generateClient();
     key = new Key.Builder().create(client);
@@ -73,6 +64,7 @@ public class QueryTest {
     assertEquals(1, counter);
   }
 
+  @Test
   public void testFlavorQuery() throws Exception {
     client = TestUtils.generateClient();
     key = new Key.Builder().create(client);
@@ -93,6 +85,7 @@ public class QueryTest {
     assertEquals(flavorId, page.items.get(0).id);
   }
 
+  @Test
   public void testTransactionQuery() throws Exception {
     client = TestUtils.generateClient();
     key = new Key.Builder().create(client);
@@ -159,6 +152,7 @@ public class QueryTest {
     assertEquals(1, page.items.size());
   }
 
+  @Test
   public void testActionQuery() throws Exception {
     client = TestUtils.generateClient();
     DevUtils.reset(client);
@@ -343,6 +337,7 @@ public class QueryTest {
     assertEquals(tagData, as.snapshot.destinationAccountTags.get("test"));
   }
 
+  @Test
   public void testTokenQuery() throws Exception {
     client = TestUtils.generateClient();
     DevUtils.reset(client);
@@ -436,6 +431,7 @@ public class QueryTest {
   // Because BaseQueryBuilder#getPage is used in the execute
   // method and for pagination, testing pagination for one
   // api object is sufficient for exercising the code path.
+  @Test
   public void testPagination() throws Exception {
     client = TestUtils.generateClient();
     key = new Key.Builder().create(client);

@@ -5,10 +5,7 @@ import com.seq.api.*;
 import com.seq.http.Client;
 import org.junit.Test;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static junit.framework.TestCase.assertNotNull;
 import static junit.framework.TestCase.assertTrue;
@@ -297,5 +294,40 @@ public class TransactionTest {
     action = actions.items.get(0);
     assertEquals("retire", action.type);
     assertEquals(5, action.amount);
+  }
+
+  @Test
+  public void testTransactionWithTransactionTags() throws Exception {
+    client = TestUtils.generateClient();
+    key = new Key.Builder().create(client);
+    String alice = "TransactionTest-testTransactionWithTransactionTags-alice";
+    String flavor = "TransactionTest-testTransactionWithTransactionTags-flavor";
+    String tagValue = "TransactionTest-testTransactionWithTransactionTags-tag";
+    new Account.Builder().setId(alice).addKeyId(key.id).create(client);
+    new Flavor.Builder().setId(flavor).addKeyId(key.id).create(client);
+
+    new Transaction.Builder()
+      .addAction(
+        new Transaction.Builder.Action.Issue()
+          .setFlavorId(flavor)
+          .setAmount(100)
+          .setDestinationAccountId(alice))
+      .addTransactionTagsField("tagKey", tagValue)
+      .transact(client);
+
+    Transaction.Page page =
+      new Transaction.ListBuilder()
+        .setFilter("actions(snapshot.transactionTags.tagKey=$1)")
+        .addFilterParameter(tagValue)
+        .getPage(client);
+    Transaction tx = page.items.get(0);
+    Transaction.Action action = tx.actions.get(0);
+
+    assertEquals(tagValue, tx.tags.get("tagKey"));
+    assertEquals(tagValue, action.snapshot.transactionTags.get("tagKey"));
+    assertEquals("issue", action.type);
+    assertEquals(100, action.amount);
+    assertEquals(flavor, action.flavorId);
+    assertEquals(alice, action.destinationAccountId);
   }
 }

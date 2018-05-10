@@ -42,6 +42,12 @@ public class Transaction {
   public List<Action> actions;
 
   /**
+   * User-specified key-value data embedded into the transaction.
+   */
+  @Expose
+  public Map<String, Object> tags;
+
+  /**
    * A single page of transactions returned from a query.
    */
   public static class Page extends BasePage<Transaction> {}
@@ -190,6 +196,13 @@ public class Transaction {
       @SerializedName("token_tags")
       @Expose
       public Map<String, Object> tokenTags;
+
+      /**
+       * A snapshot of the transaction's tags at the time of action creation
+       */
+      @SerializedName("transaction_tags")
+      @Expose
+      public Map<String, Object> transactionTags;
     }
   }
 
@@ -199,6 +212,10 @@ public class Transaction {
   public static class Builder {
     @Expose
     protected List<Action> actions;
+
+    @SerializedName("transaction_tags")
+    @Expose
+    protected Map<String, Object> transactionTags;
 
     /**
      * Builds, signs, and submits a tranasaction.
@@ -212,6 +229,7 @@ public class Transaction {
 
     public Builder() {
       this.actions = new ArrayList<>();
+      this.transactionTags = new HashMap<>();
     }
 
     /**
@@ -221,6 +239,17 @@ public class Transaction {
      */
     public Builder addAction(Action action) {
       this.actions.add(action);
+      return this;
+    }
+
+    /**
+     * Adds a key-value pair to the transaction's tags.
+     * @param key key of the tag field
+     * @param value value of tag field
+     * @return updated builder
+     */
+    public Builder addTransactionTagsField(String key, Object value) {
+      this.transactionTags.put(key, value);
       return this;
     }
 

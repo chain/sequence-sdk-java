@@ -128,8 +128,14 @@ public class Action {
     @SerializedName("token_tags")
     @Expose
     public Map<String, Object> tokenTags;
-  }
 
+    /**
+     * A snapshot of the transactions's tags at the time of action creation
+     */
+    @SerializedName("transaction_tags")
+    @Expose
+    public Map<String, Object> transactionTags;
+  }
 
   /**
    * A single page of actions returned from a query.

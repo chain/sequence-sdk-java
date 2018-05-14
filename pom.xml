@@ -21,6 +21,7 @@
 
     <properties>
         <encoding>UTF-8</encoding>
+        <targetdir>${project.basedir}/target</targetdir>
     </properties>
 
     <developers>
@@ -73,6 +74,7 @@
     </distributionManagement>
 
     <build>
+        <directory>${targetdir}</directory>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

@@ -1,5 +1,10 @@
 # Sequence Java SDK changelog
 
+## 2.1 (20180516)
+
+* Added transaction tags.
+  [More info](https://dashboard.seq.com/docs/transactions)
+
 ## 2.0.1 (20180501)
 
 * Generate unique request IDs in the client for easier debugging support

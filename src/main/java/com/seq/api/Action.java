@@ -3,7 +3,7 @@ package com.seq.api;
 import com.seq.exception.APIException;
 import com.seq.exception.BadURLException;
 import com.seq.exception.ChainException;
-import com.seq.http.Client;
+import com.seq.http.*;
 
 import com.seq.exception.ConnectivityException;
 import com.seq.exception.JSONException;
@@ -263,6 +263,47 @@ public class Action {
       }
       this.next.groupBy.add(field);
       return this;
+    }
+  }
+
+
+  /**
+   * A builder for updating an action's tags.
+   */
+  public static class TagUpdateBuilder {
+    @Expose
+    private String id;
+
+    @Expose
+    private Map<String, Object> tags;
+
+    /**
+     * Specifies the action to be updated.
+     * @param id the action's ID
+     * @return updated builder
+     */
+    public TagUpdateBuilder forId(String id) {
+      this.id = id;
+      return this;
+    }
+
+    /**
+     * Specifies a new set of tags.
+     * @param tags map of tag keys to tag values
+     * @return updated builder
+     */
+    public TagUpdateBuilder setTags(Map<String, Object> tags) {
+      this.tags = tags;
+      return this;
+    }
+
+    /**
+     * Updates the action's tags.
+     * @param client ledger API connection object
+     * @throws ChainException
+     */
+    public void update(Client client) throws ChainException {
+      client.request("update-action-tags", this, SuccessMessage.class);
     }
   }
 }

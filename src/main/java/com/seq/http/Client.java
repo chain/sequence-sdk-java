@@ -1,7 +1,7 @@
 package com.seq.http;
 
+import com.google.gson.GsonBuilder;
 import com.seq.exception.*;
-import com.seq.common.*;
 
 import java.io.*;
 import java.lang.reflect.Type;
@@ -42,6 +42,7 @@ public class Client {
   private String ledgerName;
   private String teamName;
   private Boolean teamNameRequested;
+  private Gson serializer;
 
   // Used to create empty, in-memory key stores.
   private static final char[] DEFAULT_KEYSTORE_PASSWORD = "password".toCharArray();
@@ -64,8 +65,12 @@ public class Client {
   static {
     InputStream in = Client.class.getClassLoader().getResourceAsStream("properties.json");
     if (in != null) {
+      Gson serializer = new GsonBuilder()
+            .excludeFieldsWithoutExposeAnnotation()
+            .setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
+            .create();
       InputStreamReader inr = new InputStreamReader(in);
-      version = Utils.serializer.fromJson(inr, BuildProperties.class).version;
+      version = serializer.fromJson(inr, BuildProperties.class).version;
     }
   }
 
@@ -81,6 +86,10 @@ public class Client {
     this.httpClient = buildHttpClient(builder);
     this.teamName = null;
     this.teamNameRequested = false;
+    this.serializer = new GsonBuilder()
+            .excludeFieldsWithoutExposeAnnotation()
+            .setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
+            .create();
   }
 
   public void getTeamName(String credential) throws ChainException {
@@ -147,7 +156,7 @@ public class Client {
    */
   private <T> T post(String path, Object body, ResponseCreator<T> respCreator)
       throws ChainException {
-    RequestBody requestBody = RequestBody.create(Client.JSON, Utils.serializer.toJson(body));
+    RequestBody requestBody = RequestBody.create(Client.JSON, this.serializer.toJson(body));
 
     byte[] bytes = new byte[10];
     new Random().nextBytes(bytes);
@@ -201,7 +210,7 @@ public class Client {
 
       try {
         Response resp = this.checkError(this.httpClient.newCall(req).execute());
-        return respCreator.create(resp, Utils.serializer);
+        return respCreator.create(resp, this.serializer);
       } catch (IOException ex) {
         // The OkHttp library already performs retries for some
         // I/O-related errors, but we've hit this case in a leader
@@ -303,7 +312,7 @@ public class Client {
 
     if ((response.code() / 100) != 2) {
         APIException err =
-            Utils.serializer.fromJson(response.body().charStream(), APIException.class);
+            this.serializer.fromJson(response.body().charStream(), APIException.class);
         if (err.seqCode != null) {
           err.requestId = rid;
           err.statusCode = response.code();

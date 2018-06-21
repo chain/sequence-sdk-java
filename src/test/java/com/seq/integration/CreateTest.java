@@ -4,7 +4,6 @@ import com.seq.TestUtils;
 import com.seq.api.*;
 import com.seq.exception.APIException;
 import com.seq.http.Client;
-import com.seq.common.Utils;
 
 import org.junit.Test;
 

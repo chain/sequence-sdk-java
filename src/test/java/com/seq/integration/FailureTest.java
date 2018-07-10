@@ -8,7 +8,9 @@ import com.seq.http.Client;
 
 import org.junit.Test;
 
-import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.ArrayList;
 
 import static org.junit.Assert.*;
 
@@ -59,6 +61,30 @@ public class FailureTest {
     try {
       new Transaction.Builder().addAction(new Transaction.Builder.Action.Issue()).transact(client);
     } catch (APIException e) {
+      return;
+    }
+    throw new Exception("expecting APIException");
+  }
+
+  @Test
+  public void testErrorData() throws Exception {
+    client = TestUtils.generateClient();
+    try {
+      new Transaction.Builder().addAction(
+        new Transaction.Builder.Action.Transfer()
+          .setSourceAccountId("not-real")
+          .setFlavorId("not-real")
+          .setAmount(10)
+          .setDestinationAccountId("not-real")
+      ).transact(client);
+    } catch (APIException e) {
+      assertEquals("SEQ706", e.seqCode);
+      assertEquals(1, e.data.actions.size());
+
+      APIException actionError = e.data.actions.get(0);
+      assertEquals("SEQ702", actionError.seqCode);
+      assertEquals(0, (long)actionError.data.index);
+      assertEquals("source_account_id", actionError.data.error_fields);
       return;
     }
     throw new Exception("expecting APIException");

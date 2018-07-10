@@ -3,6 +3,9 @@ package com.seq.exception;
 import com.google.gson.annotations.SerializedName;
 import com.google.gson.annotations.Expose;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * APIException is thrown when the ledger API encounters an error handling a
  * user request. Errors could be due to user error, or due to server issues.
@@ -27,12 +30,19 @@ public class APIException extends ChainException {
   public String chainMessage;
 
   /**
-   * Additional information about the error (possibly null).
+   * Additional message about the error (possibly null).
    */
   @Expose
   public String detail;
 
   /**
+   * Additional specifics about the error, such as which
+   * action failed in a transaction, or for what reason (possibly null).
+   */
+  @Expose
+  public APIExceptionData data;
+
+    /**
    * Specifies whether the error is considered to be transient and that the
    * request should be retried.
    */
@@ -56,6 +66,37 @@ public class APIException extends ChainException {
    */
   @Expose
   public int statusCode;
+
+  /**
+   * Additional specifics about the error, including any
+   * nested sub-errors related to individual actions.
+   */
+  public static class APIExceptionData {
+    /**
+     * Nested errors specific to individual actions in the transaction. Nested
+     * errors may contain their own API exception data object.
+     */
+    @Expose
+    public List<APIException> actions;
+
+    /**
+     * Lists fields omitted from an action.
+     */
+    @Expose
+    public List<String> missing_fields;
+
+    /**
+     * The first field with incorrect data in an action .
+     */
+    @Expose
+    public String error_fields;
+
+    /**
+     * The index in the transaction of the action with an error
+     */
+    @Expose
+    public Integer index;
+  }
 
   @Override
   public String getMessage() {

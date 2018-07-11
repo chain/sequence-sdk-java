@@ -1,5 +1,12 @@
 # Sequence Java SDK changelog
 
+## 2.1.1 (20180711)
+
+* Expose additional details about errors specific to actions
+  in a transaction.
+* Resolved an issue related to GSON when using multiple threads.
+* Added support for updating Action tags.
+
 ## 2.1 (20180516)
 
 * Added transaction tags.

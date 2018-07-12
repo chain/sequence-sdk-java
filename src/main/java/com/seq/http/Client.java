@@ -41,7 +41,6 @@ public class Client {
   private String credential;
   private String ledgerName;
   private String teamName;
-  private Boolean teamNameRequested;
   private Gson serializer;
 
   // Used to create empty, in-memory key stores.
@@ -53,11 +52,11 @@ public class Client {
     public String version;
   }
 
-  private static class TeamResponse {
+  private static class HelloResponse {
     @SerializedName("team_name")
     @Expose public String teamName;
 
-    public TeamResponse() {
+    public HelloResponse() {
       this.teamName = null;
     }
   }
@@ -85,18 +84,23 @@ public class Client {
     this.credential = builder.credential;
     this.httpClient = buildHttpClient(builder);
     this.teamName = null;
-    this.teamNameRequested = false;
     this.serializer = new GsonBuilder()
             .excludeFieldsWithoutExposeAnnotation()
             .setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
             .create();
   }
 
-  public void getTeamName(String credential) throws ChainException {
-    this.teamNameRequested = true;
-    TeamResponse teamResp = new TeamResponse();
-    teamResp = request("hello", new Object(), TeamResponse.class);
-    this.teamName = teamResp.teamName;
+  public void hello(String credential) throws ChainException {
+    HelloResponse resp = new HelloResponse();
+    ResponseCreator<HelloResponse> rc =
+        new ResponseCreator<HelloResponse>() {
+          public HelloResponse create(Response response, Gson deserializer) throws IOException {
+            return deserializer.fromJson(response.body().charStream(), HelloResponse.class);
+          }
+        };
+
+    resp = post("hello", new Object(), rc);
+    this.teamName = resp.teamName;
   }
 
   /**
@@ -116,8 +120,8 @@ public class Client {
           }
         };
 
-    if(this.teamNameRequested == false && this.teamName == null) {
-      getTeamName(this.credential);
+    if (this.teamName == null) {
+      hello(this.credential);
     }
     return post(action, body, rc);
   }

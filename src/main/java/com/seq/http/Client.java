@@ -90,16 +90,8 @@ public class Client {
             .create();
   }
 
-  public void hello(String credential) throws ChainException {
-    HelloResponse resp = new HelloResponse();
-    ResponseCreator<HelloResponse> rc =
-        new ResponseCreator<HelloResponse>() {
-          public HelloResponse create(Response response, Gson deserializer) throws IOException {
-            return deserializer.fromJson(response.body().charStream(), HelloResponse.class);
-          }
-        };
-
-    resp = post("hello", new Object(), rc);
+  public <HelloReponse> void hello(String credential) throws ChainException {
+    HelloResponse resp = post("hello", new Object(), HelloResponse.class);
     this.teamName = resp.teamName;
   }
 
@@ -113,17 +105,10 @@ public class Client {
    * @throws ChainException
    */
   public <T> T request(String action, Object body, final Type tClass) throws ChainException {
-    ResponseCreator<T> rc =
-        new ResponseCreator<T>() {
-          public T create(Response response, Gson deserializer) throws IOException {
-            return deserializer.fromJson(response.body().charStream(), tClass);
-          }
-        };
-
     if (this.teamName == null) {
       hello(this.credential);
     }
-    return post(action, body, rc);
+    return post(action, body, tClass);
   }
 
   /**
@@ -135,30 +120,14 @@ public class Client {
   }
 
   /**
-   * Defines an interface for deserializing HTTP responses into objects.
-   * @param <T> the type of object to return
-   */
-  public interface ResponseCreator<T> {
-    /**
-     * Deserializes an HTTP response into a Java object of type T.
-     * @param response HTTP response object
-     * @param deserializer json deserializer
-     * @return an object of type T
-     * @throws ChainException
-     * @throws IOException
-     */
-    T create(Response response, Gson deserializer) throws ChainException, IOException;
-  }
-
-  /**
    * Builds and executes an HTTP Post request.
    * @param path the path to the endpoint
    * @param body the request body
-   * @param respCreator object specifying the response structure
+   * @param tClass Type of object to be deserialized from the response JSON
    * @return a response deserialized into type T
    * @throws ChainException
    */
-  private <T> T post(String path, Object body, ResponseCreator<T> respCreator)
+  private <T> T post(String path, Object body, final Type tClass)
       throws ChainException {
     RequestBody requestBody = RequestBody.create(Client.JSON, this.serializer.toJson(body));
 
@@ -214,7 +183,7 @@ public class Client {
 
       try {
         Response resp = this.checkError(this.httpClient.newCall(req).execute());
-        return respCreator.create(resp, this.serializer);
+        return this.serializer.fromJson(resp.body().charStream(), tClass);
       } catch (IOException ex) {
         // The OkHttp library already performs retries for some
         // I/O-related errors, but we've hit this case in a leader

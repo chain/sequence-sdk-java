@@ -1,5 +1,10 @@
 # Sequence Java SDK changelog
 
+## 2.2.0 (????????)
+
+* Added preliminary support for dynamically addressing
+  different API hosts when needed.
+
 ## 2.1.1 (20180711)
 
 * Expose additional details about errors specific to actions

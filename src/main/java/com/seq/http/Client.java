@@ -40,7 +40,6 @@ public class Client {
   private OkHttpClient httpClient;
   private String credential;
   private String ledgerName;
-  private String teamName;
   private String ledgerUrl;
   private Gson serializer;
 
@@ -88,14 +87,13 @@ public class Client {
     this.ledgerName = builder.ledger;
     this.credential = builder.credential;
     this.httpClient = buildHttpClient(builder);
-    this.teamName = null;
     this.serializer = new GsonBuilder()
             .excludeFieldsWithoutExposeAnnotation()
             .setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
             .create();
   }
 
-  public <HelloReponse> void hello(String credential) throws ChainException {
+  public <HelloReponse> void hello() throws ChainException {
     String url = "https://api.seq.com";
     String addr = System.getenv("SEQADDR");
     if (addr != null) {
@@ -103,7 +101,6 @@ public class Client {
     }
     url += "/hello";
     HelloResponse resp = post(url, new Object(), HelloResponse.class);
-    this.teamName = resp.teamName;
     this.ledgerUrl = "https://" + resp.addr + "/" + resp.teamName + "/" + this.ledgerName;
   }
 
@@ -118,7 +115,7 @@ public class Client {
    */
   public <T> T request(String action, Object body, final Type tClass) throws ChainException {
     if (this.ledgerUrl == null) {
-      hello(this.credential);
+      hello();
     }
     String url = this.ledgerUrl + "/" + action;
     return post(url, body, tClass);

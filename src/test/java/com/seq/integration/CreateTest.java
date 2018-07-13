@@ -19,6 +19,7 @@ public class CreateTest {
   @Test
   public void testKeyCreate() throws Exception {
     client = TestUtils.generateClient();
+    DevUtils.reset(client);
     String id = "CreateTest-testKeyCreate-id";
     key = new Key.Builder().setId(id).create(client);
     assertNotNull(key.id);
@@ -35,6 +36,7 @@ public class CreateTest {
   @Test
   public void testAccountCreate() throws Exception {
     client = TestUtils.generateClient();
+    DevUtils.reset(client);
     key = new Key.Builder().create(client);
     String alice = "CreateTest-testAccountCreate-alice";
     String test = "CreateTest-testAccountCreate-test";
@@ -71,6 +73,7 @@ public class CreateTest {
   @Test
   public void testFlavorCreate() throws Exception {
     client = TestUtils.generateClient();
+    DevUtils.reset(client);
     key = new Key.Builder().create(client);
     String flavor = "CreateTest-testFlavorCreate-flavor";
     String test = "CreateTest-testFlavorCreate-test";

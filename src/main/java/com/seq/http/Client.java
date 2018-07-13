@@ -41,6 +41,7 @@ public class Client {
   private String credential;
   private String ledgerName;
   private String teamName;
+  private String ledgerUrl;
   private Gson serializer;
 
   // Used to create empty, in-memory key stores.
@@ -56,8 +57,12 @@ public class Client {
     @SerializedName("team_name")
     @Expose public String teamName;
 
+    @SerializedName("addr")
+    @Expose public String addr;
+
     public HelloResponse() {
       this.teamName = null;
+      this.addr = null;
     }
   }
 
@@ -91,8 +96,15 @@ public class Client {
   }
 
   public <HelloReponse> void hello(String credential) throws ChainException {
-    HelloResponse resp = post("hello", new Object(), HelloResponse.class);
+    String url = "https://api.seq.com";
+    String addr = System.getenv("SEQADDR");
+    if (addr != null) {
+      url = "https://" + addr;
+    }
+    url += "/hello";
+    HelloResponse resp = post(url, new Object(), HelloResponse.class);
     this.teamName = resp.teamName;
+    this.ledgerUrl = "https://" + resp.addr + "/" + resp.teamName + "/" + this.ledgerName;
   }
 
   /**
@@ -105,10 +117,11 @@ public class Client {
    * @throws ChainException
    */
   public <T> T request(String action, Object body, final Type tClass) throws ChainException {
-    if (this.teamName == null) {
+    if (this.ledgerUrl == null) {
       hello(this.credential);
     }
-    return post(action, body, tClass);
+    String url = this.ledgerUrl + "/" + action;
+    return post(url, body, tClass);
   }
 
   /**
@@ -121,13 +134,13 @@ public class Client {
 
   /**
    * Builds and executes an HTTP Post request.
-   * @param path the path to the endpoint
+   * @param url the URL to the endpoint
    * @param body the request body
    * @param tClass Type of object to be deserialized from the response JSON
    * @return a response deserialized into type T
    * @throws ChainException
    */
-  private <T> T post(String path, Object body, final Type tClass)
+  private <T> T post(String url, Object body, final Type tClass)
       throws ChainException {
     RequestBody requestBody = RequestBody.create(Client.JSON, this.serializer.toJson(body));
 
@@ -140,23 +153,10 @@ public class Client {
     ChainException exception = null;
     for (int attempt = 1; attempt - 1 <= MAX_RETRIES; attempt++) {
       String attemptId = requestId + '/' + attempt;
-      String urlParts = "https://api.seq.com";
-      String addr = System.getenv("SEQADDR");
-      if (addr != null) {
-        urlParts = "https://" + addr;
-      }
 
       URL endpointURL;
       try {
-        if (urlParts.endsWith("/")) {
-          urlParts = urlParts.substring(0, urlParts.length() - 1);
-        }
-        if (this.teamName != null) {
-          urlParts += "/" + this.teamName;
-          urlParts += "/" + this.ledgerName;
-        }
-        urlParts += "/" + path;
-        endpointURL = new URL(urlParts);
+        endpointURL = new URL(url);
       } catch (MalformedURLException ex) {
         throw new BadURLException(ex.getMessage());
       }

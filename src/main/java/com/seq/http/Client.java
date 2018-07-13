@@ -15,6 +15,7 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateFactory;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
+import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -41,6 +42,7 @@ public class Client {
   private String credential;
   private String ledgerName;
   private String ledgerUrl;
+  private int deadline;
   private Gson serializer;
 
   // Used to create empty, in-memory key stores.
@@ -59,9 +61,13 @@ public class Client {
     @SerializedName("addr")
     @Expose public String addr;
 
+    @SerializedName("addr_ttl_seconds")
+    @Expose public int addrTtlSeconds;
+
     public HelloResponse() {
       this.teamName = null;
       this.addr = null;
+      this.addrTtlSeconds = 0;
     }
   }
 
@@ -100,8 +106,14 @@ public class Client {
       url = "https://" + addr;
     }
     url += "/hello";
+
     HelloResponse resp = post(url, new Object(), HelloResponse.class);
-    this.ledgerUrl = "https://" + resp.addr + "/" + resp.teamName + "/" + this.ledgerName;
+
+    synchronized(this) {
+      int now = (int) Instant.now().getEpochSecond();
+      this.deadline = now + resp.addrTtlSeconds;
+      this.ledgerUrl = "https://" + resp.addr + "/" + resp.teamName + "/" + this.ledgerName;
+    }
   }
 
   /**
@@ -114,10 +126,43 @@ public class Client {
    * @throws ChainException
    */
   public <T> T request(String action, Object body, final Type tClass) throws ChainException {
-    if (this.ledgerUrl == null) {
+    String ledgerUrl;
+    synchronized(this) {
+      ledgerUrl = this.ledgerUrl;
+    }
+
+    if (ledgerUrl == null) {
       hello();
     }
-    String url = this.ledgerUrl + "/" + action;
+
+    String url;
+    int deadline;
+    synchronized(this) {
+      url = this.ledgerUrl + "/" + action;
+      deadline = this.deadline;
+    }
+
+    int now = (int) Instant.now().getEpochSecond();
+    if (now >= deadline) {
+      // Extend the deadline long enough to get a fresh addr.
+      synchronized(this) {
+        this.deadline = now + (RETRY_MAX_DELAY_MILLIS * MAX_RETRIES);
+      }
+
+      // Get new deadline and ledgerUrl in the background.
+      // Do not block current request.
+      final Client client = this;
+      new Thread(new Runnable() {
+        public void run() {
+          try {
+            client.hello();
+          } catch (ChainException e) {
+            // Continue wth existing values if `/hello` fails to respond.
+          }
+        }
+      }).start();
+    }
+
     return post(url, body, tClass);
   }
 

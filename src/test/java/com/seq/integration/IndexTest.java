@@ -17,30 +17,6 @@ public class IndexTest {
   static Key key;
 
   @Test
-  public void testActionIndexCreate() throws Exception {
-    client = TestUtils.generateClient();
-    DevUtils.reset(client);
-    String test = "IndexTest-testActionIndexCreate-test";
-    Index<Action> index =
-      new Index.Action.Builder()
-        .setId(test)
-        .setFilter("tags.type=$1")
-        .create(client);
-    assertNotNull(index.id);
-    assertEquals(test, index.id);
-
-    try {
-      new Index.Action.Builder()
-        .setId(test)
-        .setFilter("tags.type=$1")
-        .create(client);
-    } catch (APIException e) {
-      return;
-    }
-    throw new Exception("expecting APIException");
-  }
-
-  @Test
   public void testTokenIndexCreate() throws Exception {
     client = TestUtils.generateClient();
     DevUtils.reset(client);
@@ -49,8 +25,8 @@ public class IndexTest {
     groupBy.add("flavorId");
     groupBy.add("accountId");
 
-    Index<Token> index =
-      new Index.Token.Builder()
+    Index index =
+      new Index.TokenSum.Builder()
         .setId(test)
         .setFilter("tags.type=$1")
       	.setGroupBy(groupBy)
@@ -59,7 +35,7 @@ public class IndexTest {
     assertEquals(test, index.id);
 
     try {
-      new Index.Token.Builder()
+      new Index.TokenSum.Builder()
         .setId(test)
         .setFilter("tags.type=$1")
         .addGroupByField("flavorId")
@@ -71,21 +47,29 @@ public class IndexTest {
   }
 
   @Test
+  public void testTokenIndexCreateWithoutId() throws Exception {
+    client = TestUtils.generateClient();
+    DevUtils.reset(client);
+
+    Index index =
+      new Index.TokenSum.Builder()
+        .setFilter("tags.type=$1")
+        .create(client);
+    assertNotNull(index.id);
+  }
+
+  @Test
   public void testIndexPageCursor() throws Exception {
     client = TestUtils.generateClient();
     DevUtils.reset(client);
-    String testAction = "IndexTest-testTokenIndexList-testAction";
-    String testToken = "IndexTest-testTokenIndexList-testToken";
-    Index<Action> actionIndex =
-      new Index.Action.Builder()
-        .setId(testAction)
-        .setFilter("tags.type=$1")
+    Index index1 =
+      new Index.TokenSum.Builder()
+        .setFilter("tags.type1=$1")
         .create(client);
 
-    Index<Token> tokenIndex =
-      new Index.Token.Builder()
-        .setId(testToken)
-        .setFilter("tags.type=$1")
+    Index index2 =
+      new Index.TokenSum.Builder()
+        .setFilter("tags.type2=$1")
       	.addGroupByField("flavorId")
         .create(client);
 
@@ -93,12 +77,12 @@ public class IndexTest {
       .setPageSize(1)
       .getPage(client);
 
-    assertEquals(indexes.items.get(0).id, tokenIndex.id);
+    assertEquals(indexes.items.get(0).id, index2.id);
 
     indexes = new Index.ListBuilder()
       .getPage(client, indexes.cursor);
 
-    assertEquals(indexes.items.get(0).id, actionIndex.id);
+    assertEquals(indexes.items.get(0).id, index1.id);
     assertEquals(indexes.lastPage, false);
   }
 
@@ -110,8 +94,8 @@ public class IndexTest {
     ArrayList<String> groupBy = new ArrayList<String>();
     groupBy.add("accountId");
 
-    Index<Token> index =
-      new Index.Token.Builder()
+    Index index =
+      new Index.TokenSum.Builder()
         .setId(test)
         .setFilter("tags.type=$1")
         .setGroupBy(groupBy)

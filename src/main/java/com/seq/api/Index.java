@@ -11,7 +11,7 @@ import java.util.*;
 /**
  * Indexes are used to pre-compute queries that could potentially be slow.
  */
-public class Index<T> {
+public class Index {
   /**
    * Unique identifier of the index.
    */
@@ -19,10 +19,16 @@ public class Index<T> {
   public String id;
 
   /**
-   * Type of index, "action" or "token".
+   * Type of index, currently only "token".
    */
   @Expose
   public String type;
+
+  /**
+   * Method for index, currently only "sum".
+   */
+  @Expose
+  public String method;
 
   /**
    * Token/Action object fields to group by.
@@ -37,18 +43,10 @@ public class Index<T> {
   @Expose
   public String filter;
 
-  public static class Action {
-    public static class Builder extends Index.Builder<com.seq.api.Action> {
+  public static class TokenSum {
+    public static class Builder extends Index.Builder {
       public Builder() {
-        super("action");
-      }
-    }
-  }
-
-  public static class Token {
-    public static class Builder extends Index.Builder<com.seq.api.Token> {
-      public Builder() {
-        super("token");
+        super("token", "sum");
       }
     }
   }
@@ -56,12 +54,15 @@ public class Index<T> {
   /**
    * Configuration object for creating indexes.
    */
-  abstract public static class Builder<T> {
+  abstract public static class Builder {
     @Expose
     private String id;
 
     @Expose
     private String type;
+
+    @Expose
+    private String method;
 
     @SerializedName("group_by")
     @Expose
@@ -70,8 +71,9 @@ public class Index<T> {
     @Expose
     private String filter;
 
-    private Builder(String type) {
+    private Builder(String type, String method) {
       this.type = type;
+      this.method = method;
     };
 
     /**
@@ -79,7 +81,7 @@ public class Index<T> {
      * @param id unique identifier. Will be auto-generated if not provided.
      * @return the updated builder
      */
-    public Builder<T> setId(String id) {
+    public Builder setId(String id) {
       this.id = id;
       return this;
     }
@@ -89,7 +91,7 @@ public class Index<T> {
      * @param filter a filter expression
      * @return updated builder
      */
-    public Builder<T> setFilter(String filter) {
+    public Builder setFilter(String filter) {
       this.filter = filter;
       return this;
     }
@@ -99,7 +101,7 @@ public class Index<T> {
      * @param groupBy a list of fields
      * @return updated builder
      */
-    public Builder<T> setGroupBy(List<String> groupBy) {
+    public Builder setGroupBy(List<String> groupBy) {
       this.groupBy = groupBy;
       return this;
     }
@@ -109,7 +111,7 @@ public class Index<T> {
      * @param field name of a field
      * @return updated builder
      */
-    public Builder<T> addGroupByField(String field) {
+    public Builder addGroupByField(String field) {
       if (this.groupBy == null) {
         this.groupBy = new ArrayList<>();
       }
@@ -123,8 +125,8 @@ public class Index<T> {
      * @return a key object
      * @throws ChainException
      */
-    public Index<T> create(Client client) throws ChainException {
-      Index<T> index = client.request("create-index", this, Index.class);
+    public Index create(Client client) throws ChainException {
+      Index index = client.request("create-index", this, Index.class);
       return index;
     }
   }

@@ -96,13 +96,18 @@ public class Feed<T> implements Iterable<T> {
         if (pos < items.size()) {
           return true;
         } else {
-          try {
-            IterablePage page = getPage();
-            this.pos = 0;
-            this.items = page.items;
-            this.cursors = page.cursors;
-          } catch (ChainException e) {
-            return false;
+          boolean fetched = false;
+          while (!fetched) {
+            try {
+              IterablePage page = getPage();
+              fetched = true;
+
+              this.pos = 0;
+              this.items = page.items;
+              this.cursors = page.cursors;
+            } catch (ChainException e) {
+              // Error fetching a new connection. Try again.
+            }
           }
         }
 

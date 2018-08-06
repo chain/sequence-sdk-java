@@ -49,9 +49,11 @@ public class Client {
   private static final char[] DEFAULT_KEYSTORE_PASSWORD = "password".toCharArray();
   private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
   private static String version = "dev"; // updated in the static initializer
-
+  static String getVersion() {
+    return version;
+  }
   private static class BuildProperties {
-    public String version;
+    @Expose public String version;
   }
 
   private static class HelloResponse {
@@ -205,7 +207,7 @@ public class Client {
 
       Request req =
           new Request.Builder()
-              .header("User-Agent", "sequence-sdk-java/" + version)
+              .header("User-Agent", "sequence-sdk-java/" + Client.getVersion())
               .header("Credential", this.credential)
               .header("Idempotency-Key", idempotencyKey)
               .header("Name-Set", "camel")

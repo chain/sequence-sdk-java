@@ -109,7 +109,10 @@ public class Client {
     }
     url += "/hello";
 
-    HelloResponse resp = post(url, new Object(), HelloResponse.class);
+    Map<String, Object> requestBody = new HashMap<>();
+    requestBody.put("ledger_name", this.ledgerName);
+
+    HelloResponse resp = post(url, requestBody, HelloResponse.class);
 
     synchronized(this) {
       int now = (int) Instant.now().getEpochSecond();

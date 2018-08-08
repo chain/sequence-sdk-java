@@ -39,6 +39,12 @@ public class Feed<T> implements Iterable<T> {
   @Expose
   public String cursor;
 
+  /**
+   * When set, contains the exception thrown by the iterator that caused
+   * it to exit prematurely.
+   */
+  public ChainException exception;
+
   private Client _client;
 
   private T latestItem;
@@ -96,13 +102,25 @@ public class Feed<T> implements Iterable<T> {
         if (pos < items.size()) {
           return true;
         } else {
-          try {
-            IterablePage page = getPage();
-            this.pos = 0;
-            this.items = page.items;
-            this.cursors = page.cursors;
-          } catch (ChainException e) {
-            return false;
+          boolean fetched = false;
+          while (!fetched) {
+            try {
+              IterablePage page = getPage();
+              fetched = true;
+
+              this.pos = 0;
+              this.items = page.items;
+              this.cursors = page.cursors;
+            } catch (ConfigurationException e) {
+              // Loop on timeouts only
+              if (e.getMessage() != "timeout") {
+                Feed.this.exception = e;
+                return false;
+              }
+            } catch (ChainException e) {
+              Feed.this.exception = e;
+              return false;
+            }
           }
         }
 

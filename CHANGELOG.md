@@ -1,9 +1,12 @@
 # Sequence Java SDK changelog
 
-## 2.2.0 (????????)
+## 2.2.0 (20180808)
 
-* Added preliminary support for dynamically addressing
-  different API hosts when needed.
+* Resolved issue where polling for Feed items would end unexpectedly. 
+  Feeds now reconnect consistently in the event of a timeout, and errors 
+  during iteration are available on the feed's `exception` property.
+* Added support for dynamically addressing different API hosts for 
+  individual ledgers. Internal APIs only, works automatically.
 
 ## 2.1.1 (20180711)
 

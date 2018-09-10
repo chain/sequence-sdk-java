@@ -1,6 +1,6 @@
 #!/bin/bash
 set -xeo pipefail
 createdb-if-not-exists ledger
-cd $CHAIN/sdk/java
+cd $I10R/sdk/java
 rm -rf target
 with-ledgerd mvn clean integration-test "$@"

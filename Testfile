@@ -1,0 +1,2 @@
+java8: asdf local java 8.172 && $I10R/sequence/sdk/java/bin/tests
+java10: asdf local java 10.0.1 && $I10R/sequence/sdk/java/bin/tests

@@ -50,12 +50,6 @@ public class APIException extends ChainException {
   public boolean retriable;
 
   /**
-   * Deprecated. Alias for retriable. Will be removed in 2.0.0.
-   */
-  @Expose
-  public boolean temporary;
-
-  /**
    * Unique identifier of the request to the server.
    */
   @Expose

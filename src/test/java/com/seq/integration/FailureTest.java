@@ -27,7 +27,7 @@ public class FailureTest {
     try {
       new Account.Builder().create(client);
     } catch (APIException e) {
-      assertEquals(e.seqCode, "SEQ202");
+      assertEquals(e.seqCode, "SEQ052");
       return;
     }
     throw new Exception("expecting APIException");
